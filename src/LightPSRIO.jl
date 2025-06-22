@@ -1,11 +1,10 @@
 module LightPSRIO
 
-using LuaNova
-using Quiver
-
 abstract type Expression end
 
 abstract type ExpressionData <: Expression end
+
+Base.promote_rule(::Type{ExpressionData}, ::Type{ExpressionData}) = ExpressionData
 
 mutable struct ExpressionDataNumber{T <: Number} <: ExpressionData
     value::T
@@ -14,49 +13,39 @@ mutable struct ExpressionDataNumber{T <: Number} <: ExpressionData
     end
 end
 
-struct ExpressionBinary <: Expression
-    left::Expression
-    right::Expression
-    op::Symbol
-end
+Base.show(io::IO, e::ExpressionDataNumber) = show(io, "$(e.value)")
 
-Base.:+(e1::Expression, e2::Expression) = ExpressionBinary(e1, e2, :+)
-Base.:*(e1::Expression, e2::Expression) = ExpressionBinary(e1, e2, :*)
-
-Base.promote_rule(::Type{ExpressionData}, ::Type{ExpressionBinary}) = ExpressionBinary
-Base.promote_rule(::Type{ExpressionBinary}, ::Type{ExpressionData}) = ExpressionBinary
-Base.promote_rule(::Type{ExpressionData}, ::Type{ExpressionData}) = ExpressionData
-Base.promote_rule(::Type{ExpressionBinary}, ::Type{ExpressionBinary}) = ExpressionBinary
-
-function evaluate(e::ExpressionData)
+function evaluate(e::ExpressionDataNumber)
     return e.value
 end
 
-function evaluate(e::ExpressionBinary)
-    left_val = evaluate(e.left)
-    right_val = evaluate(e.right)
+struct ExpressionBinary{Operator <: Function} <: Expression
+    left::Expression
+    right::Expression
+    operator::Operator
+end
 
-    if e.op == :+
-        return left_val + right_val
-    elseif e.op == :*
-        return left_val * right_val
-    elseif e.op == :-
-        return left_val - right_val
-    elseif e.op == :/
-        return left_val / right_val
-    else
-        throw(ArgumentError("Unsupported operator: $(e.op)"))
-    end
+Base.promote_rule(::Type{ExpressionData}, ::Type{ExpressionBinary}) = ExpressionBinary
+Base.promote_rule(::Type{ExpressionBinary}, ::Type{ExpressionData}) = ExpressionBinary
+Base.promote_rule(::Type{ExpressionBinary}, ::Type{ExpressionBinary}) = ExpressionBinary
+
+Base.:+(e1::Expression, e2::Expression) = ExpressionBinary(e1, e2, +)
+Base.:*(e1::Expression, e2::Expression) = ExpressionBinary(e1, e2, *)
+
+Base.show(io::IO, e::ExpressionBinary) = show(io, "($(e.left) $(e.operator) $(e.right))")
+
+function evaluate(e::ExpressionBinary)
+    return e.operator(evaluate(e.left), evaluate(e.right))
 end
 
 function debug5()
-    a = ExpressionDataLiteral(5)
-    b = ExpressionDataLiteral(3)
+    a = ExpressionDataNumber(5)
+    b = ExpressionDataNumber(3.0)
 
     e = (a + b) * b
 
     result = evaluate(e)
-    println("The result of (5 + 3) * 3 is: $result")
+    println("The result of $e is: $result")
 
     return nothing
 end
