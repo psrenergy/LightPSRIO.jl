@@ -1,12 +1,12 @@
 module TestAqua
 
 using Aqua
-using LightPSRIO
+using LazyEvaluation
 using Test
 
 @testset "Aqua" begin
-    Aqua.test_ambiguities(LightPSRIO, recursive = false)
-    Aqua.test_all(LightPSRIO, ambiguities = false)
+    Aqua.test_ambiguities(LazyEvaluation, recursive = false)
+    Aqua.test_all(LazyEvaluation, ambiguities = false)
     return nothing
 end
 

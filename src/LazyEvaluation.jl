@@ -1,4 +1,4 @@
-module LightPSRIO
+module LazyEvaluation
 
 abstract type Expression end
 
@@ -51,8 +51,8 @@ function debug5()
 end
 
 # function debug()
-#     path1 = raw"C:\Development\PSRIO\LightPSRIO.jl\test\demand1"
-#     path2 = raw"C:\Development\PSRIO\LightPSRIO.jl\test\demand2"
+#     path1 = raw"C:\Development\PSRIO\LazyEvaluation.jl\test\demand1"
+#     path2 = raw"C:\Development\PSRIO\LazyEvaluation.jl\test\demand2"
 
 #     d1 = Quiver.Reader{Quiver.binary}(path1)
 #     d2 = Quiver.Reader{Quiver.binary}(path2)
