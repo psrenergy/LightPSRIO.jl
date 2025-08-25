@@ -6,6 +6,7 @@ using Quiver
 
 const cases = Vector{String}()
 
+include("optional.jl")
 include("study.jl")
 include("collection.jl")
 include("attributes.jl")
@@ -23,8 +24,11 @@ function debug()
 generic = Generic()
 e1 = generic:load("demand1")
 e2 = generic:load("demand1")
-e3 = e1 + e2 + 1
-e3:save("test")
+e = e1 + e2 + 1;
+e:save("test1");
+e = e1 * 2 + 1;
+e:save("test2");
+
 -- julia_typeof(exp)
 """,
     )

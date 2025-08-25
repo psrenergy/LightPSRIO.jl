@@ -19,8 +19,16 @@ Base.convert(::Type{Expression}, x::Number) = ExpressionDataNumber(x)
 
 Base.show(io::IO, e::ExpressionDataNumber) = print(io, "$(e.value)")
 
+function start!(e::ExpressionDataNumber)
+    return nothing
+end
+
 function evaluate(e::ExpressionDataNumber; kwargs...)
     return e.value
+end
+
+function finish!(e::ExpressionDataNumber)
+    return nothing
 end
 
 ###################################################################################################
@@ -87,8 +95,18 @@ Base.:/(x, y::Expression) = ExpressionBinary(promote(x, y)..., Base.:/)
 
 # Base.show(io::IO, e::ExpressionBinary) = print(io, "($(e.e1) $(e.f) $(e.e2))")
 
+function start!(e::ExpressionBinary)
+    start!(e.e1)
+    start!(e.e2)
+end
+
 function evaluate(e::ExpressionBinary; kwargs...)
     return e.f.(evaluate(e.e1; kwargs...), evaluate(e.e2; kwargs...))
+end
+
+function finish!(e::ExpressionBinary)
+    finish!(e.e1)
+    finish!(e.e2)
 end
 
 @define_lua_struct ExpressionBinary
@@ -96,23 +114,31 @@ end
 ###################################################################################################
 
 mutable struct ExpressionDataQuiver <: ExpressionData
+    path::String
+    filename::String
     attributes::Attributes
-    reader::Quiver.Reader
+    reader::Optional{Quiver.Reader}
 
     function ExpressionDataQuiver(path::String, filename::String)
         reader = Quiver.Reader{Quiver.csv}(joinpath(path, filename))
         attributes = Attributes(reader)
-        return new(attributes, reader)
+        return new(path, filename, attributes, nothing)
     end
 end
 
-function close!(e::ExpressionDataQuiver)
-    Quiver.close!(e.reader)
+function start!(e::ExpressionDataQuiver)
+    e.reader = Quiver.Reader{Quiver.csv}(joinpath(e.path, e.filename))
     return nothing
 end
 
 function evaluate(e::ExpressionDataQuiver; kwargs...)
     return Quiver.goto!(e.reader; kwargs...)
+end
+
+function finish!(e::ExpressionDataQuiver)
+    Quiver.close!(e.reader)
+    e.reader = nothing
+    return nothing
 end
 
 @define_lua_struct ExpressionDataQuiver
@@ -154,6 +180,7 @@ function save(e::Expression, filename::String)
         # frequency = metadata.frequency,
     )
 
+    start!(e)
     for indices in Iterators.product([1:size for size in dimension_size]...)
         kwargs = NamedTuple{Tuple(dimensions)}(indices)
         result = evaluate(e; kwargs...)
@@ -161,6 +188,7 @@ function save(e::Expression, filename::String)
 
         Quiver.write!(writer, result; kwargs...)
     end
+    finish!(e)
 
     Quiver.close!(writer)
 
@@ -176,3 +204,12 @@ end
 
 add(x, y) = Base.:+(x, y)
 @define_lua_function add
+
+sub(x, y) = Base.:-(x, y)
+@define_lua_function sub
+
+mul(x, y) = Base.:*(x, y)
+@define_lua_function mul
+
+div(x, y) = Base.:/(x, y)
+@define_lua_function div

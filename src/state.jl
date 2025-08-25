@@ -13,6 +13,9 @@ function initialize()
     @push_lua_struct(
         L, ExpressionDataQuiver,
         "__add", add,
+        "__sub", sub,
+        "__mul", mul,
+        "__div", div,
         "save", save,
     )
 
@@ -20,6 +23,9 @@ function initialize()
     @push_lua_struct(
         L, ExpressionBinary,
         "__add", add,
+        "__sub", sub,
+        "__mul", mul,
+        "__div", div,
         "save", save,
     )
 
