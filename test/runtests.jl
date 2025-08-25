@@ -1,5 +1,5 @@
 using Test
 
-using LazyEvaluation
+using LightPSRIO
 
-LazyEvaluation.debug()
+LightPSRIO.debug()
