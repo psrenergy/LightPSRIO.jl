@@ -6,6 +6,7 @@ using Quiver
 
 const cases = Vector{String}()
 
+include("study.jl")
 include("collection.jl")
 include("attributes.jl")
 include("expression.jl")

@@ -10,7 +10,7 @@ mutable struct ExpressionDataNumber{T <: Number} <: ExpressionData
     value::T
 
     function ExpressionDataNumber(x::T) where {T <: Number}
-        attributes = Attributes(["constant"])
+        attributes = Attributes(["constant"], Collection())
         return new{T}(attributes, x)
     end
 end
@@ -63,7 +63,7 @@ mutable struct ExpressionBinary{F <: Function} <: Expression
 
         dimension_size = e1.attributes.dimension_size
 
-        attributes = Attributes(labels, dimensions, dimension_size)
+        attributes = Attributes(labels, e1.attributes.collection, dimensions, dimension_size)
 
         return new{F}(attributes, e1, e2, f)
     end
@@ -127,8 +127,8 @@ function Generic()
 end
 @define_lua_struct Generic
 
-function load(collection::Generic, filename::String)
-    path = cases[collection.case_index]
+function load(generic::Generic, filename::String)
+    path = cases[generic.case_index]
     return ExpressionDataQuiver(path, filename)
 end
 @define_lua_function load
