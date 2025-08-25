@@ -1,0 +1,2 @@
+struct Collection
+end
