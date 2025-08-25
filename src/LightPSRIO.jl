@@ -17,14 +17,16 @@ function debug()
 
     state = LightPSRIO.initialize()
 
-    run(state, """
-    generic = Generic()
-    e1 = generic:load("demand1")
-    e2 = generic:load("demand1")
-    e3 = e1 + e2 + 1
-    e3:save("test")
-    -- julia_typeof(exp)
-    """
+    run(
+        state,
+        """
+generic = Generic()
+e1 = generic:load("demand1")
+e2 = generic:load("demand1")
+e3 = e1 + e2 + 1
+e3:save("test")
+-- julia_typeof(exp)
+""",
     )
 
     finalize(state)

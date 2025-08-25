@@ -161,7 +161,7 @@ function save(e::Expression, filename::String)
 
         Quiver.write!(writer, result; kwargs...)
     end
-    
+
     Quiver.close!(writer)
 
     return nothing

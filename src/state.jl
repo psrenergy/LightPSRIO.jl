@@ -28,6 +28,7 @@ end
 
 function push_case!(case::String)
     push!(cases, case)
+    return nothing
 end
 
 function run(L, script::String)
