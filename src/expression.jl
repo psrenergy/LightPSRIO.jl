@@ -101,7 +101,7 @@ div(x, y) = Base.:/(x, y)
 
 function start!(e::ExpressionBinary)
     start!(e.e1)
-    start!(e.e2)
+    return start!(e.e2)
 end
 
 function evaluate(e::ExpressionBinary; kwargs...)
@@ -110,7 +110,7 @@ end
 
 function finish!(e::ExpressionBinary)
     finish!(e.e1)
-    finish!(e.e2)
+    return finish!(e.e2)
 end
 
 ###################################################################################################
