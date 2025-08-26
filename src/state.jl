@@ -11,7 +11,9 @@ function initialize()
 
     @push_lua_struct(L, Generic, "load", load)
 
-    expressions = (
+    @push_lua_struct(
+        L,
+        ExpressionDataQuiver,
         "__add", add,
         "__sub", sub,
         "__mul", mul,
@@ -20,33 +22,42 @@ function initialize()
         "save", save,
     )
 
-    # expressions = [
-    #     :ExpressionDataQuiver,
-    #     :ExpressionUnary,
-    #     :ExpressionBinary,
-    #     :ExpressionAggregate,
-    # ]
-
     @push_lua_struct(
         L,
-        ExpressionDataQuiver,
-        expressions...,
-        # "__add", add,
-        # "__sub", sub,
-        # "__mul", mul,
-        # "__div", div,
-        # "aggregate", aggregate,
-        # "save", save,
+        ExpressionUnary,
+        "__add", add,
+        "__sub", sub,
+        "__mul", mul,
+        "__div", div,
+        "aggregate", aggregate,
+        "save", save,
     )
+    
+    @push_lua_struct(
+        L,
+        ExpressionBinary,
+        "__add", add,
+        "__sub", sub,
+        "__mul", mul,
+        "__div", div,
+        "aggregate", aggregate,
+        "save", save,
+    )
+    
+    @push_lua_struct(
+        L,
+        ExpressionAggregate,
+        "__add", add,
+        "__sub", sub,
+        "__mul", mul,
+        "__div", div,
+        "aggregate", aggregate,
+        "save", save,
+    )    
 
-    # functions = [
-    #     :BY_SUM,
-    #     :julia_typeof
-    # ]
-
-    # for f in functions
-    #     @eval @push_lua_function($L, string($f), $f)
-    # end
+    @push_lua_function(L, "BY_SUM", BY_SUM)
+    @push_lua_function(L, "julia_typeof", julia_typeof)
+    @push_lua_enumx(L, AggregateFunction)
 
     return L
 end

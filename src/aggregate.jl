@@ -1,10 +1,11 @@
 mutable struct ExpressionAggregate <: Expression
     attributes::Attributes
     e::Expression
+    aggregate_function::AggregateFunction.T
     dimension_symbol::Symbol
     dimension_original_size::Int
 
-    function ExpressionAggregate(e::Expression, dimension::String)
+    function ExpressionAggregate(e::Expression, dimension::String, aggregate_function::AggregateFunction.T)
         attributes = copy(e.attributes)
         dimension_symbol = Symbol(dimension)
 
@@ -18,6 +19,7 @@ mutable struct ExpressionAggregate <: Expression
         return new(
             attributes,
             e,
+            aggregate_function,
             dimension_symbol,
             dimension_original_size,
         )
@@ -25,8 +27,8 @@ mutable struct ExpressionAggregate <: Expression
 end
 @define_lua_struct ExpressionAggregate
 
-function aggregate(x::Expression, dimension::String, aggregate_function)
-    return ExpressionAggregate(x, dimension)
+function aggregate(x::Expression, dimension::String, aggregate_function::AggregateFunction.T)
+    return ExpressionAggregate(x, dimension, aggregate_function)
 end
 @define_lua_function aggregate
 
@@ -51,7 +53,11 @@ function evaluate(e::ExpressionAggregate; kwargs...)
         data[i] .= current_value
     end
 
-    return sum(data)
+    if e.aggregate_function == AggregateFunction.Sum
+        return sum(data)
+    else
+        error("Aggregate function $(e.aggregate_function) not implemented yet.")
+    end
 end
 
 function finish!(e::ExpressionAggregate)
