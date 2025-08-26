@@ -19,17 +19,11 @@ Base.convert(::Type{Expression}, x::Number) = ExpressionDataNumber(x)
 
 Base.show(io::IO, e::ExpressionDataNumber) = print(io, "$(e.value)")
 
-function start!(e::ExpressionDataNumber)
-    return nothing
-end
+start!(e::ExpressionDataNumber) = nothing
 
-function evaluate(e::ExpressionDataNumber; kwargs...)
-    return e.value
-end
+evaluate(e::ExpressionDataNumber; kwargs...) = e.value
 
-function finish!(e::ExpressionDataNumber)
-    return nothing
-end
+finish!(e::ExpressionDataNumber) = nothing
 
 ###################################################################################################
 
@@ -43,10 +37,11 @@ mutable struct ExpressionUnary{F <: Function} <: Expression
         return new{F}(attributes, e, f)
     end
 end
+@define_lua_struct ExpressionUnary
 
 Base.:-(x::Expression) = ExpressionUnary(x, Base.:−)
-
-@define_lua_struct ExpressionUnary
+neg(x) = Base.:-(x)
+@define_lua_function neg
 
 ###################################################################################################
 
@@ -76,22 +71,31 @@ mutable struct ExpressionBinary{F <: Function} <: Expression
         return new{F}(attributes, e1, e2, f)
     end
 end
+@define_lua_struct ExpressionBinary
 
 Base.:+(x::Expression, y::Expression) = ExpressionBinary(x, y, Base.:+)
 Base.:+(x::Expression, y) = ExpressionBinary(promote(x, y)..., Base.:+)
 Base.:+(x, y::Expression) = ExpressionBinary(promote(x, y)..., Base.:+)
+add(x, y) = Base.:+(x, y)
+@define_lua_function add
 
 Base.:-(x::Expression, y::Expression) = ExpressionBinary(x, y, Base.:−)
 Base.:-(x::Expression, y) = ExpressionBinary(promote(x, y)..., Base.:−)
 Base.:-(x, y::Expression) = ExpressionBinary(promote(x, y)..., Base.:−)
+sub(x, y) = Base.:-(x, y)
+@define_lua_function sub
 
 Base.:*(x::Expression, y::Expression) = ExpressionBinary(x, y, Base.:*)
 Base.:*(x::Expression, y) = ExpressionBinary(promote(x, y)..., Base.:*)
 Base.:*(x, y::Expression) = ExpressionBinary(promote(x, y)..., Base.:*)
+mul(x, y) = Base.:*(x, y)
+@define_lua_function mul
 
 Base.:/(x::Expression, y::Expression) = ExpressionBinary(x, y, Base.:/)
 Base.:/(x::Expression, y) = ExpressionBinary(promote(x, y)..., Base.:/)
 Base.:/(x, y::Expression) = ExpressionBinary(promote(x, y)..., Base.:/)
+div(x, y) = Base.:/(x, y)
+@define_lua_function div
 
 # Base.show(io::IO, e::ExpressionBinary) = print(io, "($(e.e1) $(e.f) $(e.e2))")
 
@@ -109,8 +113,6 @@ function finish!(e::ExpressionBinary)
     finish!(e.e2)
 end
 
-@define_lua_struct ExpressionBinary
-
 ###################################################################################################
 
 mutable struct ExpressionDataQuiver <: ExpressionData
@@ -125,6 +127,7 @@ mutable struct ExpressionDataQuiver <: ExpressionData
         return new(path, filename, attributes, nothing)
     end
 end
+@define_lua_struct ExpressionDataQuiver
 
 function start!(e::ExpressionDataQuiver)
     e.reader = Quiver.Reader{Quiver.csv}(joinpath(e.path, e.filename))
@@ -140,8 +143,6 @@ function finish!(e::ExpressionDataQuiver)
     e.reader = nothing
     return nothing
 end
-
-@define_lua_struct ExpressionDataQuiver
 
 ###################################################################################################
 
@@ -202,14 +203,3 @@ function julia_typeof(x::Any)
 end
 @define_lua_function julia_typeof
 
-add(x, y) = Base.:+(x, y)
-@define_lua_function add
-
-sub(x, y) = Base.:-(x, y)
-@define_lua_function sub
-
-mul(x, y) = Base.:*(x, y)
-@define_lua_function mul
-
-div(x, y) = Base.:/(x, y)
-@define_lua_function div
