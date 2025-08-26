@@ -32,7 +32,7 @@ e:save("test1");
 e = e1 * 2 + 1;
 e:save("test2");
 
-e = e1:aggregate("stage");
+e = e1:aggregate("stage", BY_SUM());
 e:save("test3");
 
 a = BY_SUM()

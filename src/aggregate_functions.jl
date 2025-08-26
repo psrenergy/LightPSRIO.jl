@@ -1,4 +1,5 @@
 @enumx AggregateFunction Sum Average Min Max
+@define_lua_enumx AggregateFunction
 
 BY_SUM() = AggregateFunction.Sum
 @define_lua_function BY_SUM

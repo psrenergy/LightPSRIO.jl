@@ -9,42 +9,44 @@ function initialize()
     L = LuaNova.new_state()
     LuaNova.open_libs(L)
 
-    collections = [
-        :Generic,
-    ]
+    @push_lua_struct(L, Generic, "load", load)
 
-    for c in collections
-        @eval @push_lua_struct($L, $c, "load", load)
-    end
+    expressions = (
+        "__add", add,
+        "__sub", sub,
+        "__mul", mul,
+        "__div", div,
+        "aggregate", aggregate,
+        "save", save,
+    )
 
-    expressions = [
-        :ExpressionDataQuiver,
-        :ExpressionUnary,
-        :ExpressionBinary,
-        :ExpressionAggregate,
-    ]
+    # expressions = [
+    #     :ExpressionDataQuiver,
+    #     :ExpressionUnary,
+    #     :ExpressionBinary,
+    #     :ExpressionAggregate,
+    # ]
 
-    for e in expressions
-        @eval @push_lua_struct(
-            $L,
-            $e,
-            "__add", add,
-            "__sub", sub,
-            "__mul", mul,
-            "__div", div,
-            "aggregate", aggregate,
-            "save", save,
-        )
-    end
+    @push_lua_struct(
+        L,
+        ExpressionDataQuiver,
+        expressions...,
+        # "__add", add,
+        # "__sub", sub,
+        # "__mul", mul,
+        # "__div", div,
+        # "aggregate", aggregate,
+        # "save", save,
+    )
 
-    functions = [
-        :BY_SUM,
-        :julia_typeof
-    ]
+    # functions = [
+    #     :BY_SUM,
+    #     :julia_typeof
+    # ]
 
-    for f in functions
-        @eval @push_lua_function($L, string($f), $f)
-    end
+    # for f in functions
+    #     @eval @push_lua_function($L, string($f), $f)
+    # end
 
     return L
 end

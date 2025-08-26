@@ -25,7 +25,7 @@ mutable struct ExpressionAggregate <: Expression
 end
 @define_lua_struct ExpressionAggregate
 
-function aggregate(x::Expression, dimension::String)
+function aggregate(x::Expression, dimension::String, aggregate_function)
     return ExpressionAggregate(x, dimension)
 end
 @define_lua_function aggregate
