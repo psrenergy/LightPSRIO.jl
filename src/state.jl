@@ -1,14 +1,21 @@
+function julia_typeof(x::Any)
+    @show typeof(x)
+    return nothing
+end
+@define_lua_function julia_typeof
+
 function initialize()
     println("Initializing Lua state...")
     L = LuaNova.new_state()
     LuaNova.open_libs(L)
 
-    println("Registering Generic collection...")
-    @push_lua_struct(
-        L,
-        Generic,
-        "load", load,
-    )
+    collections = [
+        :Generic,
+    ]
+
+    for c in collections
+        @eval @push_lua_struct($L, $c, "load", load)
+    end
 
     expressions = [
         :ExpressionDataQuiver,
@@ -28,6 +35,15 @@ function initialize()
             "aggregate", aggregate,
             "save", save,
         )
+    end
+
+    functions = [
+        :BY_SUM,
+        :julia_typeof
+    ]
+
+    for f in functions
+        @eval @push_lua_function($L, string($f), $f)
     end
 
     return L

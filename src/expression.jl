@@ -19,11 +19,11 @@ Base.convert(::Type{Expression}, x::Number) = ExpressionDataNumber(x)
 
 Base.show(io::IO, e::ExpressionDataNumber) = print(io, "$(e.value)")
 
-start!(e::ExpressionDataNumber) = nothing
+start!(::ExpressionDataNumber) = nothing
 
 evaluate(e::ExpressionDataNumber; kwargs...) = e.value
 
-finish!(e::ExpressionDataNumber) = nothing
+finish!(::ExpressionDataNumber) = nothing
 
 ###################################################################################################
 
@@ -197,9 +197,4 @@ function save(e::Expression, filename::String)
 end
 @define_lua_function save
 
-function julia_typeof(x::Any)
-    @show typeof(x)
-    return nothing
-end
-@define_lua_function julia_typeof
 

@@ -1,6 +1,7 @@
 module LightPSRIO
 
 using Base.Iterators
+using EnumX
 using LuaNova
 using Quiver
 
@@ -11,6 +12,7 @@ include("study.jl")
 include("collection.jl")
 include("attributes.jl")
 include("expression.jl")
+include("aggregate_functions.jl")
 include("aggregate.jl")
 include("state.jl")
 
@@ -33,7 +35,10 @@ e:save("test2");
 e = e1:aggregate("stage");
 e:save("test3");
 
--- julia_typeof(exp)
+a = BY_SUM()
+
+print(a)
+-- julia_typeof(a)
 """,
     )
 

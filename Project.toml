@@ -3,11 +3,13 @@ uuid = "fab0d976-c881-4233-b6b1-4ff1009f1ddc"
 version = "0.1.0"
 
 [deps]
+EnumX = "4e289a0a-7415-4d19-859d-a7e5c4648b56"
 LuaNova = "faa88067-b4cd-4998-97ac-8175b58d6ef9"
 Quiver = "cdbb3f72-2527-4dbd-9d0e-93533a5519ac"
 
 [compat]
 Aqua = "0.8"
+EnumX = "1.0.5"
 LuaNova = "0.1.0"
 Quiver = "0.1.11"
 Test = "1"
