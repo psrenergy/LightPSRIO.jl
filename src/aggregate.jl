@@ -1,35 +1,59 @@
-
-mutable struct ExpressionAggregation <: Expression
+mutable struct ExpressionAggregate <: Expression
     attributes::Attributes
     e::Expression
+    dimension_symbol::Symbol
+    dimension_original_size::Int
 
-    function ExpressionAggregation(e::Expression, dimension::String)
+    function ExpressionAggregate(e::Expression, dimension::String)
         attributes = copy(e.attributes)
+        dimension_symbol = Symbol(dimension)
 
-        dimension_index = findfirst(==(dimension), attributes.dimensions)
+        dimension_index = findfirst(==(dimension_symbol), attributes.dimensions)
         if dimension_index === nothing
             error("Dimension $dimension not found.")
         end
+        dimension_original_size = attributes.dimension_size[dimension_index]
         attributes.dimension_size[dimension_index] = 1
 
-        return new{F}(attributes, e)
+        return new(
+            attributes,
+            e,
+            dimension_symbol,
+            dimension_original_size,
+        )
     end
 end
-@define_lua_struct ExpressionAggregation
+@define_lua_struct ExpressionAggregate
 
 function aggregate(x::Expression, dimension::String)
-    return ExpressionAggregation(x, dimension)
+    return ExpressionAggregate(x, dimension)
 end
 @define_lua_function aggregate
 
-function start!(e::ExpressionAggregation)
-    start!(e.e)
+function start!(e::ExpressionAggregate)
+    return start!(e.e)
 end
 
-function evaluate(e::ExpressionAggregation; kwargs...)
-    
+function evaluate(e::ExpressionAggregate; kwargs...)
+    attributes = e.attributes
+    labels_size = length(attributes.labels)
+    dimension_original_size = e.dimension_original_size
+
+    data = [zeros(labels_size) for _ in 1:dimension_original_size]
+
+    for i in 1:dimension_original_size
+        modified_kwargs = merge(
+            NamedTuple(kwargs),
+            NamedTuple{(e.dimension_symbol,)}((i,)),
+        )
+
+        current_value = evaluate(e.e; modified_kwargs...)
+        data[i] .= current_value
+    end
+
+    return sum(data)
 end
 
-function finish!(e::ExpressionAggregation)
-    finish!(e.e)
+function finish!(e::ExpressionAggregate)
+    return finish!(e.e)
 end

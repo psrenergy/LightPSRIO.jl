@@ -11,6 +11,7 @@ include("study.jl")
 include("collection.jl")
 include("attributes.jl")
 include("expression.jl")
+include("aggregate.jl")
 include("state.jl")
 
 function debug()
@@ -28,6 +29,9 @@ e = e1 + e2 + 1;
 e:save("test1");
 e = e1 * 2 + 1;
 e:save("test2");
+
+e = e1:aggregate("stage");
+e:save("test3");
 
 -- julia_typeof(exp)
 """,

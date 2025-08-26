@@ -11,21 +11,37 @@ function initialize()
 
     println("Registering ExpressionDataQuiver...")
     @push_lua_struct(
-        L, ExpressionDataQuiver,
+        L,
+        ExpressionDataQuiver,
         "__add", add,
         "__sub", sub,
         "__mul", mul,
         "__div", div,
+        "aggregate", aggregate,
         "save", save,
     )
 
     println("Registering ExpressionBinary...")
     @push_lua_struct(
-        L, ExpressionBinary,
+        L,
+        ExpressionBinary,
         "__add", add,
         "__sub", sub,
         "__mul", mul,
         "__div", div,
+        "aggregate", aggregate,
+        "save", save,
+    )
+
+    println("Registering ExpressionAggregate...")
+    @push_lua_struct(
+        L,
+        ExpressionAggregate,
+        "__add", add,
+        "__sub", sub,
+        "__mul", mul,
+        "__div", div,
+        "aggregate", aggregate,
         "save", save,
     )
 
