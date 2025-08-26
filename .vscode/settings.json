@@ -1,3 +1,6 @@
 {
-    "julia.executablePath": "${env:JULIA_1113}"
+    "julia.executablePath": "${env:JULIA_1113}",
+    "Lua.diagnostics.globals": [
+        "Generic"
+    ]
 }

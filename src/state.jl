@@ -72,6 +72,14 @@ function run(L, script::String)
     return nothing
 end
 
+function run_file(L, path::String)
+    open(path) do file
+        script = read(file, String)
+        return LuaNova.safe_script(L, script)
+    end
+    return nothing
+end
+
 function finalize(L)
     LuaNova.close(L)
     return nothing
