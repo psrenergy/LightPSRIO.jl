@@ -32,7 +32,7 @@ function initialize()
         "aggregate", aggregate,
         "save", save,
     )
-    
+
     @push_lua_struct(
         L,
         ExpressionBinary,
@@ -43,7 +43,7 @@ function initialize()
         "aggregate", aggregate,
         "save", save,
     )
-    
+
     @push_lua_struct(
         L,
         ExpressionAggregate,
@@ -53,7 +53,7 @@ function initialize()
         "__div", div,
         "aggregate", aggregate,
         "save", save,
-    )    
+    )
 
     @push_lua_function(L, "BY_SUM", BY_SUM)
     @push_lua_function(L, "julia_typeof", julia_typeof)
