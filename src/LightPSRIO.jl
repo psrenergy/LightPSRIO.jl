@@ -9,6 +9,7 @@ const cases = Vector{String}()
 
 include("optional.jl")
 include("study.jl")
+include("aggregate_functions.jl")
 
 include("collections/collection.jl")
 include("collections/collection_generic.jl")
@@ -16,14 +17,13 @@ include("collections/collection_generic.jl")
 include("attributes.jl")
 
 include("expressions/expression.jl")
+include("expressions/expression_aggregate.jl")
 include("expressions/expression_data.jl")
 include("expressions/expression_data_number.jl")
 include("expressions/expression_data_quiver.jl")
 include("expressions/expression_unary.jl")
 include("expressions/expression_binary.jl")
 
-include("aggregate_functions.jl")
-include("aggregate.jl")
 include("state.jl")
 
 function debug()

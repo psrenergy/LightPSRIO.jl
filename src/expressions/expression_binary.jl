@@ -1,4 +1,3 @@
-
 mutable struct ExpressionBinary{F <: Function} <: Expression
     attributes::Attributes
     e1::Expression
@@ -18,7 +17,24 @@ mutable struct ExpressionBinary{F <: Function} <: Expression
             error("Attributes must match for binary operations.")
         end
 
-        dimension_size = e1.attributes.dimension_size
+        dimension_size = zeros(Int, length(dimensions))
+        e1_dimension_size = e1.attributes.dimension_size
+        e2_dimension_size = e2.attributes.dimension_size
+
+        for (i, dimension) in enumerate(dimensions)
+            e1_dimension_index = findfirst(==(dimension), e1.attributes.dimensions)
+            e2_dimension_index = findfirst(==(dimension), e2.attributes.dimensions)
+            if e2_dimension_index === nothing || e2_dimension_size[e2_dimension_index] == 1
+                dimension_size[i] = e1_dimension_size[e1_dimension_index]
+            elseif e1_dimension_index === nothing || e1_dimension_size[e1_dimension_index] == 1
+                dimension_size[i] = e2_dimension_size[e2_dimension_index]
+            else
+                dimension_size[i] = min(
+                    e1_dimension_size[e1_dimension_index],
+                    e2_dimension_size[e2_dimension_index],
+                )
+            end
+        end
 
         attributes = Attributes(labels, e1.attributes.collection, dimensions, dimension_size)
 
