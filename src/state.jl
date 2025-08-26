@@ -5,45 +5,30 @@ function initialize()
 
     println("Registering Generic collection...")
     @push_lua_struct(
-        L, Generic,
+        L,
+        Generic,
         "load", load,
     )
 
-    println("Registering ExpressionDataQuiver...")
-    @push_lua_struct(
-        L,
-        ExpressionDataQuiver,
-        "__add", add,
-        "__sub", sub,
-        "__mul", mul,
-        "__div", div,
-        "aggregate", aggregate,
-        "save", save,
-    )
+    expressions = [
+        :ExpressionDataQuiver,
+        :ExpressionUnary,
+        :ExpressionBinary,
+        :ExpressionAggregate,
+    ]
 
-    println("Registering ExpressionBinary...")
-    @push_lua_struct(
-        L,
-        ExpressionBinary,
-        "__add", add,
-        "__sub", sub,
-        "__mul", mul,
-        "__div", div,
-        "aggregate", aggregate,
-        "save", save,
-    )
-
-    println("Registering ExpressionAggregate...")
-    @push_lua_struct(
-        L,
-        ExpressionAggregate,
-        "__add", add,
-        "__sub", sub,
-        "__mul", mul,
-        "__div", div,
-        "aggregate", aggregate,
-        "save", save,
-    )
+    for e in expressions
+        @eval @push_lua_struct(
+            $L,
+            $e,
+            "__add", add,
+            "__sub", sub,
+            "__mul", mul,
+            "__div", div,
+            "aggregate", aggregate,
+            "save", save,
+        )
+    end
 
     return L
 end
