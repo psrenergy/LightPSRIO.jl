@@ -57,3 +57,32 @@ LightPSRIO.jl is a Julia package that provides a Lua-scriptable interface for wo
 3. Save results using `expression:save()` which evaluates across all dimensions and writes to CSV
 
 The package is designed for interactive data analysis workflows where users can write mathematical expressions in Lua that operate on multi-dimensional datasets stored as CSV files.
+
+### Lua State Management
+
+The Lua integration is managed through `state.jl` with these key functions:
+- `initialize()`: Creates Lua state, registers Julia types/functions, returns state handle
+- `run(L, script)`: Executes Lua script in the given state
+- `finalize(L)`: Cleans up Lua state
+
+**Important**: When adding new expression types (like `ExpressionBinary`, `ExpressionUnary`), use the `@register_expression_types` macro in `state.jl`. This macro generates the repetitive `@push_lua_struct` calls to register the same set of Lua functions (`__add`, `__sub`, `__mul`, `__div`, `aggregate`, `save`) across multiple Julia types. Simply uncomment the relevant sections in the macro definition.
+
+### Expression Type Hierarchy
+
+- `Expression` (abstract base)
+  - `ExpressionData` (abstract)
+    - `ExpressionDataNumber`: Constant values
+    - `ExpressionDataQuiver`: CSV-backed data with Quiver.jl integration
+  - `ExpressionUnary`/`ExpressionBinary`: Arithmetic operation nodes
+  - `ExpressionAggregate`: Aggregation operations
+
+All expression types follow the lifecycle: `start!()` → `evaluate()` → `finish!()`
+
+### Testing and Development Workflow
+
+The main test simply calls `LightPSRIO.debug()` which demonstrates the full workflow:
+1. Initialize Lua state
+2. Load data from CSV files using `Generic:load()`
+3. Perform arithmetic operations and aggregations in Lua
+4. Save results back to CSV files
+5. Clean up Lua state
