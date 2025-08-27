@@ -24,9 +24,4 @@ docs/site/
 Manifest.toml
 
 *.DS_Store
-test1.csv
-test1.toml
-test2.csv
-test2.toml
-test3.csv
-test3.toml
+test/data

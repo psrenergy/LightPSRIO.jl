@@ -11,7 +11,7 @@ function save(e::Expression, filename::String)
     dimensions = attributes.dimensions
     dimension_size = attributes.dimension_size
 
-    path = raw"C:\Development\PSRIO\LightPSRIO.jl\test"
+    path = raw"C:\Development\PSRIO\LightPSRIO.jl\test\data"
 
     writer = Quiver.Writer{Quiver.csv}(
         joinpath(path, filename);

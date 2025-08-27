@@ -19,12 +19,14 @@ function start!(e::ExpressionDataQuiver)
 end
 
 function evaluate(e::ExpressionDataQuiver; kwargs...)
-    println("Evaluating Quiver data for $kwargs")
+    println("Evaluating Quiver data for $(e.filename) at $kwargs")
     return Quiver.goto!(e.reader; kwargs...)
 end
 
 function finish!(e::ExpressionDataQuiver)
-    Quiver.close!(e.reader)
-    e.reader = nothing
+    if !isnothing(e.reader)
+        Quiver.close!(e.reader)
+        e.reader = nothing
+    end
     return nothing
 end
