@@ -32,8 +32,6 @@ function save(e::Expression, filename::String)
     for indices in iterators
         kwargs = NamedTuple{Tuple(dimensions)}(indices)
         result = evaluate(e; kwargs...)
-        println("The result for $kwargs is: $result")
-
         Quiver.write!(writer, result; kwargs...)
     end
     finish!(e)

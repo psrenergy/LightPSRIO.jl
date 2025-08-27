@@ -19,7 +19,19 @@ function start!(e::ExpressionDataQuiver)
 end
 
 function evaluate(e::ExpressionDataQuiver; kwargs...)
-    return Quiver.goto!(e.reader; kwargs...)
+    # Get minimum between dimension_size and kwargs
+    constrained_kwargs = Dict{Symbol, Int}()
+    for (key, value) in pairs(kwargs)
+        dim_index = findfirst(==(key), e.attributes.dimensions)
+        if dim_index !== nothing
+            max_size = e.attributes.dimension_size[dim_index]
+            constrained_kwargs[key] = min(value, max_size)
+        else
+            constrained_kwargs[key] = value
+        end
+    end
+
+    return Quiver.goto!(e.reader; constrained_kwargs...)
 end
 
 function finish!(e::ExpressionDataQuiver)

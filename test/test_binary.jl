@@ -35,8 +35,16 @@ include("util.jl")
         """
 local generic = Generic();
 local input1 = generic:load("input1");
+local input2 = generic:load("input2");
+local input3 = generic:load("input3");
+local input4 = generic:load("input4");
+local input5 = generic:load("input5");
+
 local output1 = input1 + input1;
 output1:save("output1");
+
+local output2 = input1 * input3;
+output2:save("output2");
     """,
     )
 
@@ -68,6 +76,33 @@ output1:save("output1");
     @test Quiver.goto!(output1; stage = 4, scenario = 3, block = 1) ≈ [16.0, 6.0, 2.0]
     @test Quiver.goto!(output1; stage = 4, scenario = 3, block = 2) ≈ [0.0, 6.0, 4.0]
     Quiver.close!(output1)
+
+    output2 = load_quiver("output2")
+    @test Quiver.goto!(output2; stage = 1, scenario = 1, block = 1) ≈ [0.0, 12.0, 0.0]
+    @test Quiver.goto!(output2; stage = 1, scenario = 1, block = 2) ≈ [36.0, 14.0, 0.0]
+    @test Quiver.goto!(output2; stage = 1, scenario = 2, block = 1) ≈ [32.0, 0.0, 72.0]
+    @test Quiver.goto!(output2; stage = 1, scenario = 2, block = 2) ≈ [16.0, 0.0, 40.0]
+    @test Quiver.goto!(output2; stage = 1, scenario = 3, block = 1) ≈ [36.0, 5.0, 56.0]
+    @test Quiver.goto!(output2; stage = 1, scenario = 3, block = 2) ≈ [12.0, 4.0, 35.0]
+    @test Quiver.goto!(output2; stage = 2, scenario = 1, block = 1) ≈ [40.0, 56.0, 4.0]
+    @test Quiver.goto!(output2; stage = 2, scenario = 1, block = 2) ≈ [35.0, 42.0, 0.0]
+    @test Quiver.goto!(output2; stage = 2, scenario = 2, block = 1) ≈ [10.0, 0.0, 72.0]
+    @test Quiver.goto!(output2; stage = 2, scenario = 2, block = 2) ≈ [5.0, 15.0, 8.0]
+    @test Quiver.goto!(output2; stage = 2, scenario = 3, block = 1) ≈ [14.0, 72.0, 18.0]
+    @test Quiver.goto!(output2; stage = 2, scenario = 3, block = 2) ≈ [56.0, 72.0, 18.0]
+    @test Quiver.goto!(output2; stage = 3, scenario = 1, block = 1) ≈ [0.0, 0.0, 10.0]
+    @test Quiver.goto!(output2; stage = 3, scenario = 1, block = 2) ≈ [49.0, 0.0, 12.0]
+    @test Quiver.goto!(output2; stage = 3, scenario = 2, block = 1) ≈ [25.0, 42.0, 72.0]
+    @test Quiver.goto!(output2; stage = 3, scenario = 2, block = 2) ≈ [45.0, 56.0, 18.0]
+    @test Quiver.goto!(output2; stage = 3, scenario = 3, block = 1) ≈ [6.0, 64.0, 20.0]
+    @test Quiver.goto!(output2; stage = 3, scenario = 3, block = 2) ≈ [4.0, 64.0, 24.0]
+    @test Quiver.goto!(output2; stage = 4, scenario = 1, block = 1) ≈ [21.0, 0.0, 16.0]
+    @test Quiver.goto!(output2; stage = 4, scenario = 1, block = 2) ≈ [28.0, 81.0, 56.0]
+    @test Quiver.goto!(output2; stage = 4, scenario = 2, block = 1) ≈ [56.0, 35.0, 6.0]
+    @test Quiver.goto!(output2; stage = 4, scenario = 2, block = 2) ≈ [7.0, 40.0, 16.0]
+    @test Quiver.goto!(output2; stage = 4, scenario = 3, block = 1) ≈ [72.0, 18.0, 3.0]
+    @test Quiver.goto!(output2; stage = 4, scenario = 3, block = 2) ≈ [0.0, 18.0, 6.0]
+    Quiver.close!(output2)
 
     return nothing
 end
