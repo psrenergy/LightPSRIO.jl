@@ -67,7 +67,7 @@ function push_case!(case::String)
     return nothing
 end
 
-function run(L, script::String)
+function run_script(L, script::String)
     LuaNova.safe_script(L, script)
     return nothing
 end

@@ -24,8 +24,12 @@ function save(e::Expression, filename::String)
         # frequency = metadata.frequency,
     )
 
+    ranges = [1:size for size in dimension_size]
+    reversed_ranges = reverse(ranges)
+    iterators = (reverse(p) for p in Iterators.product(reversed_ranges...))
+
     start!(e)
-    for indices in Iterators.product([1:size for size in dimension_size]...)
+    for indices in iterators
         kwargs = NamedTuple{Tuple(dimensions)}(indices)
         result = evaluate(e; kwargs...)
         println("The result for $kwargs is: $result")
