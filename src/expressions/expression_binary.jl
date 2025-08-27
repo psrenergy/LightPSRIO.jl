@@ -5,7 +5,18 @@ mutable struct ExpressionBinary{F <: Function} <: Expression
     f::F
 
     function ExpressionBinary(e1::Expression, e2::Expression, f::F) where {F <: Function}
-        labels = e1.attributes.labels
+        println("BINARY: $(e1.attributes)")
+        println("BINARY: $(e2.attributes)")
+
+        labels = if e1.attributes.labels == e2.attributes.labels
+            copy(e1.attributes.labels)
+        elseif length(e1.attributes.labels) == 1
+            copy(e2.attributes.labels)
+        elseif length(e2.attributes.labels) == 1
+            copy(e1.attributes.labels)
+        else
+            error("Labels must match for binary operations.")
+        end
 
         dimensions = if isempty(e1.attributes.dimensions)
             copy(e2.attributes.dimensions)
@@ -28,15 +39,17 @@ mutable struct ExpressionBinary{F <: Function} <: Expression
                 dimension_size[i] = e1_dimension_size[e1_dimension_index]
             elseif e1_dimension_index === nothing || e1_dimension_size[e1_dimension_index] == 1
                 dimension_size[i] = e2_dimension_size[e2_dimension_index]
+            elseif e1_dimension_size[e1_dimension_index] == e2_dimension_size[e2_dimension_index]
+                dimension_size[i] = e1_dimension_size[e1_dimension_index]
             else
-                dimension_size[i] = min(
-                    e1_dimension_size[e1_dimension_index],
-                    e2_dimension_size[e2_dimension_index],
-                )
+                # dimension_size[i] = min(e1_dimension_size[e1_dimension_index], e2_dimension_size[e2_dimension_index])
+                error("Dimensions must match or be 1 for broadcasting.")
             end
         end
 
         attributes = Attributes(labels, e1.attributes.collection, dimensions, dimension_size)
+
+        println("BINARY= $attributes")
 
         return new{F}(attributes, e1, e2, f)
     end

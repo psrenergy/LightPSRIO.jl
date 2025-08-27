@@ -4,8 +4,6 @@ Base.promote_rule(::Type{<:Expression}, ::Type{<:Number}) = Expression
 Base.promote_rule(::Type{<:Number}, ::Type{<:Expression}) = Expression
 
 function save(e::Expression, filename::String)
-    println("Saving expression data to $filename")
-
     attributes = e.attributes
     labels = attributes.labels
     dimensions = attributes.dimensions
@@ -13,7 +11,9 @@ function save(e::Expression, filename::String)
 
     path = raw"C:\Development\PSRIO\LightPSRIO.jl\test\data"
 
-    writer = Quiver.Writer{Quiver.csv}(
+    println("Saving $filename ($attributes)")
+
+    writer = Quiver.Writer{Quiver.binary}(
         joinpath(path, filename);
         labels = labels,
         dimensions = string.(dimensions),

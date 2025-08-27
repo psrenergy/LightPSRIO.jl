@@ -6,31 +6,32 @@ mutable struct ExpressionDataQuiver <: ExpressionData
     reader::Optional{Quiver.Reader}
 
     function ExpressionDataQuiver(path::String, filename::String)
-        reader = Quiver.Reader{Quiver.csv}(joinpath(path, filename))
+        reader = Quiver.Reader{Quiver.binary}(joinpath(path, filename))
         attributes = Attributes(reader)
+        println("Loading $filename ($attributes)")
         return new(path, filename, attributes, nothing)
     end
 end
 @define_lua_struct ExpressionDataQuiver
 
 function start!(e::ExpressionDataQuiver)
-    e.reader = Quiver.Reader{Quiver.csv}(joinpath(e.path, e.filename))
+    e.reader = Quiver.Reader{Quiver.binary}(joinpath(e.path, e.filename))
     return nothing
 end
 
 function evaluate(e::ExpressionDataQuiver; kwargs...)
     # Get minimum between dimension_size and kwargs
-    constrained_kwargs = Dict{Symbol, Int}()
+    constrained_values = []
     for (key, value) in pairs(kwargs)
-        dim_index = findfirst(==(key), e.attributes.dimensions)
-        if dim_index !== nothing
-            max_size = e.attributes.dimension_size[dim_index]
-            constrained_kwargs[key] = min(value, max_size)
+        dimension_index = findfirst(==(key), e.attributes.dimensions)
+        if dimension_index !== nothing
+            max_size = e.attributes.dimension_size[dimension_index]
+            push!(constrained_values, key => min(value, max_size))
         else
-            constrained_kwargs[key] = value
+            push!(constrained_values, key => value)
         end
     end
-
+    constrained_kwargs = pairs(NamedTuple(constrained_values))
     return Quiver.goto!(e.reader; constrained_kwargs...)
 end
 

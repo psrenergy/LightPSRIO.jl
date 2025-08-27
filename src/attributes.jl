@@ -29,3 +29,12 @@ function Base.copy(a::Attributes)
         copy(a.dimension_size),
     )
 end
+
+function Base.show(io::IO, attributes::Attributes)
+    for (index, dimension) in enumerate(attributes.dimensions)
+        print(io, "$dimension: 1:$(attributes.dimension_size[index]), ")
+    end
+    print(io, "agents: $(length(attributes.labels))")
+    # print(io, "stages: 195 [1:195] [week] [40/2011], blocks: none, scenarios: 1, unit: , agents: 1 [study]")
+    return nothing
+end
