@@ -6,7 +6,7 @@ using LightPSRIO
 using Quiver
 using Test
 
-include("util.jl")
+include("../util.jl")
 
 @testset "Binary" begin
     LightPSRIO.push_case!(raw"C:\Development\PSRIO\LightPSRIO.jl\test\data")

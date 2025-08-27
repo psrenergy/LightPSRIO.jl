@@ -38,7 +38,7 @@ function load_quiver_as_df(filename::String)
     return Quiver.file_to_df(joinpath(@__DIR__, "data", filename), Quiver.binary)
 end
 
-function create_tests(filename::String)
+function create_quiver_tests(filename::String)
     println("$filename = open_quiver(\"$filename\")")
 
     quiver = open_quiver(filename)
