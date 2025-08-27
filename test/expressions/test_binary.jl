@@ -55,6 +55,17 @@ output10:save("output10");
 
     finalize(L)
 
+    input1 = open_quiver("input1")
+    @test Quiver.goto!(input1; stage = 1, scenario = 1, block = 1) ≈ [1.0, 1.0, 1.0, 2.0]
+    @test Quiver.goto!(input1; stage = 1, scenario = 1, block = 2) ≈ [1.0, 1.0, 2.0, 2.0]
+    @test Quiver.goto!(input1; stage = 1, scenario = 2, block = 1) ≈ [1.0, 2.0, 1.0, 2.0]
+    @test Quiver.goto!(input1; stage = 1, scenario = 2, block = 2) ≈ [1.0, 2.0, 2.0, 2.0]
+    @test Quiver.goto!(input1; stage = 2, scenario = 1, block = 1) ≈ [2.0, 1.0, 1.0, 2.0]
+    @test Quiver.goto!(input1; stage = 2, scenario = 1, block = 2) ≈ [2.0, 1.0, 2.0, 2.0]
+    @test Quiver.goto!(input1; stage = 2, scenario = 2, block = 1) ≈ [2.0, 2.0, 1.0, 2.0]
+    @test Quiver.goto!(input1; stage = 2, scenario = 2, block = 2) ≈ [2.0, 2.0, 2.0, 2.0]
+    close_quiver(input1)
+
     output1 = open_quiver("output1")
     @test Quiver.goto!(output1; stage = 1, scenario = 1, block = 1) ≈ [1.5, 1.5, 1.5, 2.5]
     @test Quiver.goto!(output1; stage = 1, scenario = 1, block = 2) ≈ [1.5, 1.5, 2.5, 2.5]

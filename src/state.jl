@@ -60,6 +60,7 @@ function initialize()
     )
 
     @push_lua_function(L, "BY_SUM", BY_SUM)
+    @push_lua_function(L, "BY_AVERAGE", BY_AVERAGE)
     @push_lua_function(L, "julia_typeof", julia_typeof)
     @push_lua_enumx(L, AggregateFunction)
 

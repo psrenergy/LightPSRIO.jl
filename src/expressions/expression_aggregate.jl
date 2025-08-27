@@ -55,6 +55,8 @@ function evaluate(e::ExpressionAggregate; kwargs...)
 
     if e.aggregate_function == AggregateFunction.Sum
         return sum(data)
+    elseif e.aggregate_function == AggregateFunction.Average
+        return mean(data)
     else
         error("Aggregate function $(e.aggregate_function) not implemented yet.")
     end

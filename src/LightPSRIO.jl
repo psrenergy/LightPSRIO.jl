@@ -4,6 +4,7 @@ using Base.Iterators
 using EnumX
 using LuaNova
 using Quiver
+using Statistics
 
 const cases = Vector{String}()
 
