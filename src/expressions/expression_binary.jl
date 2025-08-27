@@ -80,6 +80,12 @@ Base.:/(x, y::Expression) = ExpressionBinary(promote(x, y)..., Base.:/)
 div(x, y) = Base.:/(x, y)
 @define_lua_function div
 
+Base.:^(x::Expression, y::Expression) = ExpressionBinary(x, y, Base.:^)
+Base.:^(x::Expression, y) = ExpressionBinary(promote(x, y)..., Base.:^)
+Base.:^(x, y::Expression) = ExpressionBinary(promote(x, y)..., Base.:^)
+pow(x, y) = Base.:^(x, y)
+@define_lua_function pow
+
 # Base.show(io::IO, e::ExpressionBinary) = print(io, "($(e.e1) $(e.f) $(e.e2))")
 
 function start!(e::ExpressionBinary)

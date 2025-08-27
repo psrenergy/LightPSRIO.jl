@@ -22,8 +22,16 @@ function create_quiver(filename; n_stages::Integer, n_blocks::Integer, n_scenari
     return nothing
 end
 
-function load_quiver(filename::String)
+function open_quiver(filename::String)
     return Quiver.Reader{Quiver.binary}(joinpath(@__DIR__, "data", filename))
+end
+
+function close_quiver(reader::Quiver.Reader)
+    filename = reader.filename
+    Quiver.close!(reader)
+    rm(joinpath(@__DIR__, "data", "$filename.toml"))
+    rm(joinpath(@__DIR__, "data", "$filename.quiv"))
+    return nothing
 end
 
 function load_quiver_as_df(filename::String)
@@ -31,23 +39,24 @@ function load_quiver_as_df(filename::String)
 end
 
 function create_tests(filename::String)
-    quiver = load_quiver(filename)
+    println("$filename = open_quiver(\"$filename\")")
+
+    quiver = open_quiver(filename)
     n_stages = quiver.metadata.dimension_size[1]
     n_scenarios = quiver.metadata.dimension_size[2]
     n_blocks = quiver.metadata.dimension_size[3]
-
-    println("$filename = load_quiver(\"$filename\")")
 
     for stage in 1:n_stages
         for scenario in 1:n_scenarios
             for block in 1:n_blocks
                 data = Quiver.goto!(quiver; stage = stage, scenario = scenario, block = block)
-                println("Quiver.goto!($filename; stage = $stage, scenario = $scenario, block = $block) ≈ [$(join(data, ", "))]")
+                println("@test Quiver.goto!($filename; stage = $stage, scenario = $scenario, block = $block) ≈ [$(join(data, ", "))]")
             end
         end
     end
+    close_quiver(quiver)
 
-    println("Quiver.close!($filename)")
+    println("close_quiver($filename)\n")
 
     return nothing
 end

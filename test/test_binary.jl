@@ -44,107 +44,126 @@ output7:save("output7");
 
 local output8 = input1 / 2;
 output8:save("output8");
+
+local output9 = input1 ^ 2;
+output9:save("output9");
+
+local output10 = 2 ^ input1;
+output10:save("output10");
     """,
     )
 
     finalize(L)
 
-    output1 = load_quiver("output1")
-    Quiver.goto!(output1; stage = 1, scenario = 1, block = 1) ≈ [1.5, 1.5, 1.5, 2.5]
-    Quiver.goto!(output1; stage = 1, scenario = 1, block = 2) ≈ [1.5, 1.5, 2.5, 2.5]
-    Quiver.goto!(output1; stage = 1, scenario = 2, block = 1) ≈ [1.5, 2.5, 1.5, 2.5]
-    Quiver.goto!(output1; stage = 1, scenario = 2, block = 2) ≈ [1.5, 2.5, 2.5, 2.5]
-    Quiver.goto!(output1; stage = 2, scenario = 1, block = 1) ≈ [2.5, 1.5, 1.5, 2.5]
-    Quiver.goto!(output1; stage = 2, scenario = 1, block = 2) ≈ [2.5, 1.5, 2.5, 2.5]
-    Quiver.goto!(output1; stage = 2, scenario = 2, block = 1) ≈ [2.5, 2.5, 1.5, 2.5]
-    Quiver.goto!(output1; stage = 2, scenario = 2, block = 2) ≈ [2.5, 2.5, 2.5, 2.5]
-    Quiver.close!(output1)
+    output1 = open_quiver("output1")
+    @test Quiver.goto!(output1; stage = 1, scenario = 1, block = 1) ≈ [1.5, 1.5, 1.5, 2.5]
+    @test Quiver.goto!(output1; stage = 1, scenario = 1, block = 2) ≈ [1.5, 1.5, 2.5, 2.5]
+    @test Quiver.goto!(output1; stage = 1, scenario = 2, block = 1) ≈ [1.5, 2.5, 1.5, 2.5]
+    @test Quiver.goto!(output1; stage = 1, scenario = 2, block = 2) ≈ [1.5, 2.5, 2.5, 2.5]
+    @test Quiver.goto!(output1; stage = 2, scenario = 1, block = 1) ≈ [2.5, 1.5, 1.5, 2.5]
+    @test Quiver.goto!(output1; stage = 2, scenario = 1, block = 2) ≈ [2.5, 1.5, 2.5, 2.5]
+    @test Quiver.goto!(output1; stage = 2, scenario = 2, block = 1) ≈ [2.5, 2.5, 1.5, 2.5]
+    @test Quiver.goto!(output1; stage = 2, scenario = 2, block = 2) ≈ [2.5, 2.5, 2.5, 2.5]
+    close_quiver(output1)
 
-    output2 = load_quiver("output2")
-    Quiver.goto!(output2; stage = 1, scenario = 1, block = 1) ≈ [1.5, 1.5, 1.5, 2.5]
-    Quiver.goto!(output2; stage = 1, scenario = 1, block = 2) ≈ [1.5, 1.5, 2.5, 2.5]
-    Quiver.goto!(output2; stage = 1, scenario = 2, block = 1) ≈ [1.5, 2.5, 1.5, 2.5]
-    Quiver.goto!(output2; stage = 1, scenario = 2, block = 2) ≈ [1.5, 2.5, 2.5, 2.5]
-    Quiver.goto!(output2; stage = 2, scenario = 1, block = 1) ≈ [2.5, 1.5, 1.5, 2.5]
-    Quiver.goto!(output2; stage = 2, scenario = 1, block = 2) ≈ [2.5, 1.5, 2.5, 2.5]
-    Quiver.goto!(output2; stage = 2, scenario = 2, block = 1) ≈ [2.5, 2.5, 1.5, 2.5]
-    Quiver.goto!(output2; stage = 2, scenario = 2, block = 2) ≈ [2.5, 2.5, 2.5, 2.5]
-    Quiver.close!(output2)
+    output2 = open_quiver("output2")
+    @test Quiver.goto!(output2; stage = 1, scenario = 1, block = 1) ≈ [1.5, 1.5, 1.5, 2.5]
+    @test Quiver.goto!(output2; stage = 1, scenario = 1, block = 2) ≈ [1.5, 1.5, 2.5, 2.5]
+    @test Quiver.goto!(output2; stage = 1, scenario = 2, block = 1) ≈ [1.5, 2.5, 1.5, 2.5]
+    @test Quiver.goto!(output2; stage = 1, scenario = 2, block = 2) ≈ [1.5, 2.5, 2.5, 2.5]
+    @test Quiver.goto!(output2; stage = 2, scenario = 1, block = 1) ≈ [2.5, 1.5, 1.5, 2.5]
+    @test Quiver.goto!(output2; stage = 2, scenario = 1, block = 2) ≈ [2.5, 1.5, 2.5, 2.5]
+    @test Quiver.goto!(output2; stage = 2, scenario = 2, block = 1) ≈ [2.5, 2.5, 1.5, 2.5]
+    @test Quiver.goto!(output2; stage = 2, scenario = 2, block = 2) ≈ [2.5, 2.5, 2.5, 2.5]
+    close_quiver(output2)
 
-    output3 = load_quiver("output3")
-    Quiver.goto!(output3; stage = 1, scenario = 1, block = 1) ≈ [0.0, 0.0, 0.0, -1.0]
-    Quiver.goto!(output3; stage = 1, scenario = 1, block = 2) ≈ [0.0, 0.0, -1.0, -1.0]
-    Quiver.goto!(output3; stage = 1, scenario = 2, block = 1) ≈ [0.0, -1.0, 0.0, -1.0]
-    Quiver.goto!(output3; stage = 1, scenario = 2, block = 2) ≈ [0.0, -1.0, -1.0, -1.0]
-    Quiver.goto!(output3; stage = 2, scenario = 1, block = 1) ≈ [-1.0, 0.0, 0.0, -1.0]
-    Quiver.goto!(output3; stage = 2, scenario = 1, block = 2) ≈ [-1.0, 0.0, -1.0, -1.0]
-    Quiver.goto!(output3; stage = 2, scenario = 2, block = 1) ≈ [-1.0, -1.0, 0.0, -1.0]
-    Quiver.goto!(output3; stage = 2, scenario = 2, block = 2) ≈ [-1.0, -1.0, -1.0, -1.0]
-    Quiver.close!(output3)
+    output3 = open_quiver("output3")
+    @test Quiver.goto!(output3; stage = 1, scenario = 1, block = 1) ≈ [0.0, 0.0, 0.0, -1.0]
+    @test Quiver.goto!(output3; stage = 1, scenario = 1, block = 2) ≈ [0.0, 0.0, -1.0, -1.0]
+    @test Quiver.goto!(output3; stage = 1, scenario = 2, block = 1) ≈ [0.0, -1.0, 0.0, -1.0]
+    @test Quiver.goto!(output3; stage = 1, scenario = 2, block = 2) ≈ [0.0, -1.0, -1.0, -1.0]
+    @test Quiver.goto!(output3; stage = 2, scenario = 1, block = 1) ≈ [-1.0, 0.0, 0.0, -1.0]
+    @test Quiver.goto!(output3; stage = 2, scenario = 1, block = 2) ≈ [-1.0, 0.0, -1.0, -1.0]
+    @test Quiver.goto!(output3; stage = 2, scenario = 2, block = 1) ≈ [-1.0, -1.0, 0.0, -1.0]
+    @test Quiver.goto!(output3; stage = 2, scenario = 2, block = 2) ≈ [-1.0, -1.0, -1.0, -1.0]
+    close_quiver(output3)
 
-    output4 = load_quiver("output4")
-    Quiver.goto!(output4; stage = 1, scenario = 1, block = 1) ≈ [0.0, 0.0, 0.0, 1.0]
-    Quiver.goto!(output4; stage = 1, scenario = 1, block = 2) ≈ [0.0, 0.0, 1.0, 1.0]
-    Quiver.goto!(output4; stage = 1, scenario = 2, block = 1) ≈ [0.0, 1.0, 0.0, 1.0]
-    Quiver.goto!(output4; stage = 1, scenario = 2, block = 2) ≈ [0.0, 1.0, 1.0, 1.0]
-    Quiver.goto!(output4; stage = 2, scenario = 1, block = 1) ≈ [1.0, 0.0, 0.0, 1.0]
-    Quiver.goto!(output4; stage = 2, scenario = 1, block = 2) ≈ [1.0, 0.0, 1.0, 1.0]
-    Quiver.goto!(output4; stage = 2, scenario = 2, block = 1) ≈ [1.0, 1.0, 0.0, 1.0]
-    Quiver.goto!(output4; stage = 2, scenario = 2, block = 2) ≈ [1.0, 1.0, 1.0, 1.0]
-    Quiver.close!(output4)
+    output4 = open_quiver("output4")
+    @test Quiver.goto!(output4; stage = 1, scenario = 1, block = 1) ≈ [0.0, 0.0, 0.0, 1.0]
+    @test Quiver.goto!(output4; stage = 1, scenario = 1, block = 2) ≈ [0.0, 0.0, 1.0, 1.0]
+    @test Quiver.goto!(output4; stage = 1, scenario = 2, block = 1) ≈ [0.0, 1.0, 0.0, 1.0]
+    @test Quiver.goto!(output4; stage = 1, scenario = 2, block = 2) ≈ [0.0, 1.0, 1.0, 1.0]
+    @test Quiver.goto!(output4; stage = 2, scenario = 1, block = 1) ≈ [1.0, 0.0, 0.0, 1.0]
+    @test Quiver.goto!(output4; stage = 2, scenario = 1, block = 2) ≈ [1.0, 0.0, 1.0, 1.0]
+    @test Quiver.goto!(output4; stage = 2, scenario = 2, block = 1) ≈ [1.0, 1.0, 0.0, 1.0]
+    @test Quiver.goto!(output4; stage = 2, scenario = 2, block = 2) ≈ [1.0, 1.0, 1.0, 1.0]
+    close_quiver(output4)
 
-    output5 = load_quiver("output5")
-    Quiver.goto!(output5; stage = 1, scenario = 1, block = 1) ≈ [2.0, 2.0, 2.0, 4.0]
-    Quiver.goto!(output5; stage = 1, scenario = 1, block = 2) ≈ [2.0, 2.0, 4.0, 4.0]
-    Quiver.goto!(output5; stage = 1, scenario = 2, block = 1) ≈ [2.0, 4.0, 2.0, 4.0]
-    Quiver.goto!(output5; stage = 1, scenario = 2, block = 2) ≈ [2.0, 4.0, 4.0, 4.0]
-    Quiver.goto!(output5; stage = 2, scenario = 1, block = 1) ≈ [4.0, 2.0, 2.0, 4.0]
-    Quiver.goto!(output5; stage = 2, scenario = 1, block = 2) ≈ [4.0, 2.0, 4.0, 4.0]
-    Quiver.goto!(output5; stage = 2, scenario = 2, block = 1) ≈ [4.0, 4.0, 2.0, 4.0]
-    Quiver.goto!(output5; stage = 2, scenario = 2, block = 2) ≈ [4.0, 4.0, 4.0, 4.0]
-    Quiver.close!(output5)
+    output5 = open_quiver("output5")
+    @test Quiver.goto!(output5; stage = 1, scenario = 1, block = 1) ≈ [2.0, 2.0, 2.0, 4.0]
+    @test Quiver.goto!(output5; stage = 1, scenario = 1, block = 2) ≈ [2.0, 2.0, 4.0, 4.0]
+    @test Quiver.goto!(output5; stage = 1, scenario = 2, block = 1) ≈ [2.0, 4.0, 2.0, 4.0]
+    @test Quiver.goto!(output5; stage = 1, scenario = 2, block = 2) ≈ [2.0, 4.0, 4.0, 4.0]
+    @test Quiver.goto!(output5; stage = 2, scenario = 1, block = 1) ≈ [4.0, 2.0, 2.0, 4.0]
+    @test Quiver.goto!(output5; stage = 2, scenario = 1, block = 2) ≈ [4.0, 2.0, 4.0, 4.0]
+    @test Quiver.goto!(output5; stage = 2, scenario = 2, block = 1) ≈ [4.0, 4.0, 2.0, 4.0]
+    @test Quiver.goto!(output5; stage = 2, scenario = 2, block = 2) ≈ [4.0, 4.0, 4.0, 4.0]
+    close_quiver(output5)
 
-    output6 = load_quiver("output6")
-    Quiver.goto!(output6; stage = 1, scenario = 1, block = 1) ≈ [2.0, 2.0, 2.0, 4.0]
-    Quiver.goto!(output6; stage = 1, scenario = 1, block = 2) ≈ [2.0, 2.0, 4.0, 4.0]
-    Quiver.goto!(output6; stage = 1, scenario = 2, block = 1) ≈ [2.0, 4.0, 2.0, 4.0]
-    Quiver.goto!(output6; stage = 1, scenario = 2, block = 2) ≈ [2.0, 4.0, 4.0, 4.0]
-    Quiver.goto!(output6; stage = 2, scenario = 1, block = 1) ≈ [4.0, 2.0, 2.0, 4.0]
-    Quiver.goto!(output6; stage = 2, scenario = 1, block = 2) ≈ [4.0, 2.0, 4.0, 4.0]
-    Quiver.goto!(output6; stage = 2, scenario = 2, block = 1) ≈ [4.0, 4.0, 2.0, 4.0]
-    Quiver.goto!(output6; stage = 2, scenario = 2, block = 2) ≈ [4.0, 4.0, 4.0, 4.0]
-    Quiver.close!(output6)
+    output6 = open_quiver("output6")
+    @test Quiver.goto!(output6; stage = 1, scenario = 1, block = 1) ≈ [2.0, 2.0, 2.0, 4.0]
+    @test Quiver.goto!(output6; stage = 1, scenario = 1, block = 2) ≈ [2.0, 2.0, 4.0, 4.0]
+    @test Quiver.goto!(output6; stage = 1, scenario = 2, block = 1) ≈ [2.0, 4.0, 2.0, 4.0]
+    @test Quiver.goto!(output6; stage = 1, scenario = 2, block = 2) ≈ [2.0, 4.0, 4.0, 4.0]
+    @test Quiver.goto!(output6; stage = 2, scenario = 1, block = 1) ≈ [4.0, 2.0, 2.0, 4.0]
+    @test Quiver.goto!(output6; stage = 2, scenario = 1, block = 2) ≈ [4.0, 2.0, 4.0, 4.0]
+    @test Quiver.goto!(output6; stage = 2, scenario = 2, block = 1) ≈ [4.0, 4.0, 2.0, 4.0]
+    @test Quiver.goto!(output6; stage = 2, scenario = 2, block = 2) ≈ [4.0, 4.0, 4.0, 4.0]
+    close_quiver(output6)
 
-    output7 = load_quiver("output7")
-    Quiver.goto!(output7; stage = 1, scenario = 1, block = 1) ≈ [2.0, 2.0, 2.0, 1.0]
-    Quiver.goto!(output7; stage = 1, scenario = 1, block = 2) ≈ [2.0, 2.0, 1.0, 1.0]
-    Quiver.goto!(output7; stage = 1, scenario = 2, block = 1) ≈ [2.0, 1.0, 2.0, 1.0]
-    Quiver.goto!(output7; stage = 1, scenario = 2, block = 2) ≈ [2.0, 1.0, 1.0, 1.0]
-    Quiver.goto!(output7; stage = 2, scenario = 1, block = 1) ≈ [1.0, 2.0, 2.0, 1.0]
-    Quiver.goto!(output7; stage = 2, scenario = 1, block = 2) ≈ [1.0, 2.0, 1.0, 1.0]
-    Quiver.goto!(output7; stage = 2, scenario = 2, block = 1) ≈ [1.0, 1.0, 2.0, 1.0]
-    Quiver.goto!(output7; stage = 2, scenario = 2, block = 2) ≈ [1.0, 1.0, 1.0, 1.0]
-    Quiver.close!(output7)
+    output7 = open_quiver("output7")
+    @test Quiver.goto!(output7; stage = 1, scenario = 1, block = 1) ≈ [2.0, 2.0, 2.0, 1.0]
+    @test Quiver.goto!(output7; stage = 1, scenario = 1, block = 2) ≈ [2.0, 2.0, 1.0, 1.0]
+    @test Quiver.goto!(output7; stage = 1, scenario = 2, block = 1) ≈ [2.0, 1.0, 2.0, 1.0]
+    @test Quiver.goto!(output7; stage = 1, scenario = 2, block = 2) ≈ [2.0, 1.0, 1.0, 1.0]
+    @test Quiver.goto!(output7; stage = 2, scenario = 1, block = 1) ≈ [1.0, 2.0, 2.0, 1.0]
+    @test Quiver.goto!(output7; stage = 2, scenario = 1, block = 2) ≈ [1.0, 2.0, 1.0, 1.0]
+    @test Quiver.goto!(output7; stage = 2, scenario = 2, block = 1) ≈ [1.0, 1.0, 2.0, 1.0]
+    @test Quiver.goto!(output7; stage = 2, scenario = 2, block = 2) ≈ [1.0, 1.0, 1.0, 1.0]
+    close_quiver(output7)
 
-    output8 = load_quiver("output8")
-    Quiver.goto!(output8; stage = 1, scenario = 1, block = 1) ≈ [0.5, 0.5, 0.5, 1.0]
-    Quiver.goto!(output8; stage = 1, scenario = 1, block = 2) ≈ [0.5, 0.5, 1.0, 1.0]
-    Quiver.goto!(output8; stage = 1, scenario = 2, block = 1) ≈ [0.5, 1.0, 0.5, 1.0]
-    Quiver.goto!(output8; stage = 1, scenario = 2, block = 2) ≈ [0.5, 1.0, 1.0, 1.0]
-    Quiver.goto!(output8; stage = 2, scenario = 1, block = 1) ≈ [1.0, 0.5, 0.5, 1.0]
-    Quiver.goto!(output8; stage = 2, scenario = 1, block = 2) ≈ [1.0, 0.5, 1.0, 1.0]
-    Quiver.goto!(output8; stage = 2, scenario = 2, block = 1) ≈ [1.0, 1.0, 0.5, 1.0]
-    Quiver.goto!(output8; stage = 2, scenario = 2, block = 2) ≈ [1.0, 1.0, 1.0, 1.0]
-    Quiver.close!(output8)
+    output8 = open_quiver("output8")
+    @test Quiver.goto!(output8; stage = 1, scenario = 1, block = 1) ≈ [0.5, 0.5, 0.5, 1.0]
+    @test Quiver.goto!(output8; stage = 1, scenario = 1, block = 2) ≈ [0.5, 0.5, 1.0, 1.0]
+    @test Quiver.goto!(output8; stage = 1, scenario = 2, block = 1) ≈ [0.5, 1.0, 0.5, 1.0]
+    @test Quiver.goto!(output8; stage = 1, scenario = 2, block = 2) ≈ [0.5, 1.0, 1.0, 1.0]
+    @test Quiver.goto!(output8; stage = 2, scenario = 1, block = 1) ≈ [1.0, 0.5, 0.5, 1.0]
+    @test Quiver.goto!(output8; stage = 2, scenario = 1, block = 2) ≈ [1.0, 0.5, 1.0, 1.0]
+    @test Quiver.goto!(output8; stage = 2, scenario = 2, block = 1) ≈ [1.0, 1.0, 0.5, 1.0]
+    @test Quiver.goto!(output8; stage = 2, scenario = 2, block = 2) ≈ [1.0, 1.0, 1.0, 1.0]
+    close_quiver(output8)
 
-    # create_tests("output1")
-    # create_tests("output2")
-    # create_tests("output3")
-    # create_tests("output4")
-    # create_tests("output5")
-    # create_tests("output6")
-    # create_tests("output7")
-    # create_tests("output8")
+    output9 = open_quiver("output9")
+    @test Quiver.goto!(output9; stage = 1, scenario = 1, block = 1) ≈ [1.0, 1.0, 1.0, 4.0]
+    @test Quiver.goto!(output9; stage = 1, scenario = 1, block = 2) ≈ [1.0, 1.0, 4.0, 4.0]
+    @test Quiver.goto!(output9; stage = 1, scenario = 2, block = 1) ≈ [1.0, 4.0, 1.0, 4.0]
+    @test Quiver.goto!(output9; stage = 1, scenario = 2, block = 2) ≈ [1.0, 4.0, 4.0, 4.0]
+    @test Quiver.goto!(output9; stage = 2, scenario = 1, block = 1) ≈ [4.0, 1.0, 1.0, 4.0]
+    @test Quiver.goto!(output9; stage = 2, scenario = 1, block = 2) ≈ [4.0, 1.0, 4.0, 4.0]
+    @test Quiver.goto!(output9; stage = 2, scenario = 2, block = 1) ≈ [4.0, 4.0, 1.0, 4.0]
+    @test Quiver.goto!(output9; stage = 2, scenario = 2, block = 2) ≈ [4.0, 4.0, 4.0, 4.0]
+    close_quiver(output9)
+
+    output10 = open_quiver("output10")
+    @test Quiver.goto!(output10; stage = 1, scenario = 1, block = 1) ≈ [2.0, 2.0, 2.0, 4.0]
+    @test Quiver.goto!(output10; stage = 1, scenario = 1, block = 2) ≈ [2.0, 2.0, 4.0, 4.0]
+    @test Quiver.goto!(output10; stage = 1, scenario = 2, block = 1) ≈ [2.0, 4.0, 2.0, 4.0]
+    @test Quiver.goto!(output10; stage = 1, scenario = 2, block = 2) ≈ [2.0, 4.0, 4.0, 4.0]
+    @test Quiver.goto!(output10; stage = 2, scenario = 1, block = 1) ≈ [4.0, 2.0, 2.0, 4.0]
+    @test Quiver.goto!(output10; stage = 2, scenario = 1, block = 2) ≈ [4.0, 2.0, 4.0, 4.0]
+    @test Quiver.goto!(output10; stage = 2, scenario = 2, block = 1) ≈ [4.0, 4.0, 2.0, 4.0]
+    @test Quiver.goto!(output10; stage = 2, scenario = 2, block = 2) ≈ [4.0, 4.0, 4.0, 4.0]
+    close_quiver(output10)
 
     return nothing
 end

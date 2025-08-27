@@ -18,6 +18,7 @@ function initialize()
         "__sub", sub,
         "__mul", mul,
         "__div", div,
+        "__pow", pow,
         "aggregate", aggregate,
         "save", save,
     )
@@ -29,6 +30,7 @@ function initialize()
         "__sub", sub,
         "__mul", mul,
         "__div", div,
+        "__pow", pow,
         "aggregate", aggregate,
         "save", save,
     )
@@ -40,6 +42,7 @@ function initialize()
         "__sub", sub,
         "__mul", mul,
         "__div", div,
+        "__pow", pow,
         "aggregate", aggregate,
         "save", save,
     )
@@ -51,6 +54,7 @@ function initialize()
         "__sub", sub,
         "__mul", mul,
         "__div", div,
+        "__pow", pow,
         "aggregate", aggregate,
         "save", save,
     )
