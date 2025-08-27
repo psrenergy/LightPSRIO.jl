@@ -19,7 +19,6 @@ function start!(e::ExpressionDataQuiver)
 end
 
 function evaluate(e::ExpressionDataQuiver; kwargs...)
-    println("Evaluating Quiver data for $(e.filename) at $kwargs")
     return Quiver.goto!(e.reader; kwargs...)
 end
 
