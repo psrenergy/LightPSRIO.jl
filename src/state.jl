@@ -68,7 +68,7 @@ function initialize(paths::Vector{String})
     LuaNova.safe_script(
         L,
         "__PATHS__ = {}; setmetatable(__PATHS__, { __index = { \"$paths\" }, __newindex = function(t, k, v) error(\"Attempt to modify a read-only table.\", 2) end, __metatable = \"This table is read-only.\" });",
-    ) 
+    )
 
     return L
 end
@@ -89,4 +89,13 @@ end
 function finalize(L)
     LuaNova.close(L)
     return nothing
+end
+
+function get_case_path(L::LuaState, case_index::Integer)
+    LuaNova.get_global(L, "__PATHS__")
+    LuaNova.push_to_lua!(L, case_index)
+    LuaNova.get_table(L, -2)
+    path = LuaNova.to_string(L, -1)
+    LuaNova.lua_pop!(L, 1)
+    return path
 end

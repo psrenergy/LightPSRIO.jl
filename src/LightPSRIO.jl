@@ -7,11 +7,11 @@ using Quiver
 using Statistics
 
 include("optional.jl")
-include("study.jl")
 include("aggregate_functions.jl")
 
 include("collections/collection.jl")
 include("collections/collection_generic.jl")
+include("collections/collection_study.jl")
 
 include("attributes.jl")
 

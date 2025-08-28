@@ -16,7 +16,6 @@ include("../util.jl")
     LightPSRIO.run_script(
         L,
         """
-print(__PATHS__[1])
 local generic = Generic();
 local input1 = generic:load("input1");
 
