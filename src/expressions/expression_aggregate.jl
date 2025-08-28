@@ -6,6 +6,8 @@ mutable struct ExpressionAggregate <: Expression
     dimension_original_size::Int
 
     function ExpressionAggregate(e::Expression, dimension::String, aggregate_function::AggregateFunction.T)
+        println("AGGREGATE ($dimension): $(e.attributes)")
+
         attributes = copy(e.attributes)
         dimension_symbol = Symbol(dimension)
 
@@ -15,6 +17,8 @@ mutable struct ExpressionAggregate <: Expression
         end
         dimension_original_size = attributes.dimension_size[dimension_index]
         attributes.dimension_size[dimension_index] = 1
+
+        println("AGGREGATE ($dimension)= $attributes")
 
         return new(
             attributes,

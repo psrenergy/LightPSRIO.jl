@@ -4,7 +4,7 @@ function julia_typeof(x::Any)
 end
 @define_lua_function julia_typeof
 
-function initialize()
+function initialize(paths::Vector{String})
     println("Initializing Lua state...")
     L = LuaNova.new_state()
     LuaNova.open_libs(L)
@@ -64,12 +64,13 @@ function initialize()
     @push_lua_function(L, "julia_typeof", julia_typeof)
     @push_lua_enumx(L, AggregateFunction)
 
-    return L
-end
+    paths = replace(join(paths, "\", \""), "\\" => "\\\\")
+    LuaNova.safe_script(
+        L,
+        "__PATHS__ = {}; setmetatable(__PATHS__, { __index = { \"$paths\" }, __newindex = function(t, k, v) error(\"Attempt to modify a read-only table.\", 2) end, __metatable = \"This table is read-only.\" });",
+    ) 
 
-function push_case!(case::String)
-    push!(cases, case)
-    return nothing
+    return L
 end
 
 function run_script(L, script::String)
