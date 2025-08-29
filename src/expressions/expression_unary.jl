@@ -10,6 +10,20 @@ mutable struct ExpressionUnary{F <: Function} <: Expression
 end
 @define_lua_struct ExpressionUnary
 
-Base.:-(x::Expression) = ExpressionUnary(x, Base.:−)
-neg(x) = Base.:-(x)
-@define_lua_function neg
+Base.:-(x::Expression) = ExpressionUnary(x, Base.:-)
+unm(x) = Base.:-(x)
+@define_lua_function unm
+
+function start!(e::ExpressionUnary)
+    start!(e.e)
+    return nothing
+end
+
+function evaluate(e::ExpressionUnary; kwargs...)
+    return e.f.(evaluate(e.e; kwargs...))
+end
+
+function finish!(e::ExpressionUnary)
+    finish!(e.e)
+    return nothing
+end
