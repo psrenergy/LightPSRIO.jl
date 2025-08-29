@@ -20,6 +20,7 @@ function initialize(paths::Vector{String})
         "__div", div,
         "__pow", pow,
         "aggregate", aggregate,
+        "aggregate_agents", aggregate_agents,
         "save", save,
     )
 
@@ -32,6 +33,7 @@ function initialize(paths::Vector{String})
         "__div", div,
         "__pow", pow,
         "aggregate", aggregate,
+        "aggregate_agents", aggregate_agents,
         "save", save,
     )
 
@@ -44,6 +46,7 @@ function initialize(paths::Vector{String})
         "__div", div,
         "__pow", pow,
         "aggregate", aggregate,
+        "aggregate_agents", aggregate_agents,
         "save", save,
     )
 
@@ -56,6 +59,7 @@ function initialize(paths::Vector{String})
         "__div", div,
         "__pow", pow,
         "aggregate", aggregate,
+        "aggregate_agents", aggregate_agents,
         "save", save,
     )
 
@@ -68,6 +72,7 @@ function initialize(paths::Vector{String})
         "__div", div,
         "__pow", pow,
         "aggregate", aggregate,
+        "aggregate_agents", aggregate_agents,
         "save", save,
     )    
 

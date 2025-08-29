@@ -31,10 +31,10 @@ mutable struct ExpressionAggregateAgents <: Expression
 end
 @define_lua_struct ExpressionAggregateAgents
 
-function aggregate(x::Expression, dimension::String, aggregate_function::AggregateFunction.T)
+function aggregate_agents(x::Expression, dimension::String, aggregate_function::AggregateFunction.T)
     return ExpressionAggregateAgents(x, dimension, aggregate_function)
 end
-@define_lua_function aggregate
+@define_lua_function aggregate_agents
 
 function start!(e::ExpressionAggregateAgents)
     return start!(e.e)
