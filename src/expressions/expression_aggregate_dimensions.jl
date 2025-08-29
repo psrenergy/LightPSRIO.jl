@@ -61,6 +61,10 @@ function evaluate(e::ExpressionAggregateDimensions; kwargs...)
         return sum(data)
     elseif e.aggregate_function == AggregateFunction.Average
         return mean(data)
+    elseif e.aggregate_function == AggregateFunction.Min
+        return minimum(data)
+    elseif e.aggregate_function == AggregateFunction.Max
+        return maximum(data)
     else
         error("Aggregate function $(e.aggregate_function) not implemented yet.")
     end

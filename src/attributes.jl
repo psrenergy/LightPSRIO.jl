@@ -1,4 +1,4 @@
-struct Attributes
+mutable struct Attributes
     labels::Vector{String}
     collection::Collection
     dimensions::Vector{Symbol}

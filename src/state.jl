@@ -74,10 +74,12 @@ function initialize(paths::Vector{String})
         "aggregate", aggregate,
         "aggregate_agents", aggregate_agents,
         "save", save,
-    )    
+    )
 
     @push_lua_function(L, "BY_SUM", BY_SUM)
     @push_lua_function(L, "BY_AVERAGE", BY_AVERAGE)
+    @push_lua_function(L, "BY_MIN", BY_MIN)
+    @push_lua_function(L, "BY_MAX", BY_MAX)
     @push_lua_function(L, "julia_typeof", julia_typeof)
     @push_lua_enumx(L, AggregateFunction)
 
