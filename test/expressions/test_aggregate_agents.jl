@@ -19,16 +19,16 @@ include("../util.jl")
 local generic = Generic();
 local input1 = generic:load("input1");
 
-local output1 = input1:aggregate_agents("sum", BY_SUM());
+local output1 = input1:aggregate_agents(BY_SUM(), "sum");
 output1:save("output1");
 
-local output2 = input1:aggregate_agents("avg", BY_AVERAGE());
+local output2 = input1:aggregate_agents(BY_AVERAGE(), "avg");
 output2:save("output2");
 
-local output3 = input1:aggregate_agents("min", BY_MIN());
+local output3 = input1:aggregate_agents(BY_MIN(), "min");
 output3:save("output3");
 
-local output4 = input1:aggregate_agents("max", BY_MAX());
+local output4 = input1:aggregate_agents(BY_MAX(), "max");
 output4:save("output4");
     """,
     )
