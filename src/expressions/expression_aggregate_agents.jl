@@ -7,7 +7,12 @@ mutable struct ExpressionAggregateAgents <: Expression
         println("AGGREGATE AGENTS: $(e.attributes)")
 
         attributes = copy(e.attributes)
-        attributes.labels = [label]
+
+        attributes.labels = if has_data(e)
+            String[label]
+        else
+            String[]
+        end
 
         println("AGGREGATE AGENTS= $attributes")
 
@@ -30,6 +35,10 @@ function start!(e::ExpressionAggregateAgents)
 end
 
 function evaluate(e::ExpressionAggregateAgents; kwargs...)
+    if !has_data(e)
+        return Float64[]
+    end
+
     data = evaluate(e.e; kwargs...)
 
     if e.aggregate_function == AggregateFunction.Sum

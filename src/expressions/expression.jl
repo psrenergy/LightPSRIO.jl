@@ -35,10 +35,10 @@ function save(L::LuaState, e::Expression, filename::String)
 
     ranges = [1:size for size in dimension_size]
     reversed_ranges = reverse(ranges)
-    iterators = (reverse(p) for p in Iterators.product(reversed_ranges...))
+    iterator = (reverse(p) for p in Iterators.product(reversed_ranges...))
 
     start!(e)
-    for indices in iterators
+    @showprogress barlen=50 for indices in iterator
         kwargs = NamedTuple{Tuple(dimensions)}(indices)
         result = evaluate(e; kwargs...)
         Quiver.write!(writer, result; kwargs...)

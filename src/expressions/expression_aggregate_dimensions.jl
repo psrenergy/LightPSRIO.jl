@@ -41,6 +41,10 @@ function start!(e::ExpressionAggregateDimensions)
 end
 
 function evaluate(e::ExpressionAggregateDimensions; kwargs...)
+    if !has_data(e)
+        return Float64[]
+    end
+
     attributes = e.attributes
     labels_size = length(attributes.labels)
     dimension_original_size = e.dimension_original_size
