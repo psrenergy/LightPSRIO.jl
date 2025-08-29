@@ -18,13 +18,18 @@ include("../util.jl")
         """
 local generic = Generic();
 local input1 = generic:load("input1");
-local input2 = input1:aggregate_agents(BY_SUM(), "sum");
-local input3 = input1:aggregate_agents(BY_AVERAGE(), "avg");
-local input4 = input1:aggregate_agents(BY_MIN(), "min");
-local input5 = input1:aggregate_agents(BY_MAX(), "max");
+local input2 = generic:load("input_nonexistent");
 
-local output1 = concatenate_agents(input2, input3, input4, input5);
+local input1_sum = input1:aggregate_agents(BY_SUM(), "sum");
+local input1_avg = input1:aggregate_agents(BY_AVERAGE(), "avg");
+local input1_min = input1:aggregate_agents(BY_MIN(), "min");
+local input1_max = input1:aggregate_agents(BY_MAX(), "max");
+
+local output1 = concatenate_agents(input1_sum, input1_avg, input1_min, input1_max);
 output1:save("output1");
+
+local output2 = concatenate_agents(input1, input2);
+output2:save("output2");
     """,
     )
 
@@ -41,6 +46,17 @@ output1:save("output1");
     @test Quiver.goto!(output1; stage = 2, scenario = 2, block = 1) ≈ [7.0, 1.75, 1.0, 2.0]
     @test Quiver.goto!(output1; stage = 2, scenario = 2, block = 2) ≈ [8.0, 2.0, 2.0, 2.0]
     close_quiver(output1)
+
+    output2 = open_quiver("output2")
+    @test Quiver.goto!(output2; stage = 1, scenario = 1, block = 1) ≈ [1.0, 1.0, 1.0, 2.0]
+    @test Quiver.goto!(output2; stage = 1, scenario = 1, block = 2) ≈ [1.0, 1.0, 2.0, 2.0]
+    @test Quiver.goto!(output2; stage = 1, scenario = 2, block = 1) ≈ [1.0, 2.0, 1.0, 2.0]
+    @test Quiver.goto!(output2; stage = 1, scenario = 2, block = 2) ≈ [1.0, 2.0, 2.0, 2.0]
+    @test Quiver.goto!(output2; stage = 2, scenario = 1, block = 1) ≈ [2.0, 1.0, 1.0, 2.0]
+    @test Quiver.goto!(output2; stage = 2, scenario = 1, block = 2) ≈ [2.0, 1.0, 2.0, 2.0]
+    @test Quiver.goto!(output2; stage = 2, scenario = 2, block = 1) ≈ [2.0, 2.0, 1.0, 2.0]
+    @test Quiver.goto!(output2; stage = 2, scenario = 2, block = 2) ≈ [2.0, 2.0, 2.0, 2.0]
+    close_quiver(output2)
 
     return nothing
 end

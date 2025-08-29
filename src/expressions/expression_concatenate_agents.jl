@@ -3,17 +3,11 @@ mutable struct ExpressionConcatenateAgents <: Expression
     expressions::Vector{Expression}
 
     function ExpressionConcatenateAgents(expressions::Vector{<:Expression})
-        attributes_vector = Attributes[]
         for expression in expressions
-            if has_data(expression)
-                println("CONCATENATE AGENTS: $(expression.attributes)")
-                push!(attributes_vector, expression.attributes)
-            else
-                println("CONCATENATE AGENTS: null")
-            end
+            println("CONCATENATE AGENTS: $(expression.attributes)")
         end
 
-        attributes = copy(attributes_vector[1])
+        attributes = copy(expressions[1].attributes)
         attributes.labels = [attr for expression in expressions for attr in expression.attributes.labels]
 
         println("CONCATENATE AGENTS= $attributes")
