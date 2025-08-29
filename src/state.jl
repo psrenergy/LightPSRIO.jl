@@ -25,19 +25,19 @@ function initialize(paths::Vector{String})
         "save", save,
     )
 
-    @push_lua_struct(
-        L,
-        ExpressionUnary,
-        "__add", add,
-        "__sub", sub,
-        "__mul", mul,
-        "__div", div,
-        "__pow", pow,
-        # "__unm", unm,
-        "aggregate", aggregate,
-        "aggregate_agents", aggregate_agents,
-        "save", save,
-    )
+    # @push_lua_struct(
+    #     L,
+    #     ExpressionUnary,
+    #     "__add", add,
+    #     "__sub", sub,
+    #     "__mul", mul,
+    #     "__div", div,
+    #     "__pow", pow,
+    #     # "__unm", unm,
+    #     "aggregate", aggregate,
+    #     "aggregate_agents", aggregate_agents,
+    #     "save", save,
+    # )
 
     @push_lua_struct(
         L,

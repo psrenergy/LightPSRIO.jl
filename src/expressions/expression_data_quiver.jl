@@ -9,6 +9,7 @@ mutable struct ExpressionDataQuiver <: ExpressionData
         reader = Quiver.Reader{Quiver.binary}(joinpath(path, filename))
         attributes = Attributes(reader)
         println("Loading $filename ($attributes)")
+        Quiver.close!(reader)
         return new(path, filename, attributes, nothing)
     end
 end
