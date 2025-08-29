@@ -49,7 +49,7 @@ function initialize(paths::Vector{String})
 
     @push_lua_struct(
         L,
-        ExpressionAggregate,
+        ExpressionAggregateDimensions,
         "__add", add,
         "__sub", sub,
         "__mul", mul,
@@ -58,6 +58,18 @@ function initialize(paths::Vector{String})
         "aggregate", aggregate,
         "save", save,
     )
+
+    @push_lua_struct(
+        L,
+        ExpressionAggregateAgents,
+        "__add", add,
+        "__sub", sub,
+        "__mul", mul,
+        "__div", div,
+        "__pow", pow,
+        "aggregate", aggregate,
+        "save", save,
+    )    
 
     @push_lua_function(L, "BY_SUM", BY_SUM)
     @push_lua_function(L, "BY_AVERAGE", BY_AVERAGE)

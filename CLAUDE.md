@@ -74,7 +74,8 @@ The Lua integration is managed through `state.jl` with these key functions:
     - `ExpressionDataNumber`: Constant values
     - `ExpressionDataQuiver`: CSV-backed data with Quiver.jl integration
   - `ExpressionUnary`/`ExpressionBinary`: Arithmetic operation nodes
-  - `ExpressionAggregate`: Aggregation operations
+  - `ExpressionAggregateAgents`: Aggregation over agent dimensions
+  - `ExpressionAggregateDimensions`: Aggregation over dimensions operations
 
 All expression types follow the lifecycle: `start!()` → `evaluate()` → `finish!()`
 
