@@ -3,7 +3,16 @@ abstract type Expression end
 Base.promote_rule(::Type{<:Expression}, ::Type{<:Number}) = Expression
 Base.promote_rule(::Type{<:Number}, ::Type{<:Expression}) = Expression
 
+function has_data(e::Expression)
+    return has_data(e.attributes)
+end
+
 function save(L::LuaState, e::Expression, filename::String)
+       if !has_data(e)
+        println("$filename not saved")
+        return nothing
+    end
+
     attributes = e.attributes
     labels = attributes.labels
     dimensions = attributes.dimensions

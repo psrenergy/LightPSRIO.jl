@@ -5,6 +5,10 @@ mutable struct Attributes
     dimension_size::Vector{Int}
 end
 
+function Attributes(collection::Collection)
+    return Attributes(String[], collection, Symbol[], Int[])
+end
+
 function Attributes(labels::Vector{String}, collection::Collection)
     return Attributes(labels, collection, Symbol[], Int[])
 end
@@ -37,4 +41,8 @@ function Base.show(io::IO, attributes::Attributes)
     print(io, "agents: $(length(attributes.labels))")
     # print(io, "stages: 195 [1:195] [week] [40/2011], blocks: none, scenarios: 1, unit: , agents: 1 [study]")
     return nothing
+end
+
+function has_data(attributes::Attributes)
+    return length(attributes.labels) > 0
 end

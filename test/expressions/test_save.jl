@@ -1,4 +1,4 @@
-module TestCollection
+module TestSave
 
 using DataFrames
 using Dates
@@ -8,7 +8,7 @@ using Test
 
 include("../util.jl")
 
-@testset "Collection" begin
+@testset "Save" begin
     L = LightPSRIO.initialize([joinpath(@__DIR__, "..", "data")])
 
     LightPSRIO.run_script(
@@ -24,6 +24,7 @@ output1:save("output1");
 
     finalize(L)
 
+    @test !isfile(joinpath(@__DIR__, "..", "data", "output1"))
 
     return nothing
 end

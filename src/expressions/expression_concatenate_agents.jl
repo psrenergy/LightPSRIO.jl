@@ -3,11 +3,17 @@ mutable struct ExpressionConcatenateAgents <: Expression
     expressions::Vector{Expression}
 
     function ExpressionConcatenateAgents(expressions::Vector{<:Expression})
+        attributes_vector = Attributes[]
         for expression in expressions
-            println("CONCATENATE AGENTS: $(expression.attributes)")
+            if has_data(expression)
+                println("CONCATENATE AGENTS: $(expression.attributes)")
+                push!(attributes_vector, expression.attributes)
+            else
+                println("CONCATENATE AGENTS: null")
+            end
         end
 
-        attributes = copy(expressions[1].attributes)
+        attributes = copy(attributes_vector[1])
         attributes.labels = [attr for expression in expressions for attr in expression.attributes.labels]
 
         println("CONCATENATE AGENTS= $attributes")
@@ -20,8 +26,7 @@ mutable struct ExpressionConcatenateAgents <: Expression
 end
 @define_lua_struct ExpressionConcatenateAgents
 
-function concatenate_agents(x...)
-    @show typeof(x)
+function concatenate_agents(x::Expression...)
     return ExpressionConcatenateAgents([x...])
 end
 @define_lua_function concatenate_agents
