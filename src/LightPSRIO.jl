@@ -4,7 +4,6 @@ using Base.Iterators
 using EnumX
 using LuaNova
 using Quiver
-using ProgressMeter
 using Statistics
 
 include("optional.jl")
