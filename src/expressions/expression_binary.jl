@@ -90,7 +90,8 @@ pow(x, y) = Base.:^(x, y)
 
 function start!(e::ExpressionBinary)
     start!(e.e1)
-    return start!(e.e2)
+    start!(e.e2)
+    return nothing
 end
 
 function evaluate(e::ExpressionBinary; kwargs...)
@@ -99,5 +100,6 @@ end
 
 function finish!(e::ExpressionBinary)
     finish!(e.e1)
-    return finish!(e.e2)
+    finish!(e.e2)
+    return nothing
 end
