@@ -8,7 +8,7 @@ function has_data(e::Expression)
 end
 
 function save(L::LuaState, e::Expression, filename::String)
-       if !has_data(e)
+    if !has_data(e)
         println("$filename not saved")
         return nothing
     end
