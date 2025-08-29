@@ -73,12 +73,12 @@ function initialize(paths::Vector{String})
     return L
 end
 
-function run_script(L, script::String)
+function run_script(L::LuaState, script::String)
     LuaNova.safe_script(L, script)
     return nothing
 end
 
-function run_file(L, path::String)
+function run_file(L::LuaState, path::String)
     open(path) do file
         script = read(file, String)
         return LuaNova.safe_script(L, script)

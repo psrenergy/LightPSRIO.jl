@@ -1,4 +1,4 @@
-module TestAggregate
+module TestAggregateDimensions
 
 using DataFrames
 using Dates
@@ -8,7 +8,7 @@ using Test
 
 include("../util.jl")
 
-@testset "Aggregate" begin
+@testset "Aggregate Dimensions" begin
     create_quiver("input1"; n_stages = 2, n_scenarios = 2, n_blocks = 2, constant = 2.0)
 
     L = LightPSRIO.initialize([joinpath(@__DIR__, "..", "data")])
