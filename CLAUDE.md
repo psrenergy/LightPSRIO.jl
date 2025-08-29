@@ -70,7 +70,6 @@ The Lua integration is managed through `state.jl` with these key functions:
 ### Expression Type Hierarchy
 
 - `Expression` (abstract base)
-  - `ExpressionData` (abstract)
     - `ExpressionDataNumber`: Constant values
     - `ExpressionDataQuiver`: CSV-backed data with Quiver.jl integration
   - `ExpressionUnary`/`ExpressionBinary`: Arithmetic operation nodes

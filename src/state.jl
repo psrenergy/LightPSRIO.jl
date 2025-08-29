@@ -81,11 +81,26 @@ function initialize(paths::Vector{String})
         "save", save,
     )
 
+    @push_lua_struct(
+        L,
+        ExpressionConcatenateAgents,
+        "__add", add,
+        "__sub", sub,
+        "__mul", mul,
+        "__div", div,
+        "__pow", pow,
+        # "__unm", unm,
+        "aggregate", aggregate,
+        "aggregate_agents", aggregate_agents,
+        "save", save,
+    )    
+
     @push_lua_function(L, "BY_SUM", BY_SUM)
     @push_lua_function(L, "BY_AVERAGE", BY_AVERAGE)
     @push_lua_function(L, "BY_MIN", BY_MIN)
     @push_lua_function(L, "BY_MAX", BY_MAX)
     @push_lua_function(L, "julia_typeof", julia_typeof)
+    @push_lua_function(L, "concatenate_agents", concatenate_agents)
     @push_lua_enumx(L, AggregateFunction)
 
     paths = replace(join(paths, "\", \""), "\\" => "\\\\")

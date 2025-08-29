@@ -1,5 +1,5 @@
 
-mutable struct ExpressionDataQuiver <: ExpressionData
+mutable struct ExpressionDataQuiver <: Expression
     path::String
     filename::String
     attributes::Attributes

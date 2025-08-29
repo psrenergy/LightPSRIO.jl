@@ -1,4 +1,4 @@
-mutable struct ExpressionDataNumber{T <: Number} <: ExpressionData
+mutable struct ExpressionDataNumber{T <: Number} <: Expression
     attributes::Attributes
     value::T
 

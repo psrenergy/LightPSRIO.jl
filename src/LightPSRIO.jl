@@ -18,11 +18,11 @@ include("attributes.jl")
 include("expressions/expression.jl")
 include("expressions/expression_aggregate_agents.jl")
 include("expressions/expression_aggregate_dimensions.jl")
-include("expressions/expression_data.jl")
+include("expressions/expression_binary.jl")
+include("expressions/expression_concatenate_agents.jl")
 include("expressions/expression_data_number.jl")
 include("expressions/expression_data_quiver.jl")
 include("expressions/expression_unary.jl")
-include("expressions/expression_binary.jl")
 
 include("state.jl")
 
