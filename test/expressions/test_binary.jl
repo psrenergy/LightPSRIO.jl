@@ -11,7 +11,7 @@ include("../util.jl")
 @testset "Binary" begin
     create_quiver("input1"; n_stages = 2, n_scenarios = 2, n_blocks = 2, constant = 2.0)
 
-    L = LightPSRIO.initialize([raw"C:\Development\PSRIO\LightPSRIO.jl\test\data"])
+    L = LightPSRIO.initialize([joinpath(@__DIR__, "..", "data")])
 
     LightPSRIO.run_script(
         L,

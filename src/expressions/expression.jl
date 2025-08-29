@@ -3,13 +3,13 @@ abstract type Expression end
 Base.promote_rule(::Type{<:Expression}, ::Type{<:Number}) = Expression
 Base.promote_rule(::Type{<:Number}, ::Type{<:Expression}) = Expression
 
-function save(e::Expression, filename::String)
+function save(L::LuaState, e::Expression, filename::String)
     attributes = e.attributes
     labels = attributes.labels
     dimensions = attributes.dimensions
     dimension_size = attributes.dimension_size
 
-    path = raw"C:\Development\PSRIO\LightPSRIO.jl\test\data"
+    path = get_case_path(L, 1)
 
     println("Saving $filename ($attributes)")
 
@@ -40,5 +40,5 @@ function save(e::Expression, filename::String)
 
     return nothing
 end
-@define_lua_function save
+@define_lua_function_with_state save
 
