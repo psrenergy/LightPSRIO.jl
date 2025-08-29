@@ -13,6 +13,7 @@ mutable struct ExpressionDataQuiver <: Expression
             Quiver.close!(reader)
             return new(path, filename, attributes, nothing)
         catch ArgumentError
+            println("The output $filename has no data")
             attributes = Attributes(Collection())
             return new(path, filename, attributes, nothing)
         end
