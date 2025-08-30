@@ -25,6 +25,10 @@ include("expressions/expression_data_number.jl")
 include("expressions/expression_data_quiver.jl")
 include("expressions/expression_unary.jl")
 
+include("dashboard/chart.jl")
+include("dashboard/tab.jl")
+include("dashboard/dashboard.jl")
+
 include("state.jl")
 
 end

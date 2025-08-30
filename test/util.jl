@@ -60,3 +60,7 @@ function create_quiver_tests(filename::String)
 
     return nothing
 end
+
+function get_data_directory()
+    return joinpath(@__DIR__, "data")
+end

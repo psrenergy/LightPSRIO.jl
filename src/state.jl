@@ -104,6 +104,24 @@ function initialize(paths::Vector{String})
     @push_lua_function(L, "concatenate_agents", concatenate_agents)
     @push_lua_enumx(L, AggregateFunction)
 
+    @push_lua_struct(
+        L,
+        Chart,
+    )
+
+    @push_lua_struct(
+        L,
+        Tab,
+        "push", push
+    )
+
+    @push_lua_struct(
+        L,
+        Dashboard,
+        "push", push,
+        "save", save,
+    )
+
     register_cases(L, paths)
 
     return L
