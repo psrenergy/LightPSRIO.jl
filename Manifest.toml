@@ -140,11 +140,11 @@ version = "1.11.0"
 
 [[deps.LuaNova]]
 deps = ["EnumX", "Lua_jll"]
-git-tree-sha1 = "cda69a45ebacce53383ae2727b79fa19974f8a04"
+git-tree-sha1 = "5b733d43c6900e10254bba93507d5d5d3f49c34b"
 repo-rev = "main"
 repo-url = "https://github.com/raphasampaio/LuaNova.jl.git"
 uuid = "faa88067-b4cd-4998-97ac-8175b58d6ef9"
-version = "0.1.4"
+version = "0.1.5"
 
 [[deps.Lua_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Readline_jll"]
