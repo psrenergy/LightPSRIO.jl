@@ -18,12 +18,12 @@ function save(L::LuaState, e::Expression, filename::String)
     dimensions = attributes.dimensions
     dimension_size = attributes.dimension_size
 
-    path = get_case_path(L, 1)
+    case = get_case(L, 1)
 
     println("Saving $filename ($attributes)")
 
     writer = Quiver.Writer{Quiver.binary}(
-        joinpath(path, filename);
+        joinpath(case.path, filename);
         labels = labels,
         dimensions = string.(dimensions),
         time_dimension = "stage",

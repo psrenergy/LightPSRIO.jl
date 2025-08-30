@@ -8,6 +8,7 @@ using Statistics
 
 include("optional.jl")
 include("aggregate_functions.jl")
+include("case.jl")
 
 include("collections/collection.jl")
 include("collections/collection_generic.jl")
