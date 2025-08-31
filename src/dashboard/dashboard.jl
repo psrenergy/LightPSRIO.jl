@@ -51,6 +51,28 @@ function save(L::LuaState, dashboard::Dashboard, filename::String)
             <p class="text-gray-600">Interactive data visualization</p>
         </div>
         
+        <!-- Search Bar -->
+        <div class="mb-6">
+            <div class="relative max-w-md">
+                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+                <input v-model="searchQuery" 
+                       type="text" 
+                       class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-dashboard-blue focus:border-dashboard-blue text-sm" 
+                       placeholder="Search charts...">
+                <div v-if="searchQuery" 
+                     @click="searchQuery = ''" 
+                     class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer">
+                    <svg class="h-5 w-5 text-gray-400 hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
         <!-- Tab Navigation -->
         <div class="mb-6">
             <nav class="flex space-x-1 bg-gray-100 p-1 rounded-lg shadow-sm">
@@ -63,6 +85,10 @@ function save(L::LuaState, dashboard::Dashboard, filename::String)
                                 : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200'
                         ]">
                     {{ tab.label }}
+                    <span v-if="searchQuery && getFilteredChartsForTab(index).length > 0" 
+                          class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-dashboard-blue text-white">
+                        {{ getFilteredChartsForTab(index).length }}
+                    </span>
                 </button>
             </nav>
         </div>
@@ -80,21 +106,33 @@ function save(L::LuaState, dashboard::Dashboard, filename::String)
                 
                 <!-- Charts Grid -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <div v-for="(chart, chartIndex) in tab.charts" :key="chartIndex" 
+                    <div v-for="(chart, chartIndex) in getFilteredChartsForTab(tabIndex)" :key="chartIndex" 
                          class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200">
                         <div class="mb-4">
-                            <h3 class="text-lg font-semibold text-gray-800">{{ chart.title }}</h3>
+                            <h3 class="text-lg font-semibold text-gray-800" v-html="highlightSearchTerm(chart.title)"></h3>
                             <div class="text-sm text-gray-500 capitalize">{{ chart.chart_type }} chart</div>
                         </div>
                         <div class="relative h-80">
-                            <canvas :id="'chart-' + tabIndex + '-' + chartIndex" 
+                            <canvas :id="'chart-' + tabIndex + '-' + chart.originalIndex" 
                                     class="max-w-full max-h-full"></canvas>
                         </div>
                     </div>
                 </div>
                 
+                <!-- No Search Results -->
+                <div v-if="searchQuery && getFilteredChartsForTab(tabIndex).length === 0" 
+                     class="text-center py-12 bg-white rounded-xl border border-gray-200">
+                    <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-2">No charts found</h3>
+                    <p class="text-gray-500">No charts match your search query "{{ searchQuery }}"</p>
+                </div>
+                
                 <!-- Empty State -->
-                <div v-if="tab.charts.length === 0" 
+                <div v-else-if="!searchQuery && tab.charts.length === 0" 
                      class="text-center py-12 bg-white rounded-xl border border-gray-200">
                     <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
                         <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -144,6 +182,7 @@ function save(L::LuaState, dashboard::Dashboard, filename::String)
             data() {
                 return {
                     activeTab: 0,
+                    searchQuery: '',
                     tabs: """,
     )
 
@@ -165,6 +204,12 @@ function save(L::LuaState, dashboard::Dashboard, filename::String)
                     this.\$nextTick(() => {
                         this.initializeChartsForTab(newTab);
                     });
+                },
+                searchQuery() {
+                    this.\$nextTick(() => {
+                        // Re-initialize charts for the active tab when search changes
+                        this.initializeChartsForTab(this.activeTab);
+                    });
                 }
             },
             methods: {
@@ -176,9 +221,9 @@ function save(L::LuaState, dashboard::Dashboard, filename::String)
                     });
                 },
                 initializeChartsForTab(tabIndex) {
-                    const tab = this.tabs[tabIndex];
-                    tab.charts.forEach((chart, chartIndex) => {
-                        const chartId = 'chart-' + tabIndex + '-' + chartIndex;
+                    const filteredCharts = this.getFilteredChartsForTab(tabIndex);
+                    filteredCharts.forEach((chart) => {
+                        const chartId = 'chart-' + tabIndex + '-' + chart.originalIndex;
                         const canvas = document.getElementById(chartId);
                         
                         if (canvas && !this.chartInstances[chartId]) {
@@ -323,6 +368,28 @@ function save(L::LuaState, dashboard::Dashboard, filename::String)
                             }
                         }
                     };
+                },
+                getFilteredChartsForTab(tabIndex) {
+                    if (!this.searchQuery) {
+                        return this.tabs[tabIndex].charts.map((chart, index) => ({
+                            ...chart,
+                            originalIndex: index
+                        }));
+                    }
+                    
+                    const query = this.searchQuery.toLowerCase();
+                    return this.tabs[tabIndex].charts
+                        .map((chart, index) => ({ ...chart, originalIndex: index }))
+                        .filter(chart => 
+                            chart.title.toLowerCase().includes(query) ||
+                            chart.chart_type.toLowerCase().includes(query)
+                        );
+                },
+                highlightSearchTerm(text) {
+                    if (!this.searchQuery) return text;
+                    
+                    const regex = new RegExp('(' + this.searchQuery + ')', 'gi');
+                    return text.replace(regex, '<span class="bg-yellow-200 text-yellow-800 px-1 rounded">\$1</span>');
                 }
             }
         }).mount('#app');
