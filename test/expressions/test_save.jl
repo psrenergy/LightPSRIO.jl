@@ -9,7 +9,7 @@ using Test
 include("../util.jl")
 
 @testset "Save" begin
-    L = LightPSRIO.initialize([joinpath(@__DIR__, "..", "data")])
+    L = LightPSRIO.initialize([get_data_directory()])
 
     LightPSRIO.run_script(
         L,
