@@ -17,8 +17,10 @@ function save(L::LuaState, dashboard::Dashboard, filename::String)
     case = get_case(L, 1)
 
     file = open(joinpath(case.path, "$filename.html"), "w")
-    
-    write(file, """
+
+    write(
+        file,
+        """
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -142,11 +144,14 @@ function save(L::LuaState, dashboard::Dashboard, filename::String)
             data() {
                 return {
                     activeTab: 0,
-                    tabs: """)
-    
+                    tabs: """,
+    )
+
     write(file, json_encode_dashboard(dashboard))
-    
-    write(file, """,
+
+    write(
+        file,
+        """,
                     chartInstances: {}
                 }
             },
@@ -324,18 +329,19 @@ function save(L::LuaState, dashboard::Dashboard, filename::String)
     </script>
 </body>
 </html>
-""")
-    
+""",
+    )
+
     close(file)
     return nothing
 end
 
 function json_encode_dashboard(dashboard::Dashboard)
     tabs_json = String[]
-    
+
     for tab in dashboard.tabs
         charts_json = String[]
-        
+
         for chart in tab.charts
             data_json = String[]
             for data_point in chart.data
@@ -349,7 +355,7 @@ function json_encode_dashboard(dashboard::Dashboard)
                 end
                 push!(data_json, "{" * join(point_parts, ", ") * "}")
             end
-            
+
             chart_json = """{
                 "title": "$(escape_json(chart.title))",
                 "chart_type": "$(escape_json(chart.chart_type))",
@@ -357,14 +363,14 @@ function json_encode_dashboard(dashboard::Dashboard)
             }"""
             push!(charts_json, chart_json)
         end
-        
+
         tab_json = """{
             "label": "$(escape_json(tab.label))",
             "charts": [$(join(charts_json, ", "))]
         }"""
         push!(tabs_json, tab_json)
     end
-    
+
     return "[" * join(tabs_json, ", ") * "]"
 end
 

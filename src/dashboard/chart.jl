@@ -2,7 +2,7 @@ mutable struct Chart
     title::String
     chart_type::String
     data::Vector{Dict{String, Any}}
-    
+
     function Chart(title::String, chart_type::String = "line")
         return new(title, chart_type, Dict{String, Any}[])
     end
