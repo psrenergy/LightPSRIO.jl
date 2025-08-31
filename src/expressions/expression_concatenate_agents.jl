@@ -1,8 +1,8 @@
-mutable struct ExpressionConcatenateAgents <: Expression
+mutable struct ExpressionConcatenateAgents <: AbstractExpression
     attributes::Attributes
-    expressions::Vector{Expression}
+    expressions::Vector{AbstractExpression}
 
-    function ExpressionConcatenateAgents(expressions::Vector{<:Expression})
+    function ExpressionConcatenateAgents(expressions::Vector{<:AbstractExpression})
         for expression in expressions
             println("CONCATENATE AGENTS: $(expression.attributes)")
         end
@@ -20,7 +20,7 @@ mutable struct ExpressionConcatenateAgents <: Expression
 end
 @define_lua_struct ExpressionConcatenateAgents
 
-function concatenate_agents(x::Expression...)
+function concatenate_agents(x::AbstractExpression...)
     return ExpressionConcatenateAgents([x...])
 end
 @define_lua_function concatenate_agents

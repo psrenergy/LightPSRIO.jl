@@ -1,4 +1,4 @@
-mutable struct ExpressionDataNumber{T <: Number} <: Expression
+mutable struct ExpressionDataNumber{T <: Number} <: AbstractExpression
     attributes::Attributes
     value::T
 
@@ -8,7 +8,7 @@ mutable struct ExpressionDataNumber{T <: Number} <: Expression
     end
 end
 
-Base.convert(::Type{Expression}, x::Number) = ExpressionDataNumber(x)
+Base.convert(::Type{AbstractExpression}, x::Number) = ExpressionDataNumber(x)
 
 Base.show(io::IO, e::ExpressionDataNumber) = print(io, "$(e.value)")
 

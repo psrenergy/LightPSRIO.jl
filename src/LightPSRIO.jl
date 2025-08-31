@@ -17,13 +17,21 @@ include("collections/collection_study.jl")
 include("attributes.jl")
 
 include("expressions/expression.jl")
-include("expressions/expression_aggregate_agents.jl")
-include("expressions/expression_aggregate_dimensions.jl")
-include("expressions/expression_binary.jl")
-include("expressions/expression_concatenate_agents.jl")
+
+# data expressions
 include("expressions/expression_data_number.jl")
 include("expressions/expression_data_quiver.jl")
-include("expressions/expression_unary.jl")
+
+# unary expressions
+include("expressions/unary/expression_convert.jl")
+include("expressions/expression_aggregate_agents.jl")
+include("expressions/expression_aggregate_dimensions.jl")
+
+# binary expressions
+include("expressions/expression_binary.jl")
+
+# other
+include("expressions/expression_concatenate_agents.jl")
 
 include("dashboard/chart.jl")
 include("dashboard/tab.jl")

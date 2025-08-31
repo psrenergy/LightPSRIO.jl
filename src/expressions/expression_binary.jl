@@ -1,10 +1,10 @@
-mutable struct ExpressionBinary{F <: Function} <: Expression
+mutable struct ExpressionBinary{F <: Function} <: AbstractBinary
     attributes::Attributes
-    e1::Expression
-    e2::Expression
+    e1::AbstractExpression
+    e2::AbstractExpression
     f::F
 
-    function ExpressionBinary(e1::Expression, e2::Expression, f::F) where {F <: Function}
+    function ExpressionBinary(e1::AbstractExpression, e2::AbstractExpression, f::F) where {F <: Function}
         println("BINARY: $(e1.attributes)")
         println("BINARY: $(e2.attributes)")
 
@@ -56,50 +56,39 @@ mutable struct ExpressionBinary{F <: Function} <: Expression
 end
 @define_lua_struct ExpressionBinary
 
-Base.:+(x::Expression, y::Expression) = ExpressionBinary(x, y, Base.:+)
-Base.:+(x::Expression, y) = ExpressionBinary(promote(x, y)..., Base.:+)
-Base.:+(x, y::Expression) = ExpressionBinary(promote(x, y)..., Base.:+)
+Base.:+(x::AbstractExpression, y::AbstractExpression) = ExpressionBinary(x, y, Base.:+)
+Base.:+(x::AbstractExpression, y) = ExpressionBinary(promote(x, y)..., Base.:+)
+Base.:+(x, y::AbstractExpression) = ExpressionBinary(promote(x, y)..., Base.:+)
 add(x, y) = Base.:+(x, y)
 @define_lua_function add
 
-Base.:-(x::Expression, y::Expression) = ExpressionBinary(x, y, Base.:−)
-Base.:-(x::Expression, y) = ExpressionBinary(promote(x, y)..., Base.:−)
-Base.:-(x, y::Expression) = ExpressionBinary(promote(x, y)..., Base.:−)
+Base.:-(x::AbstractExpression, y::AbstractExpression) = ExpressionBinary(x, y, Base.:−)
+Base.:-(x::AbstractExpression, y) = ExpressionBinary(promote(x, y)..., Base.:−)
+Base.:-(x, y::AbstractExpression) = ExpressionBinary(promote(x, y)..., Base.:−)
 sub(x, y) = Base.:-(x, y)
 @define_lua_function sub
 
-Base.:*(x::Expression, y::Expression) = ExpressionBinary(x, y, Base.:*)
-Base.:*(x::Expression, y) = ExpressionBinary(promote(x, y)..., Base.:*)
-Base.:*(x, y::Expression) = ExpressionBinary(promote(x, y)..., Base.:*)
+Base.:*(x::AbstractExpression, y::AbstractExpression) = ExpressionBinary(x, y, Base.:*)
+Base.:*(x::AbstractExpression, y) = ExpressionBinary(promote(x, y)..., Base.:*)
+Base.:*(x, y::AbstractExpression) = ExpressionBinary(promote(x, y)..., Base.:*)
 mul(x, y) = Base.:*(x, y)
 @define_lua_function mul
 
-Base.:/(x::Expression, y::Expression) = ExpressionBinary(x, y, Base.:/)
-Base.:/(x::Expression, y) = ExpressionBinary(promote(x, y)..., Base.:/)
-Base.:/(x, y::Expression) = ExpressionBinary(promote(x, y)..., Base.:/)
+Base.:/(x::AbstractExpression, y::AbstractExpression) = ExpressionBinary(x, y, Base.:/)
+Base.:/(x::AbstractExpression, y) = ExpressionBinary(promote(x, y)..., Base.:/)
+Base.:/(x, y::AbstractExpression) = ExpressionBinary(promote(x, y)..., Base.:/)
 div(x, y) = Base.:/(x, y)
 @define_lua_function div
 
-Base.:^(x::Expression, y::Expression) = ExpressionBinary(x, y, Base.:^)
-Base.:^(x::Expression, y) = ExpressionBinary(promote(x, y)..., Base.:^)
-Base.:^(x, y::Expression) = ExpressionBinary(promote(x, y)..., Base.:^)
+Base.:^(x::AbstractExpression, y::AbstractExpression) = ExpressionBinary(x, y, Base.:^)
+Base.:^(x::AbstractExpression, y) = ExpressionBinary(promote(x, y)..., Base.:^)
+Base.:^(x, y::AbstractExpression) = ExpressionBinary(promote(x, y)..., Base.:^)
 pow(x, y) = Base.:^(x, y)
 @define_lua_function pow
 
 # Base.show(io::IO, e::ExpressionBinary) = print(io, "($(e.e1) $(e.f) $(e.e2))")
 
-function start!(e::ExpressionBinary)
-    start!(e.e1)
-    start!(e.e2)
-    return nothing
-end
-
 function evaluate(e::ExpressionBinary; kwargs...)
     return e.f.(evaluate(e.e1; kwargs...), evaluate(e.e2; kwargs...))
 end
 
-function finish!(e::ExpressionBinary)
-    finish!(e.e1)
-    finish!(e.e2)
-    return nothing
-end

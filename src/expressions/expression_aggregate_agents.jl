@@ -1,9 +1,9 @@
-mutable struct ExpressionAggregateAgents <: Expression
+mutable struct ExpressionAggregateAgents <: AbstractExpression
     attributes::Attributes
-    e::Expression
+    e::AbstractExpression
     aggregate_function::AggregateFunction.T
 
-    function ExpressionAggregateAgents(e::Expression, aggregate_function::AggregateFunction.T, label::String)
+    function ExpressionAggregateAgents(e::AbstractExpression, aggregate_function::AggregateFunction.T, label::String)
         println("AGGREGATE AGENTS: $(e.attributes)")
 
         attributes = copy(e.attributes)
@@ -25,7 +25,7 @@ mutable struct ExpressionAggregateAgents <: Expression
 end
 @define_lua_struct ExpressionAggregateAgents
 
-function aggregate_agents(x::Expression, aggregate_function::AggregateFunction.T, label::String)
+function aggregate_agents(x::AbstractExpression, aggregate_function::AggregateFunction.T, label::String)
     return ExpressionAggregateAgents(x, aggregate_function, label)
 end
 @define_lua_function aggregate_agents
