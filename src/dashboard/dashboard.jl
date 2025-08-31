@@ -45,64 +45,113 @@ function save(L::LuaState, dashboard::Dashboard, filename::String)
     </script>
 </head>
 <body class="bg-gray-50 min-h-screen">
-    <div id="app" class="container mx-auto px-4 py-8 max-w-7xl">
-        <div class="mb-8">
-            <h1 class="text-4xl font-bold text-gray-900 mb-2">Dashboard</h1>
-            <p class="text-gray-600">Interactive data visualization</p>
-        </div>
+    <div id="app" class="flex h-screen bg-gray-50">
+        <!-- Mobile menu overlay -->
+        <div v-if="sidebarOpen" 
+             @click="sidebarOpen = false"
+             class="fixed inset-0 z-20 bg-black bg-opacity-50 lg:hidden"></div>
         
-        <!-- Search Bar -->
-        <div class="mb-6">
-            <div class="relative max-w-md">
-                <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                    </svg>
+        <!-- Sidebar -->
+        <div :class="[
+            'bg-white border-r border-gray-200 flex flex-col transition-transform duration-300 ease-in-out',
+            'w-80 lg:translate-x-0',
+            sidebarOpen ? 'translate-x-0 fixed inset-y-0 left-0 z-30' : '-translate-x-full fixed inset-y-0 left-0 z-30 lg:relative lg:translate-x-0'
+        ]">
+            <!-- Header -->
+            <div class="p-6 border-b border-gray-200">
+                <h1 class="text-2xl font-bold text-gray-900 mb-2">Dashboard</h1>
+                <p class="text-sm text-gray-600">Interactive data visualization</p>
+            </div>
+            
+            <!-- Search Bar -->
+            <div class="p-4 border-b border-gray-200">
+                <div class="relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                        </svg>
+                    </div>
+                    <input v-model="searchQuery" 
+                           type="text" 
+                           class="block w-full pl-9 pr-8 py-2 text-sm border border-gray-300 rounded-md placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-dashboard-blue focus:border-dashboard-blue" 
+                           placeholder="Search charts...">
+                    <div v-if="searchQuery" 
+                         @click="searchQuery = ''" 
+                         class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer">
+                        <svg class="h-4 w-4 text-gray-400 hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </div>
                 </div>
-                <input v-model="searchQuery" 
-                       type="text" 
-                       class="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-dashboard-blue focus:border-dashboard-blue text-sm" 
-                       placeholder="Search charts...">
-                <div v-if="searchQuery" 
-                     @click="searchQuery = ''" 
-                     class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer">
-                    <svg class="h-5 w-5 text-gray-400 hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                    </svg>
+            </div>
+
+            <!-- Navigation -->
+            <nav class="flex-1 overflow-y-auto p-4">
+                <div class="space-y-2">
+                    <button v-for="(tab, index) in tabs" :key="index"
+                            @click="activeTab = index"
+                            :class="[
+                                'w-full text-left px-4 py-3 rounded-lg transition-all duration-200 flex items-center justify-between group',
+                                activeTab === index 
+                                    ? 'bg-dashboard-blue text-white shadow-sm' 
+                                    : 'text-gray-700 hover:bg-gray-100 hover:text-gray-900'
+                            ]">
+                        <div class="flex items-center space-x-3">
+                            <div :class="[
+                                'w-2 h-2 rounded-full transition-colors',
+                                activeTab === index ? 'bg-white' : 'bg-gray-400'
+                            ]"></div>
+                            <span class="font-medium">{{ tab.label }}</span>
+                        </div>
+                        <span v-if="searchQuery && getFilteredChartsForTab(index).length > 0" 
+                              :class="[
+                                  'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium',
+                                  activeTab === index 
+                                      ? 'bg-white/20 text-white' 
+                                      : 'bg-dashboard-blue text-white'
+                              ]">
+                            {{ getFilteredChartsForTab(index).length }}
+                        </span>
+                    </button>
+                </div>
+            </nav>
+            
+            <!-- Footer -->
+            <div class="p-4 border-t border-gray-200">
+                <div class="text-xs text-gray-500 text-center">
+                    {{ tabs.reduce((total, tab) => total + tab.charts.length, 0) }} charts across {{ tabs.length }} tabs
                 </div>
             </div>
         </div>
-
-        <!-- Tab Navigation -->
-        <div class="mb-6">
-            <nav class="flex space-x-1 bg-gray-100 p-1 rounded-lg shadow-sm">
-                <button v-for="(tab, index) in tabs" :key="index"
-                        @click="activeTab = index"
-                        :class="[
-                            'px-4 py-2 text-sm font-medium rounded-md transition-all duration-200',
-                            activeTab === index 
-                                ? 'bg-white text-dashboard-blue shadow-sm ring-1 ring-dashboard-blue/20' 
-                                : 'text-gray-600 hover:text-gray-900 hover:bg-gray-200'
-                        ]">
-                    {{ tab.label }}
-                    <span v-if="searchQuery && getFilteredChartsForTab(index).length > 0" 
-                          class="ml-2 inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-dashboard-blue text-white">
-                        {{ getFilteredChartsForTab(index).length }}
-                    </span>
-                </button>
-            </nav>
-        </div>
         
-        <!-- Tab Content -->
-        <div class="space-y-6">
-            <div v-for="(tab, tabIndex) in tabs" :key="tabIndex" 
-                 v-show="activeTab === tabIndex"
-                 class="animate-fadeIn">
+        <!-- Main Content -->
+        <div class="flex-1 flex flex-col overflow-hidden lg:ml-0">
+            <!-- Content Header -->
+            <div class="bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between">
+                <!-- Mobile menu button -->
+                <button @click="sidebarOpen = !sidebarOpen" 
+                        class="lg:hidden p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-dashboard-blue">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
                 
-                <div class="mb-6">
-                    <h2 class="text-2xl font-semibold text-gray-800 mb-2">{{ tab.label }}</h2>
-                    <div class="h-0.5 w-20 bg-dashboard-blue rounded"></div>
+                <div class="flex-1 lg:flex-none">
+                    <div v-for="(tab, tabIndex) in tabs" :key="tabIndex" v-show="activeTab === tabIndex">
+                        <h2 class="text-xl font-semibold text-gray-800">{{ tab.label }}</h2>
+                        <p class="text-sm text-gray-600 mt-1">
+                            {{ searchQuery ? getFilteredChartsForTab(tabIndex).length : tab.charts.length }} 
+                            {{ searchQuery ? 'matching' : 'total' }} charts
+                        </p>
+                    </div>
                 </div>
+            </div>
+            
+            <!-- Content Area -->
+            <div class="flex-1 overflow-y-auto p-6">
+                <div v-for="(tab, tabIndex) in tabs" :key="tabIndex" 
+                     v-show="activeTab === tabIndex"
+                     class="animate-fadeIn h-full">
                 
                 <!-- Charts Grid -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -141,6 +190,7 @@ function save(L::LuaState, dashboard::Dashboard, filename::String)
                     </div>
                     <h3 class="text-lg font-medium text-gray-900 mb-2">No charts available</h3>
                     <p class="text-gray-500">This tab doesn't contain any charts yet.</p>
+                </div>
                 </div>
             </div>
         </div>
@@ -183,6 +233,7 @@ function save(L::LuaState, dashboard::Dashboard, filename::String)
                 return {
                     activeTab: 0,
                     searchQuery: '',
+                    sidebarOpen: false,
                     tabs: """,
     )
 
@@ -201,6 +252,8 @@ function save(L::LuaState, dashboard::Dashboard, filename::String)
             },
             watch: {
                 activeTab(newTab, oldTab) {
+                    // Close sidebar on mobile when tab is selected
+                    this.sidebarOpen = false;
                     this.\$nextTick(() => {
                         this.initializeChartsForTab(newTab);
                     });
