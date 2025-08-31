@@ -10,14 +10,29 @@
     <script
         src="https://cdn.jsdelivr.net/npm/chartjs-adapter-luxon@1.3.1/dist/chartjs-adapter-luxon.umd.min.js"></script>
     <style>
+        /* Make the chart fill the entire viewport */
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+
         body {
             font-family: Arial, sans-serif;
         }
 
         #chart-container {
-            width: 80%;
-            height: 400px;
-            margin: auto;
+            width: 100%;
+            height: 100vh; /* full viewport height */
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Ensure the canvas stretches to the container */
+        #mixedChart {
+            width: 100% !important;
+            height: 100% !important;
+            display: block;
         }
     </style>
 </head>
@@ -131,6 +146,7 @@
             type: 'line',
             data: data,
             options: {
+                maintainAspectRatio: false,
                 plugins: {
                     title: {
                         text: 'Hourly and Monthly Data for 2023',
