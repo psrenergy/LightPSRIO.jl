@@ -260,8 +260,10 @@ function save(L::LuaState, dashboard::Dashboard, filename::String)
                 },
                 searchQuery() {
                     this.\$nextTick(() => {
-                        // Re-initialize charts for the active tab when search changes
-                        this.initializeChartsForTab(this.activeTab);
+                        // Re-initialize charts for all tabs when search changes
+                        this.tabs.forEach((tab, tabIndex) => {
+                            this.initializeChartsForTab(tabIndex);
+                        });
                     });
                 }
             },
@@ -274,12 +276,23 @@ function save(L::LuaState, dashboard::Dashboard, filename::String)
                     });
                 },
                 initializeChartsForTab(tabIndex) {
+                    // First, destroy existing chart instances for this tab
+                    Object.keys(this.chartInstances).forEach(chartId => {
+                        if (chartId.startsWith('chart-' + tabIndex + '-')) {
+                            if (this.chartInstances[chartId]) {
+                                this.chartInstances[chartId].destroy();
+                                delete this.chartInstances[chartId];
+                            }
+                        }
+                    });
+                    
+                    // Then create new charts for filtered results
                     const filteredCharts = this.getFilteredChartsForTab(tabIndex);
                     filteredCharts.forEach((chart) => {
                         const chartId = 'chart-' + tabIndex + '-' + chart.originalIndex;
                         const canvas = document.getElementById(chartId);
                         
-                        if (canvas && !this.chartInstances[chartId]) {
+                        if (canvas) {
                             const ctx = canvas.getContext('2d');
                             
                             const chartConfig = {
