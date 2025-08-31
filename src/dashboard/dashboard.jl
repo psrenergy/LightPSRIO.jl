@@ -103,14 +103,14 @@ function save(L::LuaState, dashboard::Dashboard, filename::String)
                             ]"></div>
                             <span class="font-medium">{{ tab.label }}</span>
                         </div>
-                        <span v-if="searchQuery && getFilteredChartsForTab(index).length > 0" 
+                        <span v-if="searchQuery && getVisibleChartsCount(index) > 0" 
                               :class="[
                                   'inline-flex items-center px-2 py-1 rounded-full text-xs font-medium',
                                   activeTab === index 
                                       ? 'bg-white/20 text-white' 
                                       : 'bg-dashboard-blue text-white'
                               ]">
-                            {{ getFilteredChartsForTab(index).length }}
+                            {{ getVisibleChartsCount(index) }}
                         </span>
                     </button>
                 </div>
@@ -140,7 +140,7 @@ function save(L::LuaState, dashboard::Dashboard, filename::String)
                     <div v-for="(tab, tabIndex) in tabs" :key="tabIndex" v-show="activeTab === tabIndex">
                         <h2 class="text-xl font-semibold text-gray-800">{{ tab.label }}</h2>
                         <p class="text-sm text-gray-600 mt-1">
-                            {{ searchQuery ? getFilteredChartsForTab(tabIndex).length : tab.charts.length }} 
+                            {{ searchQuery ? getVisibleChartsCount(tabIndex) : tab.charts.length }} 
                             {{ searchQuery ? 'matching' : 'total' }} charts
                         </p>
                     </div>
@@ -155,21 +155,22 @@ function save(L::LuaState, dashboard::Dashboard, filename::String)
                 
                 <!-- Charts Grid -->
                 <div class="space-y-6">
-                    <div v-for="(chart, chartIndex) in getFilteredChartsForTab(tabIndex)" :key="chartIndex" 
+                    <div v-for="(chart, chartIndex) in tab.charts" :key="'chart-' + tabIndex + '-' + chartIndex" 
+                         v-show="isChartVisible(chart)"
                          class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200">
                         <div class="mb-4">
                             <h3 class="text-lg font-semibold text-gray-800" v-html="highlightSearchTerm(chart.title)"></h3>
                             <div class="text-sm text-gray-500 capitalize">{{ chart.chart_type }} chart</div>
                         </div>
                         <div class="relative h-96">
-                            <canvas :id="'chart-' + tabIndex + '-' + chart.originalIndex" 
+                            <canvas :id="'chart-' + tabIndex + '-' + chartIndex" 
                                     class="max-w-full max-h-full"></canvas>
                         </div>
                     </div>
                 </div>
                 
                 <!-- No Search Results -->
-                <div v-if="searchQuery && getFilteredChartsForTab(tabIndex).length === 0" 
+                <div v-if="searchQuery && getVisibleChartsCount(tabIndex) === 0" 
                      class="text-center py-12 bg-white rounded-xl border border-gray-200">
                     <div class="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
                         <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -247,98 +248,77 @@ function save(L::LuaState, dashboard::Dashboard, filename::String)
             },
             mounted() {
                 this.\$nextTick(() => {
-                    this.initializeCharts();
+                    this.initializeAllCharts();
                 });
             },
             watch: {
                 activeTab(newTab, oldTab) {
                     // Close sidebar on mobile when tab is selected
                     this.sidebarOpen = false;
-                    this.\$nextTick(() => {
-                        this.initializeChartsForTab(newTab);
-                    });
-                },
-                searchQuery() {
-                    this.\$nextTick(() => {
-                        // Re-initialize charts for all tabs when search changes
-                        this.tabs.forEach((tab, tabIndex) => {
-                            this.initializeChartsForTab(tabIndex);
-                        });
-                    });
                 }
             },
             methods: {
-                initializeCharts() {
+                initializeAllCharts() {
                     this.tabs.forEach((tab, tabIndex) => {
-                        if (tabIndex === this.activeTab) {
-                            this.initializeChartsForTab(tabIndex);
-                        }
+                        tab.charts.forEach((chart, chartIndex) => {
+                            const chartId = 'chart-' + tabIndex + '-' + chartIndex;
+                            this.createChart(chartId, chart);
+                        });
                     });
                 },
-                initializeChartsForTab(tabIndex) {
-                    // First, destroy existing chart instances for this tab
-                    Object.keys(this.chartInstances).forEach(chartId => {
-                        if (chartId.startsWith('chart-' + tabIndex + '-')) {
-                            if (this.chartInstances[chartId]) {
-                                this.chartInstances[chartId].destroy();
-                                delete this.chartInstances[chartId];
-                            }
-                        }
-                    });
+                createChart(chartId, chart) {
+                    const canvas = document.getElementById(chartId);
+                    if (!canvas) return;
                     
-                    // Then create new charts for filtered results
-                    const filteredCharts = this.getFilteredChartsForTab(tabIndex);
-                    filteredCharts.forEach((chart) => {
-                        const chartId = 'chart-' + tabIndex + '-' + chart.originalIndex;
-                        const canvas = document.getElementById(chartId);
-                        
-                        if (canvas) {
-                            const ctx = canvas.getContext('2d');
-                            
-                            const chartConfig = {
-                                type: chart.chart_type,
-                                data: this.prepareChartData(chart),
-                                options: {
-                                    responsive: true,
-                                    maintainAspectRatio: false,
-                                    plugins: {
-                                        legend: {
-                                            display: true,
-                                            position: 'bottom',
-                                            labels: {
-                                                padding: 20,
-                                                font: {
-                                                    family: 'system-ui, -apple-system, sans-serif',
-                                                    size: 12
-                                                },
-                                                color: '#6b7280' // gray-500
-                                            }
+                    // Destroy existing chart if it exists
+                    if (this.chartInstances[chartId]) {
+                        this.chartInstances[chartId].destroy();
+                    }
+                    
+                    const ctx = canvas.getContext('2d');
+                    
+                    const chartConfig = {
+                        type: chart.chart_type,
+                        data: this.prepareChartData(chart),
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: true,
+                                    position: 'bottom',
+                                    labels: {
+                                        padding: 20,
+                                        font: {
+                                            family: 'system-ui, -apple-system, sans-serif',
+                                            size: 12
                                         },
-                                        tooltip: {
-                                            backgroundColor: '#1f2937', // gray-800
-                                            titleColor: '#f9fafb',       // gray-50
-                                            bodyColor: '#f9fafb',        // gray-50
-                                            borderColor: '#374151',      // gray-700
-                                            borderWidth: 1,
-                                            cornerRadius: 8,
-                                            titleFont: {
-                                                family: 'system-ui, -apple-system, sans-serif',
-                                                size: 13,
-                                                weight: 600
-                                            },
-                                            bodyFont: {
-                                                family: 'system-ui, -apple-system, sans-serif',
-                                                size: 12
-                                            }
-                                        }
+                                        color: '#6b7280'
+                                    }
+                                },
+                                tooltip: {
+                                    backgroundColor: '#1f2937',
+                                    titleColor: '#f9fafb',
+                                    bodyColor: '#f9fafb',
+                                    borderColor: '#374151',
+                                    borderWidth: 1,
+                                    cornerRadius: 8,
+                                    titleFont: {
+                                        family: 'system-ui, -apple-system, sans-serif',
+                                        size: 13,
+                                        weight: 600
                                     },
-                                    scales: this.getScaleConfig(chart.chart_type)
+                                    bodyFont: {
+                                        family: 'system-ui, -apple-system, sans-serif',
+                                        size: 12
+                                    }
                                 }
-                            };
-                            
-                            this.chartInstances[chartId] = new Chart(ctx, chartConfig);
+                            },
+                            scales: this.getScaleConfig(chart.chart_type)
                         }
-                    });
+                    };
+                    
+                    this.chartInstances[chartId] = new Chart(ctx, chartConfig);
                 },
                 prepareChartData(chart) {
                     if (!chart.data || chart.data.length === 0) {
@@ -355,25 +335,25 @@ function save(L::LuaState, dashboard::Dashboard, filename::String)
                     }
                     
                     const colors = [
-                        'rgba(59, 130, 246, 0.8)',   // blue-500
-                        'rgba(16, 185, 129, 0.8)',   // emerald-500  
-                        'rgba(245, 158, 11, 0.8)',   // amber-500
-                        'rgba(239, 68, 68, 0.8)',    // red-500
-                        'rgba(139, 92, 246, 0.8)',   // violet-500
-                        'rgba(236, 72, 153, 0.8)',   // pink-500
-                        'rgba(6, 182, 212, 0.8)',    // cyan-500
-                        'rgba(34, 197, 94, 0.8)'     // green-500
+                        'rgba(59, 130, 246, 0.8)',
+                        'rgba(16, 185, 129, 0.8)',
+                        'rgba(245, 158, 11, 0.8)',
+                        'rgba(239, 68, 68, 0.8)',
+                        'rgba(139, 92, 246, 0.8)',
+                        'rgba(236, 72, 153, 0.8)',
+                        'rgba(6, 182, 212, 0.8)',
+                        'rgba(34, 197, 94, 0.8)'
                     ];
                     
                     const borderColors = [
-                        'rgba(59, 130, 246, 1)',     // blue-500
-                        'rgba(16, 185, 129, 1)',     // emerald-500
-                        'rgba(245, 158, 11, 1)',     // amber-500
-                        'rgba(239, 68, 68, 1)',      // red-500
-                        'rgba(139, 92, 246, 1)',     // violet-500
-                        'rgba(236, 72, 153, 1)',     // pink-500
-                        'rgba(6, 182, 212, 1)',      // cyan-500
-                        'rgba(34, 197, 94, 1)'       // green-500
+                        'rgba(59, 130, 246, 1)',
+                        'rgba(16, 185, 129, 1)',
+                        'rgba(245, 158, 11, 1)',
+                        'rgba(239, 68, 68, 1)',
+                        'rgba(139, 92, 246, 1)',
+                        'rgba(236, 72, 153, 1)',
+                        'rgba(6, 182, 212, 1)',
+                        'rgba(34, 197, 94, 1)'
                     ];
                     
                     if (chart.chart_type === 'pie' || chart.chart_type === 'doughnut') {
@@ -409,11 +389,11 @@ function save(L::LuaState, dashboard::Dashboard, filename::String)
                         y: {
                             beginAtZero: true,
                             grid: {
-                                color: '#f1f5f9', // gray-100
-                                borderColor: '#e2e8f0' // gray-200
+                                color: '#f1f5f9',
+                                borderColor: '#e2e8f0'
                             },
                             ticks: {
-                                color: '#6b7280', // gray-500
+                                color: '#6b7280',
                                 font: {
                                     family: 'system-ui, -apple-system, sans-serif',
                                     size: 11
@@ -422,11 +402,11 @@ function save(L::LuaState, dashboard::Dashboard, filename::String)
                         },
                         x: {
                             grid: {
-                                color: '#f1f5f9', // gray-100
-                                borderColor: '#e2e8f0' // gray-200
+                                color: '#f1f5f9',
+                                borderColor: '#e2e8f0'
                             },
                             ticks: {
-                                color: '#6b7280', // gray-500
+                                color: '#6b7280',
                                 font: {
                                     family: 'system-ui, -apple-system, sans-serif',
                                     size: 11
@@ -435,21 +415,17 @@ function save(L::LuaState, dashboard::Dashboard, filename::String)
                         }
                     };
                 },
-                getFilteredChartsForTab(tabIndex) {
-                    if (!this.searchQuery) {
-                        return this.tabs[tabIndex].charts.map((chart, index) => ({
-                            ...chart,
-                            originalIndex: index
-                        }));
-                    }
+                isChartVisible(chart) {
+                    if (!this.searchQuery) return true;
                     
                     const query = this.searchQuery.toLowerCase();
-                    return this.tabs[tabIndex].charts
-                        .map((chart, index) => ({ ...chart, originalIndex: index }))
-                        .filter(chart => 
-                            chart.title.toLowerCase().includes(query) ||
-                            chart.chart_type.toLowerCase().includes(query)
-                        );
+                    return chart.title.toLowerCase().includes(query) ||
+                           chart.chart_type.toLowerCase().includes(query);
+                },
+                getVisibleChartsCount(tabIndex) {
+                    if (!this.searchQuery) return this.tabs[tabIndex].charts.length;
+                    
+                    return this.tabs[tabIndex].charts.filter(chart => this.isChartVisible(chart)).length;
                 },
                 highlightSearchTerm(text) {
                     if (!this.searchQuery) return text;
