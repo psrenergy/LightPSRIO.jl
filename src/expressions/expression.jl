@@ -76,3 +76,19 @@ function finish!(e::AbstractBinary)
     finish!(e.e2)
     return nothing
 end
+
+abstract type AbstractVariadic <: AbstractExpression end
+
+function start!(e::AbstractVariadic)
+    for expression in e.expressions
+        start!(expression)
+    end
+    return nothing
+end
+
+function finish!(e::AbstractVariadic)
+    for expression in e.expressions
+        finish!(expression)
+    end
+    return nothing
+end

@@ -6,7 +6,7 @@ using LightPSRIO
 using Quiver
 using Test
 
-include("../util.jl")
+include("../../util.jl")
 
 @testset "Aggregate Dimensions" begin
     create_quiver("input1"; n_stages = 2, n_scenarios = 2, n_blocks = 2, constant = 2.0)

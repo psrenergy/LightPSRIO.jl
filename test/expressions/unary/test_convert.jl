@@ -6,7 +6,7 @@ using LightPSRIO
 using Quiver
 using Test
 
-include("../util.jl")
+include("../../util.jl")
 
 @testset "Convert" begin
     L = LightPSRIO.initialize([joinpath(@__DIR__, "..", "data")])
