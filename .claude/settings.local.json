@@ -3,7 +3,8 @@
     "allow": [
       "Bash(julia:*)",
       "Bash(dir:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(cmd /c:*)"
     ],
     "deny": [],
     "ask": []
