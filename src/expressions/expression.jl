@@ -49,5 +49,5 @@ function save(L::LuaState, e::Expression, filename::String)
 
     return nothing
 end
-@define_lua_function_with_state save
+@define_lua_function save
 

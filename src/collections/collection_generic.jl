@@ -7,7 +7,7 @@ mutable struct Generic
         return new(case_index, case.path)
     end
 end
-@define_lua_struct_with_state Generic
+@define_lua_struct Generic
 
 function load(generic::Generic, filename::String)
     return ExpressionDataQuiver(generic.path, filename)
