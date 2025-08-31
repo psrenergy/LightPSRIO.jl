@@ -6,6 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Testing
 - Run all tests: `julia --project=. -e "import Pkg; Pkg.test()"`
+- Run specific test file: `julia --project=. test/runtests.jl test_filename.jl`
 - Or use convenience scripts:
   - Windows: `test\test.bat`
   - Unix/Linux: `test/test.sh`
@@ -43,6 +44,12 @@ LightPSRIO.jl is a Julia package that provides a Lua-scriptable interface for wo
 - `Quiver.Reader`/`Quiver.Writer`: CSV file I/O with support for multi-dimensional time series data
 - `Generic` collection type for loading data files by name
 
+**Dashboard System**: Interactive HTML dashboard generation with:
+- `Dashboard`: Container for multiple tabs of visualizations
+- `Tab`: Organizational unit containing multiple charts
+- `Chart`: Individual data visualization (line, bar, pie, doughnut charts)
+- Vue.js-based frontend with Tailwind CSS styling and Chart.js integration
+
 ### Key Design Patterns
 
 - Expression trees are lazily evaluated - operations build the tree structure, evaluation happens on-demand
@@ -55,8 +62,9 @@ LightPSRIO.jl is a Julia package that provides a Lua-scriptable interface for wo
 1. Initialize Lua state and register Julia types/functions
 2. Execute Lua script that builds expression trees using `Generic:load()` and operators
 3. Save results using `expression:save()` which evaluates across all dimensions and writes to CSV
+4. Generate interactive HTML dashboards using `Dashboard`, `Tab`, and `Chart` components
 
-The package is designed for interactive data analysis workflows where users can write mathematical expressions in Lua that operate on multi-dimensional datasets stored as CSV files.
+The package is designed for interactive data analysis workflows where users can write mathematical expressions in Lua that operate on multi-dimensional datasets stored as CSV files, with optional HTML dashboard generation for visualization.
 
 ### Lua State Management
 
@@ -75,14 +83,6 @@ The Lua integration is managed through `state.jl` with these key functions:
   - `ExpressionUnary`/`ExpressionBinary`: Arithmetic operation nodes
   - `ExpressionAggregateAgents`: Aggregation over agent dimensions
   - `ExpressionAggregateDimensions`: Aggregation over dimensions operations
+  - `ExpressionConcatenateAgents`: Concatenation operations across agent dimensions
 
 All expression types follow the lifecycle: `start!()` → `evaluate()` → `finish!()`
-
-### Testing and Development Workflow
-
-The main test simply calls `LightPSRIO.debug()` which demonstrates the full workflow:
-1. Initialize Lua state
-2. Load data from CSV files using `Generic:load()`
-3. Perform arithmetic operations and aggregations in Lua
-4. Save results back to CSV files
-5. Clean up Lua state
