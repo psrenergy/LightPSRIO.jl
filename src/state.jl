@@ -107,6 +107,7 @@ function initialize(paths::Vector{String})
     @push_lua_struct(
         L,
         Chart,
+        "add_data", add_data
     )
 
     @push_lua_struct(
