@@ -60,7 +60,6 @@ function save(L::LuaState, dashboard::Dashboard, filename::String)
             <!-- Header -->
             <div class="p-6 border-b border-gray-200">
                 <h1 class="text-2xl font-bold text-gray-900 mb-2">Dashboard</h1>
-                <p class="text-sm text-gray-600">Interactive data visualization</p>
             </div>
             
             <!-- Search Bar -->

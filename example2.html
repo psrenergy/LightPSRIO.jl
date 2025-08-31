@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ECharts: Multi-Frequency Time Series (2023 Hourly vs Monthly)</title>
+  <style>
+    html, body { height: 100%; margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, Arial, "Apple Color Emoji", "Segoe UI Emoji"; background:#0b0f14; color:#eaeef2; }
+    .container { max-width: 1100px; margin: 24px auto; padding: 0 16px; }
+    h1 { font-size: 20px; font-weight: 600; margin: 0 0 8px 0; }
+    p  { margin: 8px 0 16px 0; line-height: 1.5; color:#aeb8c4; }
+    #chart { width: 100%; height: 560px; background:#111926; border: 1px solid #1b2636; border-radius: 12px; }
+    .note { font-size: 12px; color:#8aa2c0; }
+    code { background:#0f1521; padding:2px 6px; border-radius:6px; color:#b9d3ff; }
+    a { color:#8ab4ff; text-decoration: none; border-bottom:1px dotted #274b8a; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Multi-Frequency Time Series with ECharts</h1>
+    <p>
+      This chart mixes two different sampling frequencies on a single time axis:
+      <strong>2023 Hourly</strong> (line) and <strong>2023 Monthly</strong> (bar).
+      Use the legend and zoom controls to focus on a range. The tooltip adapts to each series.
+    </p>
+    <div id="chart"></div>
+    <p class="note">
+      Tip: drag on the chart or use the sliders below to zoom. Click legend items to toggle series.
+    </p>
+  </div>
+
+  <!-- ECharts via CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+  <script>
+  (function() {
+    const el = document.getElementById('chart');
+    const chart = echarts.init(el, null, {renderer:'canvas'});
+
+    // ---------- Generate synthetic data ----------
+    // Hourly data for entire 2023 (non-leap: 8760 points).
+    function genHourlyData2023() {
+      const begin = new Date(Date.UTC(2023, 0, 1, 0, 0, 0)); // Jan 1, 2023 00:00 UTC
+      const end   = new Date(Date.UTC(2023, 11, 31, 23, 0, 0)); // Dec 31, 2023 23:00 UTC
+      const out = [];
+      let t = begin.getTime();
+      const hour = 3600 * 1000;
+
+      // Create a smooth seasonal + daily pattern with a bit of noise
+      while (t <= end.getTime()) {
+        const d = new Date(t);
+        const dayOfYear = Math.floor((t - Date.UTC(2023,0,1)) / (24*3600*1000));
+        const hourOfDay = d.getUTCHours();
+
+        const seasonal = 20 * Math.sin((2 * Math.PI * (dayOfYear+10)) / 365); // slow yearly
+        const daily    = 8  * Math.sin((2 * Math.PI * (hourOfDay)) / 24);     // daily cycle
+        const trend    = (dayOfYear / 365) * 10;                               // slight upward trend
+        const noise    = (Math.random() - 0.5) * 2;                            // small noise
+        const value    = 100 + seasonal + daily + trend + noise;
+
+        out.push([d.toISOString(), +value.toFixed(2)]);
+        t += hour;
+      }
+      return out;
+    }
+
+    // Monthly data for each month in 2023 (12 points).
+    function genMonthlyData2023() {
+      const out = [];
+      for (let m = 0; m < 12; m++) {
+        // place monthly point at mid-month (15th 12:00 UTC) for better alignment in tooltip
+        const d = new Date(Date.UTC(2023, m, 15, 12, 0, 0));
+        // A smoother, low-noise signal to contrast with hourly
+        const seasonal = 25 * Math.sin((2 * Math.PI * (m + 1)) / 12);
+        const trend = (m / 11) * 15;
+        const base = 120 + seasonal + trend;
+        out.push([d.toISOString(), +base.toFixed(2)]);
+      }
+      return out;
+    }
+
+    const hourly = genHourlyData2023();
+    const monthly = genMonthlyData2023();
+
+    // ---------- Chart option ----------
+    const option = {
+      backgroundColor: '#111926',
+      animation: true,
+      animationDuration: 600,
+      grid: { left: 48, right: 24, top: 36, bottom: 80 },
+      legend: { top: 6, textStyle: { color: '#c9d5e3' } },
+      toolbox: {
+        right: 12, top: 6,
+        feature: {
+          dataZoom: { yAxisIndex: 'none' },
+          restore: {},
+          saveAsImage: { pixelRatio: 2 }
+        },
+        iconStyle: { borderColor: '#c9d5e3' }
+      },
+      tooltip: {
+        trigger: 'axis',
+        axisPointer: { type: 'cross' },
+        backgroundColor: 'rgba(20,28,38,0.95)',
+        borderColor: '#274b8a',
+        textStyle: { color: '#dfe8f5' },
+        formatter: function(params) {
+          if (!params || !params.length) return '';
+          const dateStr = new Date(params[0].axisValue).toUTCString();
+          let html = '<div style="font-weight:600;margin-bottom:6px;">' + dateStr + '</div>';
+          params.forEach(p => {
+            html += '<div style="margin:2px 0;">' +
+                    '<span style="display:inline-block;width:10px;height:10px;border-radius:50%;background:' + p.color + ';margin-right:6px;"></span>' +
+                    (p.seriesName || 'Series') + ': <strong>' + p.data[1] + '</strong>' +
+                    '</div>';
+          });
+          return html;
+        }
+      },
+      dataZoom: [
+        { type: 'inside', throttle: 50, start: 0, end: 100 },
+      ],
+      xAxis: {
+        type: 'time',
+        boundaryGap: false,
+        axisLine: { lineStyle: { color: '#2a3a52' } },
+        axisLabel: { color: '#9fb1c9' },
+        splitLine: { show: true, lineStyle: { color: '#1b2636' } }
+      },
+      yAxis: {
+        type: 'value',
+        axisLine: { lineStyle: { color: '#2a3a52' } },
+        axisLabel: { color: '#9fb1c9' },
+        splitLine: { show: true, lineStyle: { color: '#1b2636' } }
+      },
+      series: [
+        {
+          name: 'Hourly (2023)',
+          type: 'line',
+          showSymbol: false,
+          sampling: 'lttb', // down-sample for performance/clarity when zoomed out
+          smooth: 0.2,
+          lineStyle: { width: 1.25 },
+          emphasis: { focus: 'series' },
+          large: true,
+          data: hourly
+        },
+        {
+          name: 'Monthly (2023)',
+          type: 'bar',
+          barWidth: '50%',
+          z: 3,
+          emphasis: { focus: 'series' },
+          data: monthly
+        }
+      ]
+    };
+
+    chart.setOption(option);
+
+    // Handle resize
+    window.addEventListener('resize', () => chart.resize());
+  })();
+  </script>
+</body>
+</html>
