@@ -154,14 +154,14 @@ function save(L::LuaState, dashboard::Dashboard, filename::String)
                      class="animate-fadeIn h-full">
                 
                 <!-- Charts Grid -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                <div class="space-y-6">
                     <div v-for="(chart, chartIndex) in getFilteredChartsForTab(tabIndex)" :key="chartIndex" 
                          class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow duration-200">
                         <div class="mb-4">
                             <h3 class="text-lg font-semibold text-gray-800" v-html="highlightSearchTerm(chart.title)"></h3>
                             <div class="text-sm text-gray-500 capitalize">{{ chart.chart_type }} chart</div>
                         </div>
-                        <div class="relative h-80">
+                        <div class="relative h-96">
                             <canvas :id="'chart-' + tabIndex + '-' + chart.originalIndex" 
                                     class="max-w-full max-h-full"></canvas>
                         </div>

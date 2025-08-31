@@ -124,6 +124,7 @@
                 {
                     label: 'Monthly 2023',
                     data: monthly,
+                    unit: 'month',
                     borderColor: CHART_COLORS.red,
                     backgroundColor: transparentize(CHART_COLORS.red, 0.6),
                     borderWidth: 2,
@@ -133,6 +134,7 @@
                 {
                     label: 'Hourly 2023',
                     data: hourly,
+                    unit: 'hour',
                     borderColor: CHART_COLORS.blue,
                     backgroundColor: transparentize(CHART_COLORS.blue, 0.4),
                     borderWidth: 1,
@@ -151,6 +153,35 @@
                     title: {
                         text: 'Hourly and Monthly Data for 2023',
                         display: true
+                    },
+                    tooltip: {
+                        callbacks: {
+                            // Title will show month name for monthly dataset, and full hour for hourly dataset
+                            title: function(items) {
+                                if (!items || !items.length) return '';
+                                const item = items[0];
+                                const ds = item.dataset || {};
+                                const raw = item.raw || {};
+                                let dt = null;
+                                if (raw.x && typeof raw.x === 'string') {
+                                    dt = window.luxon.DateTime.fromISO(raw.x);
+                                } else if (item.parsed && typeof item.parsed.x === 'number') {
+                                    dt = window.luxon.DateTime.fromMillis(item.parsed.x);
+                                }
+                                if (!dt) return '';
+                                if (ds.unit === 'month') {
+                                    return dt.toFormat('LLLL yyyy'); // e.g. March 2023
+                                }
+                                if (ds.unit === 'hour') {
+                                    return dt.toFormat('MMM d yyyy HH:mm'); // e.g. Mar 5 2023 14:00
+                                }
+                                return dt.toISO();
+                            },
+                            label: function(item) {
+                                const v = (item.parsed && typeof item.parsed.y !== 'undefined') ? item.parsed.y : (item.raw && item.raw.y);
+                                return (item.dataset && item.dataset.label ? item.dataset.label + ': ' : '') + v;
+                            }
+                        }
                     }
                 },
                 interaction: {
