@@ -19,8 +19,8 @@ include("attributes.jl")
 include("expressions/expression.jl")
 
 # data expressions
-include("expressions/expression_data_number.jl")
-include("expressions/expression_data_quiver.jl")
+include("expressions/data/number.jl")
+include("expressions/data/quiver.jl")
 
 # unary expressions
 include("expressions/unary/convert.jl")
@@ -28,7 +28,7 @@ include("expressions/unary/aggregate_agents.jl")
 include("expressions/unary/aggregate_dimensions.jl")
 
 # binary expressions
-include("expressions/expression_binary.jl")
+include("expressions/binary/binary.jl")
 
 # other
 include("expressions/expression_concatenate_agents.jl")
