@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(julia:*)",
-      "Bash(dir:*)"
+      "Bash(dir:*)",
+      "Bash(grep:*)"
     ],
     "deny": [],
     "ask": []
