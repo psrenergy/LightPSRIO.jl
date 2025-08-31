@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mixed Chart Example with Hourly and Monthly Data</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        #chart-container {
+            width: 80%;
+            height: 400px;
+            margin: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="chart-container">
+        <canvas id="mixedChart"></canvas>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('mixedChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [
+                    '00:00', '01:00', '02:00', '03:00', '04:00', '05:00', '06:00', '07:00', '08:00', '09:00',
+                    '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00', '18:00', '19:00',
+                    '20:00', '21:00', '22:00', '23:00', // Hourly data
+                ],
+                datasets: [
+                    {
+                        label: 'Hourly Traffic (Line)',
+                        data: [
+                            100, 150, 130, 170, 160, 180, 200, 210, 190, 220, 240, 230,
+                            250, 270, 280, 300, 310, 330, 350, 370, 380, 400, 420, 440
+                        ], // Hourly data points
+                        borderColor: 'rgba(75, 192, 192, 1)',
+                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        fill: false,
+                        tension: 0.1,
+                        type: 'line',
+                        yAxisID: 'y-axis-1',
+                    },
+                    {
+                        label: 'Monthly Sales (Line)',
+                        data: [30, 50, 80, 40, 60, 70], // Monthly data points
+                        borderColor: 'rgba(255, 159, 64, 1)',
+                        backgroundColor: 'rgba(255, 159, 64, 0.2)',
+                        fill: false,
+                        tension: 0.1,
+                        type: 'line',
+                        yAxisID: 'y-axis-2',
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    yAxes: [{
+                        id: 'y-axis-1',
+                        type: 'linear',
+                        position: 'left',
+                        ticks: {
+                            beginAtZero: true,
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Traffic'
+                        }
+                    }, {
+                        id: 'y-axis-2',
+                        type: 'linear',
+                        position: 'right',
+                        ticks: {
+                            beginAtZero: true,
+                        },
+                        scaleLabel: {
+                            display: true,
+                            labelString: 'Sales'
+                        }
+                    }],
+                    xAxes: [{
+                        ticks: {
+                            autoSkip: false,
+                        },
+                    }]
+                },
+                title: {
+                    display: true,
+                    text: 'Mixed Chart Example with Hourly and Monthly Data'
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
