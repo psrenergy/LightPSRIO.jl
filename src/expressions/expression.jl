@@ -54,12 +54,12 @@ end
 abstract type AbstractUnary <: AbstractExpression end
 
 function start!(e::AbstractUnary)
-    start!(e.e)
+    start!(e.e1)
     return nothing
 end
 
 function finish!(e::AbstractUnary)
-    finish!(e.e)
+    finish!(e.e1)
     return nothing
 end
 

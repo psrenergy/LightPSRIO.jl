@@ -1,14 +1,14 @@
-mutable struct ExpressionAggregateDimensions <: AbstractExpression
+mutable struct ExpressionAggregateDimensions <: AbstractUnary
     attributes::Attributes
-    e::AbstractExpression
+    e1::AbstractExpression
     aggregate_function::AggregateFunction.T
     dimension_symbol::Symbol
     dimension_original_size::Int
 
-    function ExpressionAggregateDimensions(e::AbstractExpression, dimension::String, aggregate_function::AggregateFunction.T)
-        println("AGGREGATE ($dimension): $(e.attributes)")
+    function ExpressionAggregateDimensions(e1::AbstractExpression, dimension::String, aggregate_function::AggregateFunction.T)
+        println("AGGREGATE ($dimension): $(e1.attributes)")
 
-        attributes = copy(e.attributes)
+        attributes = copy(e1.attributes)
         dimension_symbol = Symbol(dimension)
 
         dimension_index = findfirst(==(dimension_symbol), attributes.dimensions)
@@ -22,7 +22,7 @@ mutable struct ExpressionAggregateDimensions <: AbstractExpression
 
         return new(
             attributes,
-            e,
+            e1,
             aggregate_function,
             dimension_symbol,
             dimension_original_size,
@@ -35,10 +35,6 @@ function aggregate(x::AbstractExpression, dimension::String, aggregate_function:
     return ExpressionAggregateDimensions(x, dimension, aggregate_function)
 end
 @define_lua_function aggregate
-
-function start!(e::ExpressionAggregateDimensions)
-    return start!(e.e)
-end
 
 function evaluate(e::ExpressionAggregateDimensions; kwargs...)
     if !has_data(e)
@@ -57,7 +53,7 @@ function evaluate(e::ExpressionAggregateDimensions; kwargs...)
             NamedTuple{(e.dimension_symbol,)}((i,)),
         )
 
-        current_value = evaluate(e.e; modified_kwargs...)
+        current_value = evaluate(e.e1; modified_kwargs...)
         data[i] .= current_value
     end
 
@@ -72,8 +68,4 @@ function evaluate(e::ExpressionAggregateDimensions; kwargs...)
     else
         error("Aggregate function $(e.aggregate_function) not implemented yet.")
     end
-end
-
-function finish!(e::ExpressionAggregateDimensions)
-    return finish!(e.e)
 end

@@ -1,14 +1,14 @@
-mutable struct ExpressionAggregateAgents <: AbstractExpression
+mutable struct ExpressionAggregateAgents <: AbstractUnary
     attributes::Attributes
-    e::AbstractExpression
+    e1::AbstractExpression
     aggregate_function::AggregateFunction.T
 
-    function ExpressionAggregateAgents(e::AbstractExpression, aggregate_function::AggregateFunction.T, label::String)
-        println("AGGREGATE AGENTS: $(e.attributes)")
+    function ExpressionAggregateAgents(e1::AbstractExpression, aggregate_function::AggregateFunction.T, label::String)
+        println("AGGREGATE AGENTS: $(e1.attributes)")
 
-        attributes = copy(e.attributes)
+        attributes = copy(e1.attributes)
 
-        attributes.labels = if has_data(e)
+        attributes.labels = if has_data(e1)
             String[label]
         else
             String[]
@@ -18,7 +18,7 @@ mutable struct ExpressionAggregateAgents <: AbstractExpression
 
         return new(
             attributes,
-            e,
+            e1,
             aggregate_function,
         )
     end
@@ -30,16 +30,12 @@ function aggregate_agents(x::AbstractExpression, aggregate_function::AggregateFu
 end
 @define_lua_function aggregate_agents
 
-function start!(e::ExpressionAggregateAgents)
-    return start!(e.e)
-end
-
 function evaluate(e::ExpressionAggregateAgents; kwargs...)
     if !has_data(e)
         return Float64[]
     end
 
-    data = evaluate(e.e; kwargs...)
+    data = evaluate(e.e1; kwargs...)
 
     if e.aggregate_function == AggregateFunction.Sum
         return [sum(data)]
@@ -52,8 +48,4 @@ function evaluate(e::ExpressionAggregateAgents; kwargs...)
     else
         error("Aggregate function $(e.aggregate_function) not implemented yet.")
     end
-end
-
-function finish!(e::ExpressionAggregateAgents)
-    return finish!(e.e)
 end

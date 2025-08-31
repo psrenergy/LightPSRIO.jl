@@ -1,11 +1,11 @@
 mutable struct ExpressionConvert <: AbstractUnary
     attributes::Attributes
-    e::AbstractExpression
+    e1::AbstractExpression
 
-    function ExpressionConvert(e::AbstractExpression, unit::String)
-        attributes = copy(e.attributes)
+    function ExpressionConvert(e1::AbstractExpression, unit::String)
+        attributes = copy(e1.attributes)
         @show unit
-        return new(attributes, e)
+        return new(attributes, e1)
     end
 end
 @define_lua_struct ExpressionConvert
@@ -14,5 +14,5 @@ convert(x::AbstractExpression, unit::String) = ExpressionConvert(x, unit)
 @define_lua_function convert
 
 function evaluate(e::ExpressionConvert; kwargs...)
-    return evaluate(e.e; kwargs...)
+    return evaluate(e.e1; kwargs...)
 end
