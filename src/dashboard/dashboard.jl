@@ -335,46 +335,16 @@ function save(L::LuaState, dashboard::Dashboard, filename::String)
     close(file)
     return nothing
 end
+@define_lua_function save
 
 function json_encode_dashboard(dashboard::Dashboard)
     tabs_json = String[]
 
     for tab in dashboard.tabs
-        charts_json = String[]
-
-        for chart in tab.charts
-            data_json = String[]
-            for data_point in chart.data
-                point_parts = String[]
-                for (key, value) in data_point
-                    if isa(value, String)
-                        push!(point_parts, "\"$(key)\": \"$(escape_json(value))\"")
-                    else
-                        push!(point_parts, "\"$(key)\": $(value)")
-                    end
-                end
-                push!(data_json, "{" * join(point_parts, ", ") * "}")
-            end
-
-            chart_json = """{
-                "title": "$(escape_json(chart.title))",
-                "chart_type": "$(escape_json(chart.chart_type))",
-                "data": [$(join(data_json, ", "))]
-            }"""
-            push!(charts_json, chart_json)
-        end
-
-        tab_json = """{
-            "label": "$(escape_json(tab.label))",
-            "charts": [$(join(charts_json, ", "))]
-        }"""
+        tab_json = json_encode_dashboard(tab)
         push!(tabs_json, tab_json)
     end
 
     return "[" * join(tabs_json, ", ") * "]"
 end
 
-function escape_json(str::String)
-    return replace(replace(replace(str, "\\" => "\\\\"), "\"" => "\\\""), "\n" => "\\n")
-end
-@define_lua_function save

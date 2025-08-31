@@ -9,6 +9,8 @@ using Test
 include("../util.jl")
 
 @testset "Dashboard" begin
+    create_quiver("input1"; n_stages = 2, n_scenarios = 2, n_blocks = 2, constant = 2.0)
+
     L = LightPSRIO.initialize([get_data_directory()])
 
     LightPSRIO.run_script(

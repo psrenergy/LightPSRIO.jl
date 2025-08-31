@@ -6,7 +6,7 @@ using LuaNova
 using Quiver
 using Statistics
 
-include("optional.jl")
+include("util.jl")
 include("aggregate_functions.jl")
 include("case.jl")
 
