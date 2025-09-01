@@ -30,7 +30,7 @@ include("expressions/unary/aggregate_dimensions.jl")
 # binary expressions
 include("expressions/binary/binary.jl")
 
-# variadic
+# variadic expressions
 include("expressions/variadic/concatenate_agents.jl")
 
 include("dashboard/chart.jl")

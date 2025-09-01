@@ -10,89 +10,42 @@ function initialize(paths::Vector{String})
     LuaNova.open_libs(L)
 
     @push_lua_struct(L, Case)
-    @push_lua_struct(L, Generic, "load", load)
 
-    @push_lua_struct(
+    @push_lua_structs(
         L,
-        ExpressionDataQuiver,
-        "convert", convert,
-        "__add", add,
-        "__sub", sub,
-        "__mul", mul,
-        "__div", div,
-        "__pow", pow,
-        "aggregate", aggregate,
-        "aggregate_agents", aggregate_agents,
-        "save", save,
+        [
+            Generic,
+        ],
+        "load", load
     )
 
-    @push_lua_struct(
+    @push_lua_structs(
         L,
-        ExpressionConvert,
+        [
+            # data expressions
+            ExpressionDataQuiver,
+            # unary expressions
+            ExpressionConvert,
+            ExpressionAggregateAgents,
+            ExpressionAggregateDimensions,
+            # binary expressions
+            ExpressionBinary,
+            # variadic expressions
+            ExpressionConcatenateAgents,
+        ],
+        # data expressions
+        # unary expressions
         "convert", convert,
+        "aggregate_agents", aggregate_agents,
+        "aggregate", aggregate,
+        # binary expressions
         "__add", add,
         "__sub", sub,
         "__mul", mul,
         "__div", div,
         "__pow", pow,
-        "aggregate", aggregate,
-        "aggregate_agents", aggregate_agents,
-        "save", save,
-    )
-
-    @push_lua_struct(
-        L,
-        ExpressionBinary,
-        "convert", convert,
-        "__add", add,
-        "__sub", sub,
-        "__mul", mul,
-        "__div", div,
-        "__pow", pow,
-        "aggregate", aggregate,
-        "aggregate_agents", aggregate_agents,
-        "save", save,
-    )
-
-    @push_lua_struct(
-        L,
-        ExpressionAggregateDimensions,
-        "convert", convert,
-        "__add", add,
-        "__sub", sub,
-        "__mul", mul,
-        "__div", div,
-        "__pow", pow,
-        "aggregate", aggregate,
-        "aggregate_agents", aggregate_agents,
-        "save", save,
-    )
-
-    @push_lua_struct(
-        L,
-        ExpressionAggregateAgents,
-        "convert", convert,
-        "__add", add,
-        "__sub", sub,
-        "__mul", mul,
-        "__div", div,
-        "__pow", pow,
-        "aggregate", aggregate,
-        "aggregate_agents", aggregate_agents,
-        "save", save,
-    )
-
-    @push_lua_struct(
-        L,
-        ExpressionConcatenateAgents,
-        "convert", convert,
-        "__add", add,
-        "__sub", sub,
-        "__mul", mul,
-        "__div", div,
-        "__pow", pow,
-        "aggregate", aggregate,
-        "aggregate_agents", aggregate_agents,
+        # variadic expressions
+        # abstract 
         "save", save,
     )
 

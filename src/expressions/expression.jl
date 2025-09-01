@@ -7,6 +7,15 @@ function has_data(e::AbstractExpression)
     return has_data(e.attributes)
 end
 
+function get_iterator(e::AbstractExpression)
+    attributes = e.attributes
+    dimension_size = attributes.dimension_size
+
+    ranges = [1:size for size in dimension_size]
+    reversed_ranges = reverse(ranges)
+    return (reverse(p) for p in Iterators.product(reversed_ranges...))
+end
+
 function save(L::LuaState, e::AbstractExpression, filename::String)
     if !has_data(e)
         println("$filename not saved")
@@ -33,12 +42,12 @@ function save(L::LuaState, e::AbstractExpression, filename::String)
         # frequency = metadata.frequency,
     )
 
-    ranges = [1:size for size in dimension_size]
-    reversed_ranges = reverse(ranges)
-    iterator = (reverse(p) for p in Iterators.product(reversed_ranges...))
+    # ranges = [1:size for size in dimension_size]
+    # reversed_ranges = reverse(ranges)
+    # iterator = (reverse(p) for p in Iterators.product(reversed_ranges...))
 
     start!(e)
-    for indices in iterator
+    for indices in get_iterator(e)
         kwargs = NamedTuple{Tuple(dimensions)}(indices)
         result = evaluate(e; kwargs...)
         Quiver.write!(writer, result; kwargs...)
