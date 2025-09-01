@@ -4,6 +4,7 @@ using Base.Iterators
 using EnumX
 using LuaNova
 using Quiver
+using PSRDates
 using Statistics
 
 include("util.jl")
@@ -33,6 +34,9 @@ include("expressions/binary/binary.jl")
 # variadic expressions
 include("expressions/variadic/concatenate_agents.jl")
 
+include("dashboard/series_type.jl")
+include("dashboard/series.jl")
+include("dashboard/layer.jl")
 include("dashboard/chart.jl")
 include("dashboard/tab.jl")
 include("dashboard/dashboard.jl")

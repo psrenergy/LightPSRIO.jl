@@ -7,13 +7,21 @@ function has_data(e::AbstractExpression)
     return has_data(e.attributes)
 end
 
-function get_iterator(e::AbstractExpression)
+function Base.eachindex(e::AbstractExpression)
     attributes = e.attributes
+    dimensions = attributes.dimensions
     dimension_size = attributes.dimension_size
 
     ranges = [1:size for size in dimension_size]
     reversed_ranges = reverse(ranges)
-    return (reverse(p) for p in Iterators.product(reversed_ranges...))
+    iterator = (reverse(p) for p in Iterators.product(reversed_ranges...))
+
+    vector = Vector{NamedTuple}()
+    for it in iterator
+        kwargs = NamedTuple{Tuple(dimensions)}(it)
+        push!(vector, kwargs)
+    end
+    return vector
 end
 
 function save(L::LuaState, e::AbstractExpression, filename::String)
@@ -47,8 +55,7 @@ function save(L::LuaState, e::AbstractExpression, filename::String)
     # iterator = (reverse(p) for p in Iterators.product(reversed_ranges...))
 
     start!(e)
-    for indices in get_iterator(e)
-        kwargs = NamedTuple{Tuple(dimensions)}(indices)
+    for kwargs in eachindex(e)
         result = evaluate(e; kwargs...)
         Quiver.write!(writer, result; kwargs...)
     end

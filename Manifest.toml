@@ -2,7 +2,7 @@
 
 julia_version = "1.11.6"
 manifest_format = "2.0"
-project_hash = "a97b7717fb541f94be27f07e0c7048f854e9a046"
+project_hash = "c5340dbd3897440b5eb506517d7d174f87c17dde"
 
 [[deps.Artifacts]]
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
@@ -182,6 +182,14 @@ version = "0.3.27+1"
 git-tree-sha1 = "05868e21324cede2207c6f0f466b4bfef6d5e7ee"
 uuid = "bac558e1-5e72-5ebc-8fee-abe8a469f55d"
 version = "1.8.1"
+
+[[deps.PSRDates]]
+deps = ["Dates", "EnumX"]
+git-tree-sha1 = "b6060fc880653d1bb780cf77c866ede0f24a01e4"
+repo-rev = "master"
+repo-url = "https://github.com/psrenergy/PSRDates.jl.git"
+uuid = "0b292b47-0876-4319-b6bc-6a18552db160"
+version = "0.2.0"
 
 [[deps.Parsers]]
 deps = ["Dates", "PrecompileTools", "UUIDs"]
