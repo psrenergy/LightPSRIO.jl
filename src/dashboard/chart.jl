@@ -29,11 +29,9 @@ function json_encode_dashboard(chart::Chart)
         push!(data_json, "{" * join(point_parts, ", ") * "}")
     end
 
-    chart_json = """{
+    return """{
         "title": "$(escape_json(chart.title))",
         "chart_type": "$(escape_json(chart.chart_type))",
         "data": [$(join(data_json, ", "))]
     }"""
-
-    return chart_json
 end

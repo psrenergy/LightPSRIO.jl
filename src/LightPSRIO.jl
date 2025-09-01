@@ -2,6 +2,7 @@ module LightPSRIO
 
 using Base.Iterators
 using EnumX
+using JSON
 using LuaNova
 using Quiver
 using PSRDates

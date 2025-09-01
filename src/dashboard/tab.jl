@@ -22,10 +22,8 @@ function json_encode_dashboard(tab::Tab)
         push!(charts_json, chart_json)
     end
 
-    tab_json = """{
+    return """{
         "label": "$(escape_json(tab.label))",
         "charts": [$(join(charts_json, ", "))]
     }"""
-
-    return tab_json
 end
