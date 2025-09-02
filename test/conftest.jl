@@ -1,4 +1,4 @@
-function create_quiver(filename; n_stages::Integer, n_blocks::Integer, n_scenarios::Integer, constant::Float64)
+function create_quiver(filename; n_stages::Integer, n_blocks::Integer, n_scenarios::Integer, constant::Float64, unit::String)
     writer = Quiver.Writer{Quiver.binary}(
         joinpath(@__DIR__, "data", filename);
         dimensions = ["stage", "scenario", "block"],
@@ -19,6 +19,12 @@ function create_quiver(filename; n_stages::Integer, n_blocks::Integer, n_scenari
 
     Quiver.close!(writer)
 
+    return nothing
+end
+
+function delete_quiver(filename::String)
+    rm(joinpath(@__DIR__, "data", "$filename.toml"))
+    rm(joinpath(@__DIR__, "data", "$filename.quiv"))
     return nothing
 end
 
@@ -63,4 +69,16 @@ end
 
 function get_data_directory()
     return joinpath(@__DIR__, "data")
+end
+
+function initialize_tests()
+    create_quiver("input1"; n_stages = 2, n_scenarios = 2, n_blocks = 2, constant = 2.0, unit = "GWh")
+    create_quiver("input2"; n_stages = 2, n_scenarios = 2, n_blocks = 2, constant = 2.0, unit = "MWh")
+    return nothing
+end
+
+function finalize_tests()
+    delete_quiver("input1")
+    delete_quiver("input2")
+    return nothing
 end

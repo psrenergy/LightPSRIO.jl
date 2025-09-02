@@ -6,9 +6,10 @@ using LightPSRIO
 using Quiver
 using Test
 
-include("../../util.jl")
+include("../../conftest.jl")
 
 @testset "Convert" begin
+    initialize_tests()
     L = LightPSRIO.initialize([get_data_directory()])
 
     LightPSRIO.run_script(
@@ -23,6 +24,7 @@ output1:save("output1");
     )
 
     finalize(L)
+    finalize_tests()
 
     return nothing
 end

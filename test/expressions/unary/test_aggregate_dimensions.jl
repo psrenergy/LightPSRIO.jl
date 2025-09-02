@@ -6,11 +6,10 @@ using LightPSRIO
 using Quiver
 using Test
 
-include("../../util.jl")
+include("../../conftest.jl")
 
 @testset "Aggregate Dimensions" begin
-    create_quiver("input1"; n_stages = 2, n_scenarios = 2, n_blocks = 2, constant = 2.0)
-
+    initialize_tests()
     L = LightPSRIO.initialize([get_data_directory()])
 
     LightPSRIO.run_script(
@@ -93,6 +92,8 @@ output6:save("output6");
     @test Quiver.goto!(output6; stage = 2, scenario = 1, block = 1) ≈ [2.0, 1.0, 1.5, 2.0]
     @test Quiver.goto!(output6; stage = 2, scenario = 2, block = 1) ≈ [2.0, 2.0, 1.5, 2.0]
     close_quiver(output6)
+
+    finalize_tests()
 
     return nothing
 end

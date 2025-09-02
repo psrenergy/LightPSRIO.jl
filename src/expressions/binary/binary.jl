@@ -8,33 +8,36 @@ mutable struct ExpressionBinary{F <: Function} <: AbstractBinary
         println("BINARY: $(e1.attributes)")
         println("BINARY: $(e2.attributes)")
 
-        labels = if e1.attributes.labels == e2.attributes.labels
-            copy(e1.attributes.labels)
-        elseif length(e1.attributes.labels) == 1
-            copy(e2.attributes.labels)
-        elseif length(e2.attributes.labels) == 1
-            copy(e1.attributes.labels)
+        a1 = e1.attributes
+        a2 = e2.attributes
+
+        labels = if a1.labels == a2.labels
+            copy(a1.labels)
+        elseif length(a1.labels) == 1
+            copy(a2.labels)
+        elseif length(a2.labels) == 1
+            copy(a1.labels)
         else
             error("Labels must match for binary operations.")
         end
 
-        dimensions = if isempty(e1.attributes.dimensions)
-            copy(e2.attributes.dimensions)
-        elseif isempty(e2.attributes.dimensions)
-            copy(e1.attributes.dimensions)
-        elseif e1.attributes.dimensions == e2.attributes.dimensions
-            copy(e1.attributes.dimensions)
+        dimensions = if isempty(a1.dimensions)
+            copy(a2.dimensions)
+        elseif isempty(a2.dimensions)
+            copy(a1.dimensions)
+        elseif a1.dimensions == a2.dimensions
+            copy(a1.dimensions)
         else
             error("Attributes must match for binary operations.")
         end
 
         dimension_size = zeros(Int, length(dimensions))
-        e1_dimension_size = e1.attributes.dimension_size
-        e2_dimension_size = e2.attributes.dimension_size
+        e1_dimension_size = a1.dimension_size
+        e2_dimension_size = a2.dimension_size
 
         for (i, dimension) in enumerate(dimensions)
-            e1_dimension_index = findfirst(==(dimension), e1.attributes.dimensions)
-            e2_dimension_index = findfirst(==(dimension), e2.attributes.dimensions)
+            e1_dimension_index = findfirst(==(dimension), a1.dimensions)
+            e2_dimension_index = findfirst(==(dimension), a2.dimensions)
             if e2_dimension_index === nothing || e2_dimension_size[e2_dimension_index] == 1
                 dimension_size[i] = e1_dimension_size[e1_dimension_index]
             elseif e1_dimension_index === nothing || e1_dimension_size[e1_dimension_index] == 1

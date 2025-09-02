@@ -6,11 +6,10 @@ using LightPSRIO
 using Quiver
 using Test
 
-include("../../util.jl")
+include("../../conftest.jl")
 
 @testset "Aggregate Agents" begin
-    create_quiver("input1"; n_stages = 2, n_scenarios = 2, n_blocks = 2, constant = 2.0)
-
+    initialize_tests()
     L = LightPSRIO.initialize([get_data_directory()])
 
     LightPSRIO.run_script(
@@ -78,6 +77,8 @@ output4:save("output4");
     @test Quiver.goto!(output4; stage = 2, scenario = 2, block = 1) ≈ [2.0]
     @test Quiver.goto!(output4; stage = 2, scenario = 2, block = 2) ≈ [2.0]
     close_quiver(output4)
+
+    finalize_tests()
 
     return nothing
 end
