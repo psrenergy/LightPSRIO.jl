@@ -3,14 +3,21 @@ mutable struct Attributes
     collection::Collection
     dimensions::Vector{Symbol}
     dimension_size::Vector{Int}
+    unit::String
 end
 
 function Attributes(collection::Collection)
-    return Attributes(String[], collection, Symbol[], Int[])
+    return Attributes(
+        String[],
+        collection,
+        Symbol[],
+        Int[],
+        "",
+    )
 end
 
 function Attributes(labels::Vector{String}, collection::Collection)
-    return Attributes(labels, collection, Symbol[], Int[])
+    return Attributes(labels, collection, Symbol[], Int[], "")
 end
 
 function Attributes(quiver::Quiver.Reader)
@@ -18,11 +25,15 @@ function Attributes(quiver::Quiver.Reader)
     collection = Collection()
     dimensions = copy(quiver.metadata.dimensions)
     dimension_size = copy(quiver.metadata.dimension_size)
-    return Attributes(labels, collection, dimensions, dimension_size)
+    unit = quiver.metadata.unit
+    return Attributes(labels, collection, dimensions, dimension_size, unit)
 end
 
 function Base.:(==)(a::Attributes, b::Attributes)
-    return a.dimensions == b.dimensions && a.dimension_size == b.dimension_size
+    return
+    return a.dimensions == b.dimensions &&
+           a.dimension_size == b.dimension_size &&
+           a.unit == b.unit
 end
 
 function Base.copy(a::Attributes)
@@ -31,6 +42,7 @@ function Base.copy(a::Attributes)
         a.collection,
         copy(a.dimensions),
         copy(a.dimension_size),
+        a.unit,
     )
 end
 
@@ -38,7 +50,7 @@ function Base.show(io::IO, attributes::Attributes)
     for (index, dimension) in enumerate(attributes.dimensions)
         print(io, "$dimension: 1:$(attributes.dimension_size[index]), ")
     end
-    print(io, "agents: $(length(attributes.labels))")
+    print(io, "unit: $(attributes.unit), agents: $(length(attributes.labels))")
     # print(io, "stages: 195 [1:195] [week] [40/2011], blocks: none, scenarios: 1, unit: , agents: 1 [study]")
     return nothing
 end
@@ -46,3 +58,4 @@ end
 function has_data(attributes::Attributes)
     return length(attributes.labels) > 0
 end
+

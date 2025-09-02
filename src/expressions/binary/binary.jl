@@ -47,7 +47,11 @@ mutable struct ExpressionBinary{F <: Function} <: AbstractBinary
             end
         end
 
-        attributes = Attributes(labels, e1.attributes.collection, dimensions, dimension_size)
+        if a1.unit != a2.unit
+            error("Units must match for binary operations.")
+        end
+
+        attributes = Attributes(labels, e1.attributes.collection, dimensions, dimension_size, a1.unit)
 
         println("BINARY= $attributes")
 
@@ -91,4 +95,3 @@ pow(x, y) = Base.:^(x, y)
 function evaluate(e::ExpressionBinary; kwargs...)
     return e.f.(evaluate(e.e1; kwargs...), evaluate(e.e2; kwargs...))
 end
-
