@@ -33,10 +33,7 @@ function open_quiver(filename::String)
 end
 
 function close_quiver(reader::Quiver.Reader)
-    filename = reader.filename
     Quiver.close!(reader)
-    rm(joinpath(@__DIR__, "data", "$filename.toml"))
-    rm(joinpath(@__DIR__, "data", "$filename.quiv"))
     return nothing
 end
 
@@ -78,7 +75,11 @@ function initialize_tests()
 end
 
 function finalize_tests()
-    delete_quiver("input1")
-    delete_quiver("input2")
+    path = get_data_directory()
+    for file in readdir(path)
+        if endswith(file, ".toml") || endswith(file, ".quiv")
+            rm(joinpath(path, file))
+        end
+    end
     return nothing
 end

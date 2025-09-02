@@ -6,9 +6,10 @@ using LightPSRIO
 using Quiver
 using Test
 
-include("../../util.jl")
+include("../../conftest.jl")
 
 @testset "Binary" begin
+    initialize_tests()
     L = LightPSRIO.initialize([get_data_directory()])
 
     LightPSRIO.run_script(
@@ -171,6 +172,8 @@ output10:save("output10");
     @test Quiver.goto!(output10; stage = 2, scenario = 2, block = 1) ≈ [4.0, 4.0, 2.0, 4.0]
     @test Quiver.goto!(output10; stage = 2, scenario = 2, block = 2) ≈ [4.0, 4.0, 4.0, 4.0]
     close_quiver(output10)
+
+    finalize_tests()
 
     return nothing
 end

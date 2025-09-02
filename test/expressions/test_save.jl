@@ -6,9 +6,10 @@ using LightPSRIO
 using Quiver
 using Test
 
-include("../util.jl")
+include("../conftest.jl")
 
 @testset "Save" begin
+    initialize_tests()
     L = LightPSRIO.initialize([get_data_directory()])
 
     LightPSRIO.run_script(
@@ -24,7 +25,9 @@ output1:save("output1");
 
     finalize(L)
 
-    @test !isfile(joinpath(@__DIR__, "..", "data", "output1"))
+    @test !isfile(joinpath(get_data_directory(), "output1"))
+
+    finalize_tests()
 
     return nothing
 end

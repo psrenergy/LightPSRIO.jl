@@ -9,7 +9,7 @@ using Test
 include("../conftest.jl")
 
 @testset "Dashboard" begin
-    intialize_tests()
+    initialize_tests()
     L = LightPSRIO.initialize([get_data_directory()])
 
     LightPSRIO.run_script(
