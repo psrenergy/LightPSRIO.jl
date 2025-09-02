@@ -4,7 +4,9 @@ function julia_typeof(x::Any)
 end
 @define_lua_function julia_typeof
 
-function initialize(paths::Vector{String})
+function initialize(paths::Vector{String}; logger=Logging.Debug)
+    global_logger(ConsoleLogger(Logging.Debug))
+
     @debug "Initializing Lua state..."
     L = LuaNova.new_state()
     LuaNova.open_libs(L)

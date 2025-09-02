@@ -3,6 +3,7 @@ module LightPSRIO
 using Base.Iterators
 using Dates
 using EnumX
+using Logging
 using JSON
 using LuaNova
 using Quiver

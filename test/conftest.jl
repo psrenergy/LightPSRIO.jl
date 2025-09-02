@@ -82,7 +82,9 @@ function finalize_tests()
             @repeat 5 try
                 rm(joinpath(path, file), force = true)
             catch e
-                @show e
+                @delay_retry if e.code == -4082
+                    println("Waiting for the user/system to release the folder")
+                end
             end
         end
     end
