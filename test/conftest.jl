@@ -6,6 +6,7 @@ function create_quiver(filename; n_stages::Integer, n_blocks::Integer, n_scenari
         time_dimension = "stage",
         dimension_size = [n_stages, n_scenarios, n_blocks],
         initial_date = DateTime(2024, 1, 1),
+        unit = unit,
     )
 
     for stage in 1:n_stages

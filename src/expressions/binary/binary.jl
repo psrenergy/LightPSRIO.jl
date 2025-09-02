@@ -50,11 +50,17 @@ mutable struct ExpressionBinary{F <: Function} <: AbstractBinary
             end
         end
 
-        if a1.unit != a2.unit
-            error("Units must match for binary operations.")
+        unit = if isempty(a1.unit)
+            a2.unit
+        elseif isempty(a2.unit)
+            a1.unit
+        elseif a1.unit == a2.unit
+            a1.unit
+        else
+            error("Units must match for binary operations ($(a1.unit) and $(a2.unit))")
         end
 
-        attributes = Attributes(labels, e1.attributes.collection, dimensions, dimension_size, a1.unit)
+        attributes = Attributes(labels, e1.attributes.collection, dimensions, dimension_size, unit)
 
         println("BINARY= $attributes")
 

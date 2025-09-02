@@ -30,29 +30,21 @@ function save(L::LuaState, e::AbstractExpression, filename::String)
         return nothing
     end
 
-    attributes = e.attributes
-    labels = attributes.labels
-    dimensions = attributes.dimensions
-    dimension_size = attributes.dimension_size
-
     case = get_case(L, 1)
 
-    println("Saving $filename ($attributes)")
+        a = e.attributes
+    println("Saving $filename ($a)")
 
     writer = Quiver.Writer{Quiver.binary}(
         joinpath(case.path, filename);
-        labels = labels,
-        dimensions = string.(dimensions),
+        labels = a.labels,
+        dimensions = string.(a.dimensions),
         time_dimension = "stage",
-        dimension_size = dimension_size,
+        dimension_size = a.dimension_size,
         # initial_date = metadata.initial_date,
-        # unit = metadata.unit,
+        unit = a.unit,
         # frequency = metadata.frequency,
     )
-
-    # ranges = [1:size for size in dimension_size]
-    # reversed_ranges = reverse(ranges)
-    # iterator = (reverse(p) for p in Iterators.product(reversed_ranges...))
 
     start!(e)
     for kwargs in eachindex(e)
