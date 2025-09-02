@@ -78,7 +78,7 @@ function finalize_tests()
     path = get_data_directory()
     for file in readdir(path)
         if endswith(file, ".toml") || endswith(file, ".quiv")
-                rm(joinpath(path, file), force = true)
+            rm(joinpath(path, file), force = true)
         end
     end
     return nothing

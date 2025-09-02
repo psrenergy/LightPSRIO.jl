@@ -35,51 +35,51 @@ output4:save("output4");
     finalize(L)
 
     open_quiver("output1") do q
-    @test q.metadata.unit == "GWh"
-    @test Quiver.goto!(q; stage = 1, scenario = 1, block = 1) ≈ [5.0]
-    @test Quiver.goto!(q; stage = 1, scenario = 1, block = 2) ≈ [6.0]
-    @test Quiver.goto!(q; stage = 1, scenario = 2, block = 1) ≈ [6.0]
-    @test Quiver.goto!(q; stage = 1, scenario = 2, block = 2) ≈ [7.0]
-    @test Quiver.goto!(q; stage = 2, scenario = 1, block = 1) ≈ [6.0]
-    @test Quiver.goto!(q; stage = 2, scenario = 1, block = 2) ≈ [7.0]
-    @test Quiver.goto!(q; stage = 2, scenario = 2, block = 1) ≈ [7.0]
-    @test Quiver.goto!(q; stage = 2, scenario = 2, block = 2) ≈ [8.0]
+        @test q.metadata.unit == "GWh"
+        @test Quiver.goto!(q; stage = 1, scenario = 1, block = 1) ≈ [5.0]
+        @test Quiver.goto!(q; stage = 1, scenario = 1, block = 2) ≈ [6.0]
+        @test Quiver.goto!(q; stage = 1, scenario = 2, block = 1) ≈ [6.0]
+        @test Quiver.goto!(q; stage = 1, scenario = 2, block = 2) ≈ [7.0]
+        @test Quiver.goto!(q; stage = 2, scenario = 1, block = 1) ≈ [6.0]
+        @test Quiver.goto!(q; stage = 2, scenario = 1, block = 2) ≈ [7.0]
+        @test Quiver.goto!(q; stage = 2, scenario = 2, block = 1) ≈ [7.0]
+        @test Quiver.goto!(q; stage = 2, scenario = 2, block = 2) ≈ [8.0]
     end
 
     open_quiver("output2") do q
-    @test q.metadata.unit == "GWh"
-    @test Quiver.goto!(q; stage = 1, scenario = 1, block = 1) ≈ [1.25]
-    @test Quiver.goto!(q; stage = 1, scenario = 1, block = 2) ≈ [1.5]
-    @test Quiver.goto!(q; stage = 1, scenario = 2, block = 1) ≈ [1.5]
-    @test Quiver.goto!(q; stage = 1, scenario = 2, block = 2) ≈ [1.75]
-    @test Quiver.goto!(q; stage = 2, scenario = 1, block = 1) ≈ [1.5]
-    @test Quiver.goto!(q; stage = 2, scenario = 1, block = 2) ≈ [1.75]
-    @test Quiver.goto!(q; stage = 2, scenario = 2, block = 1) ≈ [1.75]
-    @test Quiver.goto!(q; stage = 2, scenario = 2, block = 2) ≈ [2.0]
+        @test q.metadata.unit == "GWh"
+        @test Quiver.goto!(q; stage = 1, scenario = 1, block = 1) ≈ [1.25]
+        @test Quiver.goto!(q; stage = 1, scenario = 1, block = 2) ≈ [1.5]
+        @test Quiver.goto!(q; stage = 1, scenario = 2, block = 1) ≈ [1.5]
+        @test Quiver.goto!(q; stage = 1, scenario = 2, block = 2) ≈ [1.75]
+        @test Quiver.goto!(q; stage = 2, scenario = 1, block = 1) ≈ [1.5]
+        @test Quiver.goto!(q; stage = 2, scenario = 1, block = 2) ≈ [1.75]
+        @test Quiver.goto!(q; stage = 2, scenario = 2, block = 1) ≈ [1.75]
+        @test Quiver.goto!(q; stage = 2, scenario = 2, block = 2) ≈ [2.0]
     end
 
     open_quiver("output3") do q
-    @test q.metadata.unit == "GWh"
-    @test Quiver.goto!(q; stage = 1, scenario = 1, block = 1) ≈ [1.0]
-    @test Quiver.goto!(q; stage = 1, scenario = 1, block = 2) ≈ [1.0]
-    @test Quiver.goto!(q; stage = 1, scenario = 2, block = 1) ≈ [1.0]
-    @test Quiver.goto!(q; stage = 1, scenario = 2, block = 2) ≈ [1.0]
-    @test Quiver.goto!(q; stage = 2, scenario = 1, block = 1) ≈ [1.0]
-    @test Quiver.goto!(q; stage = 2, scenario = 1, block = 2) ≈ [1.0]
-    @test Quiver.goto!(q; stage = 2, scenario = 2, block = 1) ≈ [1.0]
-    @test Quiver.goto!(q; stage = 2, scenario = 2, block = 2) ≈ [2.0]
+        @test q.metadata.unit == "GWh"
+        @test Quiver.goto!(q; stage = 1, scenario = 1, block = 1) ≈ [1.0]
+        @test Quiver.goto!(q; stage = 1, scenario = 1, block = 2) ≈ [1.0]
+        @test Quiver.goto!(q; stage = 1, scenario = 2, block = 1) ≈ [1.0]
+        @test Quiver.goto!(q; stage = 1, scenario = 2, block = 2) ≈ [1.0]
+        @test Quiver.goto!(q; stage = 2, scenario = 1, block = 1) ≈ [1.0]
+        @test Quiver.goto!(q; stage = 2, scenario = 1, block = 2) ≈ [1.0]
+        @test Quiver.goto!(q; stage = 2, scenario = 2, block = 1) ≈ [1.0]
+        @test Quiver.goto!(q; stage = 2, scenario = 2, block = 2) ≈ [2.0]
     end
 
     open_quiver("output4") do q
-    @test q.metadata.unit == "GWh"
-    @test Quiver.goto!(q; stage = 1, scenario = 1, block = 1) ≈ [2.0]
-    @test Quiver.goto!(q; stage = 1, scenario = 1, block = 2) ≈ [2.0]
-    @test Quiver.goto!(q; stage = 1, scenario = 2, block = 1) ≈ [2.0]
-    @test Quiver.goto!(q; stage = 1, scenario = 2, block = 2) ≈ [2.0]
-    @test Quiver.goto!(q; stage = 2, scenario = 1, block = 1) ≈ [2.0]
-    @test Quiver.goto!(q; stage = 2, scenario = 1, block = 2) ≈ [2.0]
-    @test Quiver.goto!(q; stage = 2, scenario = 2, block = 1) ≈ [2.0]
-    @test Quiver.goto!(q; stage = 2, scenario = 2, block = 2) ≈ [2.0]
+        @test q.metadata.unit == "GWh"
+        @test Quiver.goto!(q; stage = 1, scenario = 1, block = 1) ≈ [2.0]
+        @test Quiver.goto!(q; stage = 1, scenario = 1, block = 2) ≈ [2.0]
+        @test Quiver.goto!(q; stage = 1, scenario = 2, block = 1) ≈ [2.0]
+        @test Quiver.goto!(q; stage = 1, scenario = 2, block = 2) ≈ [2.0]
+        @test Quiver.goto!(q; stage = 2, scenario = 1, block = 1) ≈ [2.0]
+        @test Quiver.goto!(q; stage = 2, scenario = 1, block = 2) ≈ [2.0]
+        @test Quiver.goto!(q; stage = 2, scenario = 2, block = 1) ≈ [2.0]
+        @test Quiver.goto!(q; stage = 2, scenario = 2, block = 2) ≈ [2.0]
     end
 
     finalize_tests()
