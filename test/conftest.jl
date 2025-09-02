@@ -78,13 +78,7 @@ function finalize_tests()
     path = get_data_directory()
     for file in readdir(path)
         if endswith(file, ".toml") || endswith(file, ".quiv")
-            @repeat 0 try
                 rm(joinpath(path, file), force = true)
-            catch e
-                @delay_retry if e.code == -4082
-                    println("Waiting for the user/system to release the folder")
-                end
-            end
         end
     end
     return nothing
