@@ -79,7 +79,11 @@ function finalize_tests()
     path = get_data_directory()
     for file in readdir(path)
         if endswith(file, ".toml") || endswith(file, ".quiv")
-            rm(joinpath(path, file))
+            @repeat 5 try
+                rm(joinpath(path, file), force = true)
+            catch e
+                @show e
+            end
         end
     end
     return nothing

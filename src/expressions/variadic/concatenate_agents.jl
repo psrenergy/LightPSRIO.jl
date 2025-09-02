@@ -4,13 +4,13 @@ mutable struct ExpressionConcatenateAgents <: AbstractVariadic
 
     function ExpressionConcatenateAgents(expressions::Vector{<:AbstractExpression})
         for expression in expressions
-            println("CONCATENATE AGENTS: $(expression.attributes)")
+            @debug "CONCATENATE AGENTS: $(expression.attributes)"
         end
 
         attributes = copy(expressions[1].attributes)
         attributes.labels = [attr for expression in expressions for attr in expression.attributes.labels]
 
-        println("CONCATENATE AGENTS= $attributes")
+        @debug "CONCATENATE AGENTS= $attributes"
 
         return new(
             attributes,

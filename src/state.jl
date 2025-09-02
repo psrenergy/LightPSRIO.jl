@@ -5,7 +5,7 @@ end
 @define_lua_function julia_typeof
 
 function initialize(paths::Vector{String})
-    println("Initializing Lua state...")
+    @debug "Initializing Lua state..."
     L = LuaNova.new_state()
     LuaNova.open_libs(L)
 

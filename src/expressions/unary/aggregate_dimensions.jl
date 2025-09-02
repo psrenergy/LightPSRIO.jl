@@ -6,7 +6,7 @@ mutable struct ExpressionAggregateDimensions <: AbstractUnary
     dimension_original_size::Int
 
     function ExpressionAggregateDimensions(e1::AbstractExpression, dimension::String, aggregate_function::AggregateFunction.T)
-        println("AGGREGATE ($dimension): $(e1.attributes)")
+        @debug "AGGREGATE ($dimension): $(e1.attributes)"
 
         attributes = copy(e1.attributes)
         dimension_symbol = Symbol(dimension)
@@ -18,7 +18,7 @@ mutable struct ExpressionAggregateDimensions <: AbstractUnary
         dimension_original_size = attributes.dimension_size[dimension_index]
         attributes.dimension_size[dimension_index] = 1
 
-        println("AGGREGATE ($dimension)= $attributes")
+        @debug "AGGREGATE ($dimension)= $attributes"
 
         return new(
             attributes,

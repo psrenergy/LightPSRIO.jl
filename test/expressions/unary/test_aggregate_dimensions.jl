@@ -3,6 +3,7 @@ module TestAggregateDimensions
 using DataFrames
 using Dates
 using LightPSRIO
+using Retry
 using Quiver
 using Test
 
