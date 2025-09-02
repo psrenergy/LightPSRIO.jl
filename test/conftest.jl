@@ -1,3 +1,7 @@
+function get_data_directory()
+    return joinpath(@__DIR__, "data")
+end
+
 function create_quiver(filename; n_stages::Integer, n_blocks::Integer, n_scenarios::Integer, constant::Float64, unit::String)
     writer = Quiver.Writer{Quiver.binary}(
         joinpath(@__DIR__, "data", filename);
@@ -23,14 +27,8 @@ function create_quiver(filename; n_stages::Integer, n_blocks::Integer, n_scenari
     return nothing
 end
 
-function delete_quiver(filename::String)
-    rm(joinpath(@__DIR__, "data", "$filename.toml"))
-    rm(joinpath(@__DIR__, "data", "$filename.quiv"))
-    return nothing
-end
-
 function open_quiver(filename::String)
-    return Quiver.Reader{Quiver.binary}(joinpath(@__DIR__, "data", filename))
+    return Quiver.Reader{Quiver.binary}(joinpath(get_data_directory(), filename))
 end
 
 function close_quiver(reader::Quiver.Reader)
@@ -38,35 +36,36 @@ function close_quiver(reader::Quiver.Reader)
     return nothing
 end
 
-function load_quiver_as_df(filename::String)
-    return Quiver.file_to_df(joinpath(@__DIR__, "data", filename), Quiver.binary)
+function open_quiver(f::Function, filename::String)
+    reader = open_quiver(filename)
+    try
+        f(reader)
+    finally
+        close_quiver(reader)
+    end
 end
 
 function create_quiver_tests(filename::String)
-    println("$filename = open_quiver(\"$filename\")")
+    println("open_quiver(\"$filename\") do q")
 
-    quiver = open_quiver(filename)
-    n_stages = quiver.metadata.dimension_size[1]
-    n_scenarios = quiver.metadata.dimension_size[2]
-    n_blocks = quiver.metadata.dimension_size[3]
+    open_quiver(filename) do q
+        n_stages = q.metadata.dimension_size[1]
+        n_scenarios = q.metadata.dimension_size[2]
+        n_blocks = q.metadata.dimension_size[3]
 
-    for stage in 1:n_stages
-        for scenario in 1:n_scenarios
-            for block in 1:n_blocks
-                data = Quiver.goto!(quiver; stage = stage, scenario = scenario, block = block)
-                println("@test Quiver.goto!($filename; stage = $stage, scenario = $scenario, block = $block) ≈ [$(join(data, ", "))]")
+        for stage in 1:n_stages
+            for scenario in 1:n_scenarios
+                for block in 1:n_blocks
+                    data = Quiver.goto!(q; stage = stage, scenario = scenario, block = block)
+                    println("@test Quiver.goto!(q; stage = $stage, scenario = $scenario, block = $block) ≈ [$(join(data, ", "))]")
+                end
             end
         end
     end
-    close_quiver(quiver)
 
-    println("close_quiver($filename)\n")
+    println("end\n")
 
     return nothing
-end
-
-function get_data_directory()
-    return joinpath(@__DIR__, "data")
 end
 
 function initialize_tests()
@@ -79,7 +78,7 @@ function finalize_tests()
     path = get_data_directory()
     for file in readdir(path)
         if endswith(file, ".toml") || endswith(file, ".quiv")
-            @repeat 5 try
+            @repeat 0 try
                 rm(joinpath(path, file), force = true)
             catch e
                 @delay_retry if e.code == -4082
