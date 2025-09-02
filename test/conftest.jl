@@ -27,21 +27,12 @@ function create_quiver(filename; n_stages::Integer, n_blocks::Integer, n_scenari
     return nothing
 end
 
-function open_quiver(filename::String)
-    return Quiver.Reader{Quiver.binary}(joinpath(get_data_directory(), filename))
-end
-
-function close_quiver(reader::Quiver.Reader)
-    Quiver.close!(reader)
-    return nothing
-end
-
 function open_quiver(f::Function, filename::String)
-    reader = open_quiver(filename)
+    reader = Quiver.Reader{Quiver.binary}(joinpath(get_data_directory(), filename))
     try
         f(reader)
     finally
-        close_quiver(reader)
+        Quiver.close!(reader)
     end
 end
 
@@ -71,15 +62,5 @@ end
 function initialize_tests()
     create_quiver("input1"; n_stages = 2, n_scenarios = 2, n_blocks = 2, constant = 2.0, unit = "GWh")
     create_quiver("input2"; n_stages = 2, n_scenarios = 2, n_blocks = 2, constant = 2.0, unit = "MWh")
-    return nothing
-end
-
-function finalize_tests()
-    path = get_data_directory()
-    for file in readdir(path)
-        if endswith(file, ".toml") || endswith(file, ".quiv")
-            rm(joinpath(path, file), force = true)
-        end
-    end
     return nothing
 end

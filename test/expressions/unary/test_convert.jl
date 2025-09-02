@@ -24,7 +24,6 @@ output1:save("output1");
     )
 
     finalize(L)
-    finalize_tests()
 
     return nothing
 end

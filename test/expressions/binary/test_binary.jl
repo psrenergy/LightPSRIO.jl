@@ -184,8 +184,6 @@ output10:save("output10");
         @test Quiver.goto!(q; stage = 2, scenario = 2, block = 2) ≈ [4.0, 4.0, 4.0, 4.0]
     end
 
-    finalize_tests()
-
     return nothing
 end
 

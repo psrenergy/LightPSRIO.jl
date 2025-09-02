@@ -27,8 +27,6 @@ output1:save("output1");
 
     @test !isfile(joinpath(get_data_directory(), "output1"))
 
-    finalize_tests()
-
     return nothing
 end
 

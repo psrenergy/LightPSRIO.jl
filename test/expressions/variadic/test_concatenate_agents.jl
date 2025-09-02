@@ -25,10 +25,10 @@ local input1_min = input1:aggregate_agents(BY_MIN(), "min");
 local input1_max = input1:aggregate_agents(BY_MAX(), "max");
 
 local output1 = concatenate_agents(input1_sum, input1_avg, input1_min, input1_max);
-output1:save("output3");
+output1:save("output1");
 
 local output2 = concatenate_agents(input1, input2);
-output2:save("output4");
+output2:save("output2");
     """,
     )
 
@@ -56,8 +56,6 @@ output2:save("output4");
         @test Quiver.goto!(q; stage = 2, scenario = 2, block = 1) ≈ [2.0, 2.0, 1.0, 2.0]
         @test Quiver.goto!(q; stage = 2, scenario = 2, block = 2) ≈ [2.0, 2.0, 2.0, 2.0]
     end
-
-    finalize_tests()
 
     return nothing
 end

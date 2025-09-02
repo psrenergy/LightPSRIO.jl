@@ -76,7 +76,6 @@ print("Dashboard saved successfully!");
     )
 
     finalize(L)
-    finalize_tests()
 
     return nothing
 end
