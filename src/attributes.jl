@@ -1,19 +1,9 @@
-mutable struct Attributes
-    labels::Vector{String}
-    collection::Collection
-    dimensions::Vector{Symbol}
-    dimension_size::Vector{Int}
-    unit::String
-end
-
-function Attributes(collection::Collection)
-    return Attributes(
-        String[],
-        collection,
-        Symbol[],
-        Int[],
-        "",
-    )
+@kwdef mutable struct Attributes
+    labels::Vector{String} = []
+    collection::Collection = Collection()
+    dimensions::Vector{Symbol} = []
+    dimension_size::Vector{Int} = []
+    unit::String = ""
 end
 
 function Attributes(labels::Vector{String}, collection::Collection)
@@ -21,16 +11,16 @@ function Attributes(labels::Vector{String}, collection::Collection)
 end
 
 function Attributes(quiver::Quiver.Reader)
-    labels = copy(quiver.metadata.labels)
-    collection = Collection()
-    dimensions = copy(quiver.metadata.dimensions)
-    dimension_size = copy(quiver.metadata.dimension_size)
-    unit = quiver.metadata.unit
-    return Attributes(labels, collection, dimensions, dimension_size, unit)
+    return Attributes(
+        labels = copy(quiver.metadata.labels),
+        collection = Collection(),
+        dimensions = copy(quiver.metadata.dimensions),
+        dimension_size = copy(quiver.metadata.dimension_size),
+        unit = quiver.metadata.unit,
+    )
 end
 
 function Base.:(==)(a::Attributes, b::Attributes)
-    return
     return a.dimensions == b.dimensions &&
            a.dimension_size == b.dimension_size &&
            a.unit == b.unit
@@ -38,11 +28,11 @@ end
 
 function Base.copy(a::Attributes)
     return Attributes(
-        copy(a.labels),
-        a.collection,
-        copy(a.dimensions),
-        copy(a.dimension_size),
-        a.unit,
+        labels = copy(a.labels),
+        collection = a.collection,
+        dimensions = copy(a.dimensions),
+        dimension_size = copy(a.dimension_size),
+        unit = a.unit,
     )
 end
 
@@ -58,4 +48,3 @@ end
 function has_data(attributes::Attributes)
     return length(attributes.labels) > 0
 end
-

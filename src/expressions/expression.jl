@@ -32,7 +32,7 @@ function save(L::LuaState, e::AbstractExpression, filename::String)
 
     case = get_case(L, 1)
 
-        a = e.attributes
+    a = e.attributes
     println("Saving $filename ($a)")
 
     writer = Quiver.Writer{Quiver.binary}(

@@ -14,7 +14,7 @@ mutable struct ExpressionDataQuiver <: AbstractExpression
             return new(path, filename, attributes, nothing)
         catch ArgumentError
             println("The output $filename has no data")
-            attributes = Attributes(Collection())
+            attributes = Attributes()
             return new(path, filename, attributes, nothing)
         end
     end
