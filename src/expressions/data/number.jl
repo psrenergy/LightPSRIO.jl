@@ -3,7 +3,7 @@ mutable struct ExpressionDataNumber{T <: Number} <: AbstractExpression
     value::T
 
     function ExpressionDataNumber(x::T) where {T <: Number}
-        attributes = Attributes(["constant"], Collection())
+        attributes = Attributes(labels = ["constant"])
         return new{T}(attributes, x)
     end
 end

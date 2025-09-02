@@ -41,7 +41,7 @@ function save(L::LuaState, e::AbstractExpression, filename::String)
         dimensions = string.(a.dimensions),
         time_dimension = "stage",
         dimension_size = a.dimension_size,
-        # initial_date = metadata.initial_date,
+        initial_date = a.initial_date,
         unit = a.unit,
         # frequency = metadata.frequency,
     )

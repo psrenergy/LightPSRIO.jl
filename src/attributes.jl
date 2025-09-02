@@ -1,4 +1,5 @@
 @kwdef mutable struct Attributes
+    initial_date::DateTime = now()
     labels::Vector{String} = []
     collection::Collection = Collection()
     dimensions::Vector{Symbol} = []
@@ -6,12 +7,9 @@
     unit::String = ""
 end
 
-function Attributes(labels::Vector{String}, collection::Collection)
-    return Attributes(labels, collection, Symbol[], Int[], "")
-end
-
 function Attributes(quiver::Quiver.Reader)
     return Attributes(
+        initial_date = quiver.metadata.initial_date,
         labels = copy(quiver.metadata.labels),
         collection = Collection(),
         dimensions = copy(quiver.metadata.dimensions),

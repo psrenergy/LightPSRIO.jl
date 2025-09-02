@@ -4,7 +4,7 @@ mutable struct ExpressionAggregateAgents <: AbstractUnary
     aggregate_function::AggregateFunction.T
 
     function ExpressionAggregateAgents(e1::AbstractExpression, aggregate_function::AggregateFunction.T, label::String)
-        println("AGGREGATE AGENTS: $(e1.attributes)")
+        @debug "AGGREGATE AGENTS: $(e1.attributes)"
 
         attributes = copy(e1.attributes)
 
@@ -14,7 +14,7 @@ mutable struct ExpressionAggregateAgents <: AbstractUnary
             String[]
         end
 
-        println("AGGREGATE AGENTS= $attributes")
+        @debug "AGGREGATE AGENTS= $attributes"
 
         return new(
             attributes,

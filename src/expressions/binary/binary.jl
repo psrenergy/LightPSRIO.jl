@@ -5,8 +5,8 @@ mutable struct ExpressionBinary{F <: Function} <: AbstractBinary
     f::F
 
     function ExpressionBinary(e1::AbstractExpression, e2::AbstractExpression, f::F) where {F <: Function}
-        println("BINARY: $(e1.attributes)")
-        println("BINARY: $(e2.attributes)")
+        @debug "BINARY: $(e1.attributes)"
+        @debug "BINARY: $(e2.attributes)"
 
         a1 = e1.attributes
         a2 = e2.attributes
@@ -60,9 +60,15 @@ mutable struct ExpressionBinary{F <: Function} <: AbstractBinary
             error("Units must match for binary operations ($(a1.unit) and $(a2.unit))")
         end
 
-        attributes = Attributes(labels, e1.attributes.collection, dimensions, dimension_size, unit)
+        attributes = Attributes(
+            labels = labels,
+            collection = e1.attributes.collection,
+            dimensions = dimensions,
+            dimension_size = dimension_size,
+            unit = unit,
+        )
 
-        println("BINARY= $attributes")
+        @debug "BINARY= $attributes"
 
         return new{F}(attributes, e1, e2, f)
     end
