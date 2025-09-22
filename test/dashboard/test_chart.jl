@@ -13,7 +13,11 @@ include("../conftest.jl")
 
     @show expression = LightPSRIO.ExpressionDataQuiver(path, "input1")
 
-    layer = LightPSRIO.Layer()
+    chart = LightPSRIO.Chart("Test Chart")
+
+    LightPSRIO.add(chart, expression)
+
+    @show chart
 
     return nothing
 end

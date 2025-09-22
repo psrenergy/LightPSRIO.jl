@@ -14,7 +14,7 @@ struct Layer
     end
 end
 
-function add(layer::Layer, time_dimension::Integer, value::Float64)
+function add(layer::Layer, time_dimension::Integer, value::Real)
     epoch = PSRDates.stage_to_epoch(layer.date_reference, time_dimension)
     push!(layer.values, (epoch, value))
     return nothing
