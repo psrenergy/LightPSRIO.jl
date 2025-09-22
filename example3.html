@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <title>ECharts — Reference Datetime + Vector</title>
@@ -7,7 +8,10 @@
   <!-- ECharts CDN -->
   <script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
   <style>
-    :root { --h: 360px; }
+    :root {
+      --h: 360px;
+    }
+
     body {
       margin: 0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
@@ -16,8 +20,17 @@
       color: #222;
       background: #fafafa;
     }
-    h1 { margin: 0 0 .25rem; font-size: 1.25rem; }
-    p { margin: .25rem 0 1rem; color: #555; }
+
+    h1 {
+      margin: 0 0 .25rem;
+      font-size: 1.25rem;
+    }
+
+    p {
+      margin: .25rem 0 1rem;
+      color: #555;
+    }
+
     .chart {
       width: 100%;
       height: var(--h);
@@ -26,17 +39,16 @@
       border-radius: 8px;
       margin: 0 0 1rem;
     }
-    code { background: #f2f2f2; padding: .1em .3em; border-radius: 4px; }
+
+    code {
+      background: #f2f2f2;
+      padding: .1em .3em;
+      border-radius: 4px;
+    }
   </style>
 </head>
-<body>
-  <h1>Vector + Reference Datetime (no per-point timestamp)</h1>
-  <p>
-    Uses a <code>category</code> x-axis with indices only; labels/tooltips compute
-    <code>base + i * step</code> on the fly.
-  </p>
-  <div id="chart1" class="chart"></div>
 
+<body>
   <h1>Generated Timestamps (true time axis)</h1>
   <p>
     Builds <code>[timestamp, value]</code> once and uses a <code>time</code> x-axis for native time zoom, ticks, etc.
@@ -44,88 +56,62 @@
   <div id="chart2" class="chart"></div>
 
   <script>
-    // ----- Shared data -----
-    const base = new Date('2025-08-20T10:00:00Z');  // reference datetime
-    const stepMs = 5 * 60 * 1000;                   // 5 minutes per sample
-    const values = [12, 13, 15, 14, 18, 20, 19, 22, 21, 23, 25, 26, 24, 27, 29];
-
-    // Utility: format a Date as HH:MM (UTC) and ISO string for tooltip
-    function hhmmUTC(d) {
-      const h = d.getUTCHours().toString().padStart(2, '0');
-      const m = d.getUTCMinutes().toString().padStart(2, '0');
-      return `${h}:${m}Z`;
+    let base = +new Date(1988, 9, 3, 0, 0, 0);
+    let oneDay = 24 * 3600 * 1000;
+    let data = [[base, Math.random() * 300]];
+    for (let i = 1; i < 20000; i++) {
+      let now = new Date((base += oneDay));
+      data.push([+now, Math.round((Math.random() - 0.5) * 20 + data[i - 1][1])]);
     }
-    function isoUTC(ms) {
-      return new Date(ms).toISOString().replace('.000', '');
-    }
-
-    // ----- Chart 1: Category axis (no timestamps stored) -----
-    const el1 = document.getElementById('chart1');
-    const chart1 = echarts.init(el1);
-
-    const option1 = {
-      grid: { left: 48, right: 16, top: 28, bottom: 40 },
+    option = {
       tooltip: {
         trigger: 'axis',
-        axisPointer: { type: 'line' },
-        formatter: (params) => {
-          const i = params[0].dataIndex;
-          const t = base.getTime() + i * stepMs;
-          const lines = params.map(p => `${p.marker}${p.seriesName}: <b>${p.data}</b>`);
-          return `${isoUTC(t)}<br/>${lines.join('<br/>')}`;
+        position: function (pt) {
+          return [pt[0], '10%'];
         }
       },
-      xAxis: {
-        type: 'category',
-        data: values.map((_, i) => i), // indices only
-        boundaryGap: false,
-        axisLabel: {
-          formatter: (i) => hhmmUTC(new Date(base.getTime() + i * stepMs))
+      title: {
+        left: 'center',
+        text: 'Large Ara Chart'
+      },
+      toolbox: {
+        feature: {
+          dataZoom: {
+            yAxisIndex: 'none'
+          },
+          restore: {},
+          saveAsImage: {}
         }
       },
-      yAxis: { type: 'value', name: 'Value' },
-      dataZoom: [{ type: 'inside' }, { type: 'slider' }],
-      series: [{
-        type: 'line',
-        name: 'Sensor A',
-        data: values,
-        showSymbol: false,
-        smooth: true
-      }]
-    };
-    chart1.setOption(option1);
-
-    // ----- Chart 2: True time axis (generate once) -----
-    const el2 = document.getElementById('chart2');
-    const chart2 = echarts.init(el2);
-
-    const data = values.map((v, i) => [base.getTime() + i * stepMs, v]);
-
-    const option2 = {
-      grid: { left: 48, right: 16, top: 28, bottom: 40 },
-      tooltip: { trigger: 'axis', axisPointer: { type: 'line' } },
       xAxis: {
         type: 'time',
-        boundaryGap: false,
-        axisLabel: { formatter: (value) => hhmmUTC(new Date(value)) }
+        boundaryGap: false
       },
-      yAxis: { type: 'value', name: 'Value' },
-      dataZoom: [{ type: 'inside' }, { type: 'slider' }],
-      series: [{
-        type: 'line',
-        name: 'Sensor A',
-        data,
-        showSymbol: false,
-        smooth: true
-      }]
+      yAxis: {
+        type: 'value',
+        boundaryGap: [0, '100%']
+      },
+      series: [
+        {
+          name: 'Fake Data',
+          type: 'line',
+          smooth: true,
+          symbol: 'none',
+          areaStyle: {},
+          data: data
+        }
+      ]
     };
-    chart2.setOption(option2);
 
-    // Resize responsiveness
+    const el2 = document.getElementById('chart2');
+    const chart = echarts.init(el2);
+
+    chart.setOption(option);
+
     window.addEventListener('resize', () => {
-      chart1.resize();
-      chart2.resize();
+      chart.resize();
     });
   </script>
 </body>
+
 </html>
