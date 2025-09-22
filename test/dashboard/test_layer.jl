@@ -1,11 +1,11 @@
-module TestSeries
+module TestLayer
 
 using Dates
 using LightPSRIO
 using Test
 
-@testset "Series" begin
-    series = LightPSRIO.Series(
+@testset "Layer" begin
+    series = LightPSRIO.Layer(
         "Test Series",
         LightPSRIO.SeriesType.Line,
         LightPSRIO.DateReference(LightPSRIO.StageType.WEEK, 2, 2000),
@@ -15,6 +15,7 @@ using Test
     LightPSRIO.add(series, 2, 20.0)
 
     @show LightPSRIO.encode_echarts(series)
+    @show LightPSRIO.encode_highcharts(series)
 
     return nothing
 end

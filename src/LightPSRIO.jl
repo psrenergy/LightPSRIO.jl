@@ -38,7 +38,6 @@ include("expressions/binary/binary.jl")
 include("expressions/variadic/concatenate_agents.jl")
 
 include("dashboard/series_type.jl")
-include("dashboard/series.jl")
 include("dashboard/layer.jl")
 include("dashboard/chart.jl")
 include("dashboard/tab.jl")

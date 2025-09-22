@@ -1,3 +1,49 @@
-mutable struct Layer
+struct Layer
+    label::String
+    type::SeriesType.T
+    date_reference::DateReference
+    values::Vector{Base.Tuple{Int, Float64}}
 
+    function Layer(label::String, type::SeriesType.T, date_reference::DateReference)
+        return new(
+            label,
+            type,
+            date_reference,
+            Vector{Base.Tuple{Int, Float64}}(),
+        )
+    end
+end
+
+function add(layer::Layer, time_dimension::Integer, value::Float64)
+    epoch = PSRDates.stage_to_epoch(layer.date_reference, time_dimension)
+    push!(layer.values, (epoch, value))
+    return nothing
+end
+
+function encode_echarts(layer::Layer)
+    name = layer.label
+    type = layer.type
+    data = join(("[$(t[1]), $(t[2])]" for t in layer.values), ", ")
+    return """{
+      name: '$name',
+      type: '$type',
+      data: [$data],
+    }"""
+end
+
+function encode_highcharts(layer::Layer)
+    name = layer.label
+    type = layer.type
+    data = join(("[$(t[1]), $(t[2])]" for t in layer.values), ", ")
+    return """{
+        "color": "red",
+        "data": [$data],
+        "domain": "week",
+        "lineWidth": 2.0,
+        "name": "$name",
+        "pointStart": $(layer.values[1][1]),
+        "type": "$type",
+        "unique_tag": "$name",
+        "yUnit": "\$/MWh"
+    }"""
 end
