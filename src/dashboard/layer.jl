@@ -33,17 +33,18 @@ end
 
 function encode_highcharts(layer::Layer)
     name = layer.label
-    type = layer.type
+    type = layer.type == SeriesType.Line ? "line" : string(layer.type)
     data = join(("[$(t[1]), $(t[2])]" for t in layer.values), ", ")
+    point_start = isempty(layer.values) ? 0 : layer.values[1][1]
+
     return """{
-        "color": "red",
+        "name": "$name",
         "data": [$data],
         "domain": "week",
         "lineWidth": 2.0,
-        "name": "$name",
-        "pointStart": $(layer.values[1][1]),
+        "pointStart": $point_start,
         "type": "$type",
         "unique_tag": "$name",
-        "yUnit": "\$/MWh"
+        "yUnit": ""
     }"""
 end

@@ -61,8 +61,14 @@ function initialize(paths::Vector{String}; logger = Logging.Info)
 
     @push_lua_struct(
         L,
-        Chart,
-        "add_data", add_data
+        ChartJS,
+        "add", add
+    )
+
+    @push_lua_struct(
+        L,
+        Highcharts,
+        "add", add
     )
 
     @push_lua_struct(

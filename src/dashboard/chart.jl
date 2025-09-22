@@ -49,7 +49,7 @@ function add(chart::AbstractChart, expression::AbstractExpression)
 
     return nothing
 end
-@push_lua_function add
+@define_lua_function add
 
 mutable struct ChartJS <: AbstractChart
     title::String
@@ -57,35 +57,33 @@ mutable struct ChartJS <: AbstractChart
     layers::Vector{Layer}
 
     function ChartJS(title::String, chart_type::String = "line")
-        return new(title, chart_type, Dict{String, Any}[])
+        return new(title, chart_type, Layer[])
     end
 end
 @define_lua_struct ChartJS
 
-function add_data(chart::ChartJS, label::String, value::Float64)
-    push!(chart.data, Dict("label" => label, "value" => value))
-    return nothing
-end
-@define_lua_function add_data
 
 function json_encode_dashboard(chart::ChartJS)
-    data_json = String[]
-    for data_point in chart.data
-        point_parts = String[]
-        for (key, value) in data_point
-            if isa(value, String)
-                push!(point_parts, "\"$(key)\": \"$(escape_json(value))\"")
-            else
-                push!(point_parts, "\"$(key)\": $(value)")
-            end
+    layers_json = String[]
+    for layer in chart.layers
+        data_points = []
+        for (timestamp, value) in layer.values
+            push!(data_points, "{\"x\": $timestamp, \"y\": $value}")
         end
-        push!(data_json, "{" * join(point_parts, ", ") * "}")
+        data_json = "[" * join(data_points, ", ") * "]"
+
+        layer_json = """{
+            "label": "$(escape_json(layer.label))",
+            "data": $data_json
+        }"""
+        push!(layers_json, layer_json)
     end
 
     return """{
         "title": "$(escape_json(chart.title))",
         "chart_type": "$(escape_json(chart.chart_type))",
-        "data": [$(join(data_json, ", "))]
+        "library": "chartjs",
+        "layers": [$(join(layers_json, ", "))]
     }"""
 end
 
@@ -95,6 +93,32 @@ mutable struct Highcharts <: AbstractChart
     layers::Vector{Layer}
 
     function Highcharts(title::String, chart_type::String = "line")
-        return new(title, chart_type, Dict{String, Any}[])
+        return new(title, chart_type, Layer[])
+    end
+end
+@define_lua_struct Highcharts
+
+function json_encode_dashboard(chart::Highcharts)
+    layers_json = String[]
+    for layer in chart.layers
+        push!(layers_json, encode_highcharts(layer))
+    end
+
+    return """{
+        "title": "$(escape_json(chart.title))",
+        "chart_type": "highcharts",
+        "library": "highcharts",
+        "layers": [$(join(layers_json, ", "))]
+    }"""
+end
+
+# Chart type used to determine which library to use
+function get_chart_library(chart::AbstractChart)
+    if isa(chart, ChartJS)
+        return "chartjs"
+    elseif isa(chart, Highcharts)
+        return "highcharts"
+    else
+        return "unknown"
     end
 end

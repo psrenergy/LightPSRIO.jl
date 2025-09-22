@@ -13,7 +13,7 @@ include("../conftest.jl")
 
     @show expression = LightPSRIO.ExpressionDataQuiver(path, "input1")
 
-    chart = LightPSRIO.Chart("Test Chart")
+    chart = LightPSRIO.ChartJS("Test Chart")
 
     LightPSRIO.add(chart, expression)
 
