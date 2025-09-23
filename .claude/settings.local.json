@@ -4,7 +4,8 @@
       "Bash(julia:*)",
       "Bash(dir:*)",
       "Bash(grep:*)",
-      "Bash(cmd /c:*)"
+      "Bash(cmd /c:*)",
+      "Bash(/dev/null)"
     ],
     "deny": [],
     "ask": []

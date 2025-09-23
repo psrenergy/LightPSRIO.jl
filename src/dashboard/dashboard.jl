@@ -15,8 +15,14 @@ end
 
 function save(L::LuaState, dashboard::Dashboard, filename::String)
     case = get_case(L, 1)
+    save(dashboard, case.path, filename)
+    return nothing
+end
 
-    file = open(joinpath(case.path, "$filename.html"), "w")
+function save(dashboard::Dashboard, path::String, filename::String)
+    println("Saving $filename.html")
+
+    file = open(joinpath(path, "$filename.html"), "w")
 
     write(
         file,
@@ -336,25 +342,20 @@ function save(L::LuaState, dashboard::Dashboard, filename::String)
                                     }
                                 }
                             },
-                            scales: this.getScaleConfig(chart.chart_type)
+                            scales: this.getScaleConfig(chart.chart_type),
+                            // Enable parsing of time data
+                            parsing: chart.chart_type !== 'pie' && chart.chart_type !== 'doughnut' ? {
+                                xAxisKey: 'x',
+                                yAxisKey: 'y'
+                            } : false
                         }
                     };
 
                     this.chartInstances[chartId] = new Chart(ctx, chartConfig);
                 },
                 createHighcharts(chartId, chart, element) {
-                    // Convert layers to psrplot format
-                    const psrplotData = chart.layers.map(layer => ({
-                        color: this.getColorForSeries(layer.name || layer.label),
-                        data: layer.data || [],
-                        name: layer.name || layer.label,
-                        type: this.mapChartTypeToHighcharts(chart.chart_type),
-                        unique_tag: layer.unique_tag || (layer.name || layer.label),
-                        lineWidth: 2.0,
-                        yUnit: layer.yUnit || "",
-                        pointStart: layer.data && layer.data.length > 0 ? layer.data[0][0] : 0,
-                        domain: "week"
-                    }));
+                    // For Highcharts, the layers already contain the proper format from Julia
+                    const psrplotData = chart.layers;
 
                     // Use psrplot to create the chart
                     if (typeof psrplot !== 'undefined' && psrplot.createChart) {
@@ -378,9 +379,9 @@ function save(L::LuaState, dashboard::Dashboard, filename::String)
                             series: psrplotData.map(series => ({
                                 name: series.name,
                                 data: series.data,
-                                type: series.type,
-                                color: series.color,
-                                lineWidth: series.lineWidth
+                                type: this.mapChartTypeToHighcharts(chart.chart_type),
+                                color: this.getColorForSeries(series.name),
+                                lineWidth: series.lineWidth || 2.0
                             })),
                             legend: {
                                 enabled: true,
@@ -448,9 +449,27 @@ function save(L::LuaState, dashboard::Dashboard, filename::String)
                         'rgba(34, 197, 94, 1)'
                     ];
 
+                    // Handle different chart types
+                    if (chart.chart_type === 'pie' || chart.chart_type === 'doughnut') {
+                        // For pie/doughnut charts, extract just the values and create labels
+                        const layer = chart.layers[0];
+                        if (!layer || !layer.data) return { labels: [], datasets: [] };
+
+                        return {
+                            labels: layer.data.map((point, index) => \`Item \${index + 1}\`),
+                            datasets: [{
+                                data: layer.data.map(point => point.y),
+                                backgroundColor: colors,
+                                borderColor: borderColors,
+                                borderWidth: 1
+                            }]
+                        };
+                    }
+
+                    // For line/bar charts, use time series data
                     const datasets = chart.layers.map((layer, index) => ({
                         label: layer.label,
-                        data: layer.data,
+                        data: layer.data, // Data is already in {x, y} format from Julia
                         backgroundColor: colors[index % colors.length],
                         borderColor: borderColors[index % borderColors.length],
                         borderWidth: 2,

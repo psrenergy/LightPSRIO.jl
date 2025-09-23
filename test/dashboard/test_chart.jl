@@ -9,15 +9,19 @@ using Test
 include("../conftest.jl")
 
 @testset "Layers" begin
-    path = get_data_directory()
+    @show path = get_data_directory()
 
     @show expression = LightPSRIO.ExpressionDataQuiver(path, "input1")
 
-    chart = LightPSRIO.ChartJS("Test Chart")
-
+    chart = LightPSRIO.Highcharts("Test Chart")
     LightPSRIO.add(chart, expression)
 
-    @show chart
+    tab = LightPSRIO.Tab("Tab")
+    LightPSRIO.push(tab, chart)
+
+    dashboard = LightPSRIO.Dashboard()
+    LightPSRIO.push(dashboard, tab)
+    LightPSRIO.save(dashboard, path, "test_layers")
 
     return nothing
 end

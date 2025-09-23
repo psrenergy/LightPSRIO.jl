@@ -62,7 +62,6 @@ mutable struct ChartJS <: AbstractChart
 end
 @define_lua_struct ChartJS
 
-
 function json_encode_dashboard(chart::ChartJS)
     layers_json = String[]
     for layer in chart.layers
