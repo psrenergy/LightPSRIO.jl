@@ -31,6 +31,7 @@ function add(chart::AbstractChart, expression::AbstractExpression)
                 "$label ($suffix)",
                 SeriesType.Line,
                 date_reference,
+                attributes.unit,
             ) for label in attributes.labels]
         end
 

@@ -2,13 +2,15 @@ struct Layer
     label::String
     type::SeriesType.T
     date_reference::DateReference
+    unit::String
     values::Vector{Base.Tuple{Int, Float64}}
 
-    function Layer(label::String, type::SeriesType.T, date_reference::DateReference)
+    function Layer(label::String, type::SeriesType.T, date_reference::DateReference, unit::String)
         return new(
             label,
             type,
             date_reference,
+            unit,
             Vector{Base.Tuple{Int, Float64}}(),
         )
     end
