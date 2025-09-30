@@ -15,14 +15,8 @@ end
 
 function save(L::LuaState, dashboard::Dashboard, filename::String)
     case = get_case(L, 1)
-    save(dashboard, case.path, filename)
-    return nothing
-end
 
-function save(dashboard::Dashboard, path::String, filename::String)
-    println("Saving $filename.html")
-
-    file = open(joinpath(path, "$filename.html"), "w")
+    file = open(joinpath(case.path, "$filename.html"), "w")
 
     write(
         file,
@@ -36,14 +30,6 @@ function save(dashboard::Dashboard, path::String, filename::String)
     <script src="https://cdn.tailwindcss.com/3.4.0"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@3.3.4/dist/vue.global.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
-    <script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="https://code.highcharts.com/highcharts-more.js"></script>
-    <script src="https://code.highcharts.com/modules/series-label.js"></script>
-    <script src="https://code.highcharts.com/modules/exporting.js"></script>
-    <script src="https://code.highcharts.com/modules/export-data.js"></script>
-    <script src="https://code.highcharts.com/modules/accessibility.js"></script>
-    <script src="https://code.highcharts.com/themes/adaptive.js"></script>
-    <script src="https://js-scripts.psr-inc.com/psrplot/0.15/psrplot.min.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -176,12 +162,8 @@ function save(dashboard::Dashboard, path::String, filename::String)
                             <div class="text-sm text-gray-500 capitalize">{{ chart.chart_type }} chart</div>
                         </div>
                         <div class="relative h-96">
-                            <canvas v-if="chart.library === 'chartjs'"
-                                    :id="'chart-' + tabIndex + '-' + chartIndex"
+                            <canvas :id="'chart-' + tabIndex + '-' + chartIndex" 
                                     class="max-w-full max-h-full"></canvas>
-                            <div v-else-if="chart.library === 'highcharts'"
-                                 :id="'chart-' + tabIndex + '-' + chartIndex"
-                                 class="w-full h-full"></div>
                         </div>
                     </div>
                 </div>
@@ -284,30 +266,19 @@ function save(dashboard::Dashboard, path::String, filename::String)
                     });
                 },
                 createChart(chartId, chart) {
-                    const element = document.getElementById(chartId);
-                    if (!element) return;
-
+                    const canvas = document.getElementById(chartId);
+                    if (!canvas) return;
+                    
                     // Destroy existing chart if it exists
                     if (this.chartInstances[chartId]) {
-                        if (chart.library === 'chartjs') {
-                            this.chartInstances[chartId].destroy();
-                        } else if (chart.library === 'highcharts') {
-                            this.chartInstances[chartId].destroy();
-                        }
+                        this.chartInstances[chartId].destroy();
                     }
-
-                    if (chart.library === 'chartjs') {
-                        this.createChartJS(chartId, chart, element);
-                    } else if (chart.library === 'highcharts') {
-                        this.createHighcharts(chartId, chart, element);
-                    }
-                },
-                createChartJS(chartId, chart, canvas) {
+                    
                     const ctx = canvas.getContext('2d');
-
+                    
                     const chartConfig = {
                         type: chart.chart_type,
-                        data: this.prepareChartJSData(chart),
+                        data: this.prepareChartData(chart),
                         options: {
                             responsive: true,
                             maintainAspectRatio: false,
@@ -342,79 +313,14 @@ function save(dashboard::Dashboard, path::String, filename::String)
                                     }
                                 }
                             },
-                            scales: this.getScaleConfig(chart.chart_type),
-                            // Enable parsing of time data
-                            parsing: chart.chart_type !== 'pie' && chart.chart_type !== 'doughnut' ? {
-                                xAxisKey: 'x',
-                                yAxisKey: 'y'
-                            } : false
+                            scales: this.getScaleConfig(chart.chart_type)
                         }
                     };
-
+                    
                     this.chartInstances[chartId] = new Chart(ctx, chartConfig);
                 },
-                createHighcharts(chartId, chart, element) {
-                    // For Highcharts, the layers already contain the proper format from Julia
-                    const psrplotData = chart.layers;
-
-                    // Use psrplot to create the chart
-                    if (typeof psrplot !== 'undefined' && psrplot.createChart) {
-                        this.chartInstances[chartId] = psrplot.createChart(element, psrplotData, {
-                            title: { text: chart.title }
-                        });
-                    } else {
-                        // Fallback to direct Highcharts if psrplot is not available
-                        this.chartInstances[chartId] = Highcharts.chart(element, {
-                            title: { text: chart.title },
-                            chart: {
-                                height: 380,
-                                backgroundColor: '#ffffff'
-                            },
-                            xAxis: {
-                                type: 'datetime'
-                            },
-                            yAxis: {
-                                title: { text: '' }
-                            },
-                            series: psrplotData.map(series => ({
-                                name: series.name,
-                                data: series.data,
-                                type: this.mapChartTypeToHighcharts(chart.chart_type),
-                                color: this.getColorForSeries(series.name),
-                                lineWidth: series.lineWidth || 2.0
-                            })),
-                            legend: {
-                                enabled: true,
-                                align: 'center',
-                                verticalAlign: 'bottom'
-                            },
-                            credits: { enabled: false },
-                            exporting: { enabled: true }
-                        });
-                    }
-                },
-                getColorForSeries(name) {
-                    const colors = [
-                        '#3b82f6', '#10b981', '#f59e0b', '#ef4444',
-                        '#8b5cf6', '#ec4899', '#06b6d4', '#22c55e'
-                    ];
-                    let hash = 0;
-                    for (let i = 0; i < name.length; i++) {
-                        hash = name.charCodeAt(i) + ((hash << 5) - hash);
-                    }
-                    return colors[Math.abs(hash) % colors.length];
-                },
-                mapChartTypeToHighcharts(chartType) {
-                    const mapping = {
-                        'line': 'line',
-                        'bar': 'column',
-                        'area': 'area',
-                        'scatter': 'scatter'
-                    };
-                    return mapping[chartType] || 'line';
-                },
-                prepareChartJSData(chart) {
-                    if (!chart.layers || chart.layers.length === 0) {
+                prepareChartData(chart) {
+                    if (!chart.data || chart.data.length === 0) {
                         return {
                             labels: ['No Data'],
                             datasets: [{
@@ -426,7 +332,7 @@ function save(dashboard::Dashboard, path::String, filename::String)
                             }]
                         };
                     }
-
+                    
                     const colors = [
                         'rgba(59, 130, 246, 0.8)',
                         'rgba(16, 185, 129, 0.8)',
@@ -437,7 +343,7 @@ function save(dashboard::Dashboard, path::String, filename::String)
                         'rgba(6, 182, 212, 0.8)',
                         'rgba(34, 197, 94, 0.8)'
                     ];
-
+                    
                     const borderColors = [
                         'rgba(59, 130, 246, 1)',
                         'rgba(16, 185, 129, 1)',
@@ -448,35 +354,30 @@ function save(dashboard::Dashboard, path::String, filename::String)
                         'rgba(6, 182, 212, 1)',
                         'rgba(34, 197, 94, 1)'
                     ];
-
-                    // Handle different chart types
+                    
                     if (chart.chart_type === 'pie' || chart.chart_type === 'doughnut') {
-                        // For pie/doughnut charts, extract just the values and create labels
-                        const layer = chart.layers[0];
-                        if (!layer || !layer.data) return { labels: [], datasets: [] };
-
                         return {
-                            labels: layer.data.map((point, index) => \`Item \${index + 1}\`),
+                            labels: chart.data.map(d => d.label || d.x || 'Series'),
                             datasets: [{
-                                data: layer.data.map(point => point.y),
+                                data: chart.data.map(d => d.value || d.y || 0),
                                 backgroundColor: colors,
                                 borderColor: borderColors,
                                 borderWidth: 1
                             }]
                         };
                     }
-
-                    // For line/bar charts, use time series data
-                    const datasets = chart.layers.map((layer, index) => ({
-                        label: layer.label,
-                        data: layer.data, // Data is already in {x, y} format from Julia
-                        backgroundColor: colors[index % colors.length],
-                        borderColor: borderColors[index % borderColors.length],
+                    
+                    const labels = chart.data.map(d => d.label || d.x || '');
+                    const datasets = [{
+                        label: chart.title,
+                        data: chart.data.map(d => d.value || d.y || 0),
+                        backgroundColor: colors[0],
+                        borderColor: borderColors[0],
                         borderWidth: 2,
                         fill: chart.chart_type === 'line' ? false : true
-                    }));
-
-                    return { datasets };
+                    }];
+                    
+                    return { labels, datasets };
                 },
                 getScaleConfig(chartType) {
                     if (chartType === 'pie' || chartType === 'doughnut') {
@@ -554,4 +455,3 @@ function json_encode_dashboard(dashboard::Dashboard)
 
     return "[" * join(tabs_json, ", ") * "]"
 end
-
