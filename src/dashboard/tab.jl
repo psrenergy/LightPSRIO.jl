@@ -14,16 +14,6 @@ function push(tab::Tab, chart::Chart)
 end
 @define_lua_function push
 
-function json_encode_dashboard(tab::Tab)
-    charts_json = String[]
-
-    for chart in tab.charts
-        chart_json = json_encode_dashboard(chart)
-        push!(charts_json, chart_json)
-    end
-
-    return """{
-        "label": "$(escape_json(tab.label))",
-        "charts": [$(join(charts_json, ", "))]
-    }"""
+function create_patchwork(tab::Tab)
+    return PatchworkTab(tab.label, [create_patchwork(chart) for chart in tab.charts])
 end
