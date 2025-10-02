@@ -25,10 +25,11 @@ end
 function create_patchwork(layer::Layer)
     data_vector = ("[$(t[1]), $(t[2])]" for t in layer.values)
     data = join(data_vector, ", ")
+    
     return """
 {
     "name": "$(layer.label)",
-    "type": "line",
+    $(highcharts(layer.type))
     "pointRange": $(60000 * 60 * 24 * 31),
     "data": [$data]
 }

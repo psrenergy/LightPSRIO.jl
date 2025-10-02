@@ -23,10 +23,10 @@ local deficit = generic
 local tab = Tab("Performance Metrics");
 
 local chart = Chart("Generation");
-chart:add_line(demand);
-chart:add_line(hydro_generation);
-chart:add_line(thermal_generation);
-chart:add_line(deficit);
+chart:add("line", demand);
+chart:add("area_stacking", hydro_generation);
+chart:add("area_stacking", thermal_generation);
+chart:add("area_stacking", deficit);
 tab:push(chart);
 
 local dashboard = Dashboard();

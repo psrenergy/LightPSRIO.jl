@@ -1,9 +1,29 @@
-@enumx SeriesType Line
+@enumx SeriesType begin
+    Line
+    AreaStacking
+end
 
-function encode_echarts(series_type::SeriesType.T)
-    if series_type == SeriesType.Line
-        return "line"
+function to_series_type(type::String)
+    if type == "line"
+        return SeriesType.Line
+    elseif type == "area_stacking"
+        return SeriesType.AreaStacking
     else
-        error("Unsupported series type: $series_type")
+        error("Unsupported series type: $type")
+    end
+end
+
+function highcharts(type::SeriesType.T)
+    if type == SeriesType.Line
+        return """
+"type": "line",
+        """
+    elseif type == SeriesType.AreaStacking
+        return """
+"type": "area",
+"stacking": "normal",
+        """
+    else
+        error("Unsupported series type: $type")
     end
 end

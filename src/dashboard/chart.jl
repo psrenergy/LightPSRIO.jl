@@ -1,6 +1,6 @@
 abstract type AbstractChart end
 
-function add_line(chart::AbstractChart, expression::AbstractExpression)
+function add(chart::AbstractChart, type::String, expression::AbstractExpression)
     if !has_data(expression)
         return nothing
     end
@@ -26,11 +26,11 @@ function add_line(chart::AbstractChart, expression::AbstractExpression)
         end
 
         if !haskey(layers, key)
-            @show dimensions_label = get_filtered_dimensions_label(attributes, kwargs)
+            dimensions_label = get_filtered_dimensions_label(attributes, kwargs)
             layers[key] = [
                 Layer(
                     length(dimensions_label) > 0 ? "$label ($dimensions_label)" : "$label",
-                    SeriesType.Line,
+                    to_series_type(type),
                     date_reference,
                     attributes.unit,
                 ) for label in attributes.labels]
@@ -51,7 +51,7 @@ function add_line(chart::AbstractChart, expression::AbstractExpression)
 
     return nothing
 end
-@define_lua_function add_line
+@define_lua_function add
 
 mutable struct Chart <: AbstractChart
     title::String

@@ -87,7 +87,7 @@ function initialize(paths::Vector{String}; logger = Logging.Info)
     @push_lua_struct(
         L,
         Chart,
-        "add_line", add_line
+        "add", add
     )
 
     @push_lua_struct(
