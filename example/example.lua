@@ -1,5 +1,10 @@
 local generic = Generic();
 
+local demand = generic
+    :load("demand")
+    :aggregate_agents(BY_SUM(), "Total Demand")
+    :aggregate("scenario", BY_AVERAGE());
+
 local hydro_generation = generic
     :load("hydro_generation")
     :aggregate_agents(BY_SUM(), "Total Hydro")
@@ -18,6 +23,7 @@ local deficit = generic
 local tab = Tab("Performance Metrics");
 
 local chart = Chart("Generation");
+chart:add_line(demand);
 chart:add_line(hydro_generation);
 chart:add_line(thermal_generation);
 chart:add_line(deficit);

@@ -24,13 +24,12 @@ function add_line(chart::AbstractChart, expression::AbstractExpression)
                 push!(key, value)
             end
         end
-
+        
         if !haskey(layers, key)
-            kwargs_without_stage = filter(!=(Symbol(:stage)), keys(kwargs))
-            suffix = join(["$(dim)=$(kwargs[dim])" for dim in kwargs_without_stage], ", ")
+            @show dimensions_label = get_filtered_dimensions_label(attributes, kwargs)
             layers[key] = [
                 Layer(
-                    "$label ($suffix)",
+                    length(dimensions_label) > 0 ? "$label ($dimensions_label)" : "$label",
                     SeriesType.Line,
                     date_reference,
                     attributes.unit,

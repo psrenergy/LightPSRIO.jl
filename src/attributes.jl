@@ -46,3 +46,13 @@ end
 function has_data(attributes::Attributes)
     return length(attributes.labels) > 0
 end
+
+function get_filtered_dimensions_label(attributes::Attributes, kwargs)
+    dimensions = Symbol[]
+    for (index, dimension) in enumerate(attributes.dimensions)
+        if attributes.dimension_size[index] > 1 && dimension != :stage
+            push!(dimensions, dimension)
+        end
+    end
+    return join(["$dimension=$(kwargs[dimension])" for dimension in dimensions], ", ")
+end
