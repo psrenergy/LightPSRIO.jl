@@ -23,10 +23,13 @@ function add(layer::Layer, time_dimension::Integer, value::Real)
 end
 
 function create_patchwork(layer::Layer)
-    data = join(("[$(t[1]), $(t[2])]" for t in layer.values), ", ")
+    data_vector = ("[$(t[1]), $(t[2])]" for t in layer.values)
+    data = join(data_vector, ", ")
     return """
 {
     "name": "$(layer.label)",
+    "type": "line",
+    "pointRange": $(60000 * 60 * 24 * 31),
     "data": [$data]
 }
 """

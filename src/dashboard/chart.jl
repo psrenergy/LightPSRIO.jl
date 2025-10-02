@@ -26,13 +26,15 @@ function add_line(chart::AbstractChart, expression::AbstractExpression)
         end
 
         if !haskey(layers, key)
-            suffix = join(filter(!=(Symbol(:stage)), keys(kwargs)), " ")
-            layers[key] = [Layer(
-                "$label ($suffix)",
-                SeriesType.Line,
-                date_reference,
-                attributes.unit,
-            ) for label in attributes.labels]
+            kwargs_without_stage = filter(!=(Symbol(:stage)), keys(kwargs))
+            suffix = join(["$(dim)=$(kwargs[dim])" for dim in kwargs_without_stage], ", ")
+            layers[key] = [
+                Layer(
+                    "$label ($suffix)",
+                    SeriesType.Line,
+                    date_reference,
+                    attributes.unit,
+                ) for label in attributes.labels]
         end
 
         result = evaluate(expression; kwargs...)
@@ -63,14 +65,16 @@ end
 @define_lua_struct Chart
 
 function create_patchwork(chart::Chart)
-    charts = join([create_patchwork(layer) for layer in chart.layers], ",\n")
+    series = "[" * join([create_patchwork(layer) for layer in chart.layers], ",\n") * "]"
     return PatchworkHighcharts(
         "Monthly Performance",
         """
         {
-            "series": [
-                $charts
-            ],
+            "xAxis": {
+                "type": "datetime"
+            },
+            "legend": { "layout": "vertical", "align": "right", "verticalAlign": "top" },
+            "series": $series,
             "responsive": {
                 "rules": [{
                     "condition": {

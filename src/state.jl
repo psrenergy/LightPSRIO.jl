@@ -101,7 +101,7 @@ function initialize(paths::Vector{String}; logger = Logging.Info)
         Dashboard,
         "push", push,
         "save", save,
-    )    
+    )
 
     register_cases(L, paths)
 

@@ -6,7 +6,7 @@ using EnumX
 using JSON
 using Logging
 using LuaNova
-using Patchwork 
+using Patchwork
 using PSRDates
 using Quiver
 using Statistics
