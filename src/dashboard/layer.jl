@@ -14,7 +14,7 @@ function add(layer::Layer, time_dimension::Integer, value::Real)
 end
 
 function get_data_string(layer::Layer)
-    return "[" * join(("[$(t[1]), $(@sprintf("%.2f", t[2]))]" for t in layer.values), ", ") * "]"
+    return "[" * join(("[$(t[1]), $(@sprintf("%.3f", t[2]))]" for t in layer.values), ", ") * "]"
 end
 
 function create_patchwork(layer::Layer)
@@ -23,10 +23,10 @@ function create_patchwork(layer::Layer)
 
     return """
 {
+    "name": "$(layer.label)",    
     $options
-    "name": "$(layer.label)",
     $(highcharts(layer.type))
-    "pointRange": $(60000 * 60 * 24 * 31),
+    $(highcharts(layer.date_reference.stage_type))
     "data": $data
 }
 """

@@ -67,7 +67,7 @@ end
 
 function create_patchwork(chart::Chart)
     series = "[" * join([create_patchwork(layer) for layer in chart.layers], ",\n") * "]"
-    return PatchworkHighcharts(
+    return Patchwork.Highcharts(
         chart.title,
         """
         {

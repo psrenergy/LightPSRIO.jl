@@ -40,6 +40,7 @@ include("expressions/binary/binary.jl")
 # variadic expressions
 include("expressions/variadic/concatenate_agents.jl")
 
+include("dashboard/domain_type.jl")
 include("dashboard/series_type.jl")
 include("dashboard/layer.jl")
 include("dashboard/chart.jl")

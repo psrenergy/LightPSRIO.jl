@@ -15,5 +15,5 @@ end
 @define_lua_function push
 
 function create_patchwork(tab::Tab)
-    return PatchworkTab(tab.label, [create_patchwork(chart) for chart in tab.charts])
+    return Patchwork.Tab(tab.label, [create_patchwork(chart) for chart in tab.charts])
 end

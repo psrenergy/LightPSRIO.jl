@@ -1,7 +1,17 @@
 local generic = Generic();
 
-local function tab_generation()
-    local tab = Tab("Balance");
+local function tab_home()
+    local tab = Tab("Home");
+    return tab;
+end
+
+local function tab_cost_analysis()
+    local tab = Tab("Cost Analysis");
+    return tab;
+end
+
+local function tab_demand_analysis()
+    local tab = Tab("Demand Analysis");
 
     local demand = generic:load("demand"):aggregate_agents(BY_SUM(), "Total Demand"):aggregate("scenario", BY_AVERAGE());
 
@@ -13,16 +23,16 @@ local function tab_generation()
 
     local chart = Chart("Generation");
     chart:add("line", demand);
-    chart:add("area_stacking", hydro_generation);
-    chart:add("area_stacking", thermal_generation);
     chart:add("area_stacking", deficit, { color = "black" });
+    chart:add("area_stacking", thermal_generation, { color = "red" });
+    chart:add("area_stacking", hydro_generation, { color = "blue" });
     tab:push(chart);
 
     return tab;
 end
 
-local function tab_inflow()
-    local tab = Tab("Inflow");
+local function tab_hydro_analysis()
+    local tab = Tab("Hydro Analysis");
 
     local inflow = generic:load("hydro_inflow"):aggregate("scenario", BY_AVERAGE());
 
@@ -33,7 +43,21 @@ local function tab_inflow()
     return tab;
 end
 
+local function tab_thermal_analysis()
+    local tab = Tab("Thermal Analysis");
+    return tab;
+end
+
+local function tab_renewable_analysis()
+    local tab = Tab("Renewable Analysis");
+    return tab;
+end
+
 local dashboard = Dashboard();
-dashboard:push(tab_generation());
-dashboard:push(tab_inflow());
+dashboard:push(tab_home());
+dashboard:push(tab_cost_analysis());
+dashboard:push(tab_demand_analysis());
+dashboard:push(tab_hydro_analysis());
+dashboard:push(tab_thermal_analysis());
+dashboard:push(tab_renewable_analysis());
 dashboard:save("dashboard");

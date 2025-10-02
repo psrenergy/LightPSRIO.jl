@@ -18,7 +18,10 @@ function save(L::LuaState, dashboard::Dashboard, filename::String)
 
     path = joinpath(case.path, "$filename.html")
 
-    patchwork = PatchworkDashboard("Charts Demo", [create_patchwork(tab) for tab in dashboard.tabs])
+    patchwork = Patchwork.Dashboard(
+        "Dashboard",
+        [create_patchwork(tab) for tab in dashboard.tabs],
+    )
     Patchwork.save(patchwork, path)
 
     return nothing
