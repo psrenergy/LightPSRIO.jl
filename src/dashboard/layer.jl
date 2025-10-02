@@ -22,31 +22,44 @@ function add(layer::Layer, time_dimension::Integer, value::Real)
     return nothing
 end
 
-function encode_echarts(layer::Layer)
-    name = layer.label
-    type = layer.type
-    data = join(("[$(t[1]), $(t[2])]" for t in layer.values), ", ")
-    return """{
-      name: '$name',
-      type: '$type',
-      data: [$data],
-    }"""
+function create_patchwork(layer::Layer)
+    data_vector = ("[$(t[1]), $(t[2])]" for t in layer.values)
+    data = join(data_vector, ", ")
+    return """
+{
+    "name": "$(layer.label)",
+    "type": "line",
+    "pointRange": $(60000 * 60 * 24 * 31),
+    "data": [$data]
+}
+"""
 end
 
-function encode_highcharts(layer::Layer)
-    name = layer.label
-    type = layer.type == SeriesType.Line ? "line" : string(layer.type)
-    data = join(("[$(t[1]), $(t[2])]" for t in layer.values), ", ")
-    point_start = isempty(layer.values) ? 0 : layer.values[1][1]
+# function encode_echarts(layer::Layer)
+#     name = layer.label
+#     type = layer.type
+#     data = join(("[$(t[1]), $(t[2])]" for t in layer.values), ", ")
+#     return """{
+#       name: '$name',
+#       type: '$type',
+#       data: [$data],
+#     }"""
+# end
 
-    return """{
-        "name": "$name",
-        "data": [$data],
-        "domain": "week",
-        "lineWidth": 2.0,
-        "pointStart": $point_start,
-        "type": "$type",
-        "unique_tag": "$name",
-        "yUnit": ""
-    }"""
-end
+# function encode_highcharts(layer::Layer)
+#     name = layer.label
+#     type = layer.type == SeriesType.Line ? "line" : string(layer.type)
+#     data = join(("[$(t[1]), $(t[2])]" for t in layer.values), ", ")
+#     point_start = isempty(layer.values) ? 0 : layer.values[1][1]
+
+#     return """{
+#         "name": "$name",
+#         "data": [$data],
+#         "domain": "week",
+#         "lineWidth": 2.0,
+#         "pointStart": $point_start,
+#         "type": "$type",
+#         "unique_tag": "$name",
+#         "yUnit": ""
+#     }"""
+# end

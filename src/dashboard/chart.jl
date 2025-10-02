@@ -1,6 +1,6 @@
 abstract type AbstractChart end
 
-function add(chart::AbstractChart, expression::AbstractExpression)
+function add_line(chart::AbstractChart, expression::AbstractExpression)
     if !has_data(expression)
         return nothing
     end
@@ -26,13 +26,15 @@ function add(chart::AbstractChart, expression::AbstractExpression)
         end
 
         if !haskey(layers, key)
-            suffix = join(filter(!=(Symbol(:stage)), keys(kwargs)), " ")
-            layers[key] = [Layer(
-                "$label ($suffix)",
-                SeriesType.Line,
-                date_reference,
-                attributes.unit,
-            ) for label in attributes.labels]
+            kwargs_without_stage = filter(!=(Symbol(:stage)), keys(kwargs))
+            suffix = join(["$(dim)=$(kwargs[dim])" for dim in kwargs_without_stage], ", ")
+            layers[key] = [
+                Layer(
+                    "$label ($suffix)",
+                    SeriesType.Line,
+                    date_reference,
+                    attributes.unit,
+                ) for label in attributes.labels]
         end
 
         result = evaluate(expression; kwargs...)
@@ -50,75 +52,44 @@ function add(chart::AbstractChart, expression::AbstractExpression)
 
     return nothing
 end
-@define_lua_function add
+@define_lua_function add_line
 
-mutable struct ChartJS <: AbstractChart
+mutable struct Chart <: AbstractChart
     title::String
-    chart_type::String
     layers::Vector{Layer}
 
-    function ChartJS(title::String, chart_type::String = "line")
-        return new(title, chart_type, Layer[])
+    function Chart(title::String)
+        return new(title, Dict{String, Any}[])
     end
 end
-@define_lua_struct ChartJS
+@define_lua_struct Chart
 
-function json_encode_dashboard(chart::ChartJS)
-    layers_json = String[]
-    for layer in chart.layers
-        data_points = []
-        for (timestamp, value) in layer.values
-            push!(data_points, "{\"x\": $timestamp, \"y\": $value}")
-        end
-        data_json = "[" * join(data_points, ", ") * "]"
-
-        layer_json = """{
-            "label": "$(escape_json(layer.label))",
-            "data": $data_json
-        }"""
-        push!(layers_json, layer_json)
-    end
-
-    return """{
-        "title": "$(escape_json(chart.title))",
-        "chart_type": "$(escape_json(chart.chart_type))",
-        "library": "chartjs",
-        "layers": [$(join(layers_json, ", "))]
-    }"""
-end
-
-mutable struct Highcharts <: AbstractChart
-    title::String
-    chart_type::String
-    layers::Vector{Layer}
-
-    function Highcharts(title::String, chart_type::String = "line")
-        return new(title, chart_type, Layer[])
-    end
-end
-@define_lua_struct Highcharts
-
-function json_encode_dashboard(chart::Highcharts)
-    layers_json = String[]
-    for layer in chart.layers
-        push!(layers_json, encode_highcharts(layer))
-    end
-
-    return """{
-        "title": "$(escape_json(chart.title))",
-        "chart_type": "highcharts",
-        "library": "highcharts",
-        "layers": [$(join(layers_json, ", "))]
-    }"""
-end
-
-# Chart type used to determine which library to use
-function get_chart_library(chart::AbstractChart)
-    if isa(chart, ChartJS)
-        return "chartjs"
-    elseif isa(chart, Highcharts)
-        return "highcharts"
-    else
-        return "unknown"
-    end
+function create_patchwork(chart::Chart)
+    series = "[" * join([create_patchwork(layer) for layer in chart.layers], ",\n") * "]"
+    return PatchworkHighcharts(
+        "Monthly Performance",
+        """
+        {
+            "xAxis": {
+                "type": "datetime"
+            },
+            "legend": { "layout": "vertical", "align": "right", "verticalAlign": "top" },
+            "series": $series,
+            "responsive": {
+                "rules": [{
+                    "condition": {
+                        "maxWidth": 500
+                    },
+                    "chartOptions": {
+                        "legend": {
+                            "layout": "horizontal",
+                            "align": "center",
+                            "verticalAlign": "bottom"
+                        }
+                    }
+                }]
+            }
+        }
+        """,
+    )
 end
