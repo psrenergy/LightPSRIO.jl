@@ -7,10 +7,12 @@ using JSON
 using Logging
 using LuaNova
 using Patchwork
+using Printf
 using PSRDates
 using Quiver
 using Statistics
 
+include("optional.jl")
 include("util.jl")
 include("aggregate_functions.jl")
 include("case.jl")

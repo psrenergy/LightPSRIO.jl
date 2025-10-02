@@ -1,5 +1,3 @@
-Optional{T} = Union{T, Nothing}
-
 function escape_json(str::String)
     return replace(
         replace(
@@ -7,4 +5,9 @@ function escape_json(str::String)
             "\"" => "\\\""),
         "\n" => "\\n",
     )
+end
+
+function to_json_string(dict::Dict)
+    json = JSON.json(dict)
+    return json[2:end-1]
 end

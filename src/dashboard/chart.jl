@@ -1,6 +1,7 @@
 abstract type AbstractChart end
 
-function add(chart::AbstractChart, type::String, expression::AbstractExpression)
+function add(chart::AbstractChart, type::String, expression::AbstractExpression, options::Optional{Dict}=nothing)
+    @show options
     if !has_data(expression)
         return nothing
     end
@@ -29,10 +30,11 @@ function add(chart::AbstractChart, type::String, expression::AbstractExpression)
             dimensions_label = get_filtered_dimensions_label(attributes, kwargs)
             layers[key] = [
                 Layer(
-                    length(dimensions_label) > 0 ? "$label ($dimensions_label)" : "$label",
-                    to_series_type(type),
-                    date_reference,
-                    attributes.unit,
+                    label = length(dimensions_label) > 0 ? "$label ($dimensions_label)" : "$label",
+                    type = to_series_type(type),
+                    date_reference = date_reference,
+                    unit = attributes.unit,
+                    options = options,
                 ) for label in attributes.labels]
         end
 
@@ -66,9 +68,10 @@ end
 function create_patchwork(chart::Chart)
     series = "[" * join([create_patchwork(layer) for layer in chart.layers], ",\n") * "]"
     return PatchworkHighcharts(
-        "Monthly Performance",
+        chart.title,
         """
         {
+            "title": { "text": null },
             "xAxis": {
                 "type": "datetime"
             },

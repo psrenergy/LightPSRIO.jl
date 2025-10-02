@@ -13,7 +13,7 @@ mutable struct ExpressionAggregateDimensions <: AbstractUnary
 
         dimension_index = findfirst(==(dimension_symbol), attributes.dimensions)
         if dimension_index === nothing
-            error("Dimension $dimension not found.")
+            error("Dimension $dimension not found (dimensions: $(attributes.dimensions))")
         end
         dimension_original_size = attributes.dimension_size[dimension_index]
         attributes.dimension_size[dimension_index] = 1

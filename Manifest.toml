@@ -2,7 +2,7 @@
 
 julia_version = "1.11.3"
 manifest_format = "2.0"
-project_hash = "e12fb765f6d7146e92926f02cf0a490e37df59e2"
+project_hash = "893e8b3343dda37a0ac1363058a07b1a64bcafa7"
 
 [[deps.Artifacts]]
 uuid = "56f22d72-fd6d-98f1-02f0-08ddc0907c33"
@@ -150,9 +150,9 @@ version = "1.11.0"
 
 [[deps.LuaNova]]
 deps = ["EnumX", "Lua_jll"]
-git-tree-sha1 = "a72545f810582b7015f11dc86ee506bbf9cb8dc5"
+git-tree-sha1 = "825a5b6f4c20aed8909db18ec3ae659df8beb9c3"
 uuid = "faa88067-b4cd-4998-97ac-8175b58d6ef9"
-version = "0.1.5"
+version = "0.1.6"
 
 [[deps.Lua_jll]]
 deps = ["Artifacts", "JLLWrappers", "Libdl", "Readline_jll"]
@@ -207,7 +207,7 @@ version = "2.8.3"
 
 [[deps.Patchwork]]
 deps = ["JSON", "Markdown", "UUIDs"]
-git-tree-sha1 = "ae08f63ca2134342e921ae289e50adb210356367"
+git-tree-sha1 = "c086fb0dad25c8a6282c2780fdc12cc39cafc9c7"
 repo-rev = "main"
 repo-url = "https://github.com/raphasampaio/Patchwork.jl.git"
 uuid = "89290475-19d9-4972-8f76-8da21b5d05c1"

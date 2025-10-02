@@ -1,19 +1,10 @@
-struct Layer
+@kwdef struct Layer
     label::String
     type::SeriesType.T
     date_reference::DateReference
     unit::String
-    values::Vector{Base.Tuple{Int, Float64}}
-
-    function Layer(label::String, type::SeriesType.T, date_reference::DateReference, unit::String)
-        return new(
-            label,
-            type,
-            date_reference,
-            unit,
-            Vector{Base.Tuple{Int, Float64}}(),
-        )
-    end
+    options::Optional{Dict}
+    values::Vector{Base.Tuple{Int, Float64}} = []
 end
 
 function add(layer::Layer, time_dimension::Integer, value::Real)
@@ -22,16 +13,21 @@ function add(layer::Layer, time_dimension::Integer, value::Real)
     return nothing
 end
 
+function get_data_string(layer::Layer)
+    return "[" * join(("[$(t[1]), $(@sprintf("%.2f", t[2]))]" for t in layer.values), ", ") * "]"
+end
+
 function create_patchwork(layer::Layer)
-    data_vector = ("[$(t[1]), $(t[2])]" for t in layer.values)
-    data = join(data_vector, ", ")
-    
+    options = isnothing(layer.options) ? "" : string(to_json_string(layer.options), ",")
+    data = get_data_string(layer)
+
     return """
 {
+    $options
     "name": "$(layer.label)",
     $(highcharts(layer.type))
     "pointRange": $(60000 * 60 * 24 * 31),
-    "data": [$data]
+    "data": $data
 }
 """
 end
