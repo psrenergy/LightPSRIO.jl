@@ -27,6 +27,7 @@ function create_patchwork(layer::Layer)
     $options
     $(highcharts(layer.type))
     $(highcharts(layer.date_reference.stage_type))
+    "tooltip": { "valueSuffix": " $(layer.unit)" },
     "data": $data
 }
 """

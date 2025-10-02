@@ -67,6 +67,8 @@ end
 
 function create_patchwork(chart::Chart)
     series = "[" * join([create_patchwork(layer) for layer in chart.layers], ",\n") * "]"
+    units = unique([layer.unit for layer in chart.layers])
+
     return Patchwork.Highcharts(
         chart.title,
         """
@@ -74,6 +76,9 @@ function create_patchwork(chart::Chart)
             "title": { "text": null },
             "xAxis": {
                 "type": "datetime"
+            },
+            "yAxis": {
+                "title": { "text": "$(units[1])" }
             },
             "legend": { "layout": "vertical", "align": "right", "verticalAlign": "top" },
             "series": $series,
