@@ -24,7 +24,7 @@ function add_line(chart::AbstractChart, expression::AbstractExpression)
                 push!(key, value)
             end
         end
-        
+
         if !haskey(layers, key)
             @show dimensions_label = get_filtered_dimensions_label(attributes, kwargs)
             layers[key] = [
