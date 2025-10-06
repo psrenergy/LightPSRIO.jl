@@ -7,7 +7,6 @@ mutable struct ExpressionSelectAgents <: AbstractUnary
         @debug "SELECT AGENTS: $(e1.attributes)"
 
         attributes = copy(e1.attributes)
-
         attributes.labels = attributes.labels[indices]
 
         @debug "SELECT AGENTS= $attributes"

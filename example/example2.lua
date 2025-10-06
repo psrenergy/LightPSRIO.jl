@@ -10,37 +10,63 @@ local colors = { "#ff0029", "#377eb8", "#66a61e", "#984ea3" };
 --     local tab = Tab("Cost Analysis");
 --     return tab;
 -- end
--- local function tab_demand_analysis()
---     local tab = Tab("Demand Analysis");
---     local demand = generic:load("demand"):aggregate_agents(BY_SUM(), "Total Demand"):aggregate("scenario", BY_AVERAGE());
---     local hydro_generation = generic:load("hydro_generation"):aggregate_agents(BY_SUM(), "Total Hydro"):aggregate("scenario", BY_AVERAGE());
---     local thermal_generation = generic:load("thermal_generation"):aggregate_agents(BY_SUM(), "Total Thermal"):aggregate("scenario", BY_AVERAGE());
---     local deficit = generic:load("deficit"):aggregate_agents(BY_SUM(), "Total Deficit"):aggregate("scenario", BY_AVERAGE());
---     local chart = Chart("Generation");
---     chart:add("line", demand);
---     chart:add("area_stacking", deficit, { color = "black" });
---     chart:add("area_stacking", thermal_generation, { color = "red" });
---     chart:add("area_stacking", hydro_generation, { color = "blue" });
---     tab:push(chart);
---     return tab;
--- end
+
+local function tab_demand_analysis()
+    local tab = Tab("Demand Analysis");
+
+    for case_name, generic in pairs(cases) do
+        local chart = Chart("Balance - " .. case_name);
+
+        local data = generic:load("results/demand");
+        data = data:aggregate_agents(BY_SUM(), "Total Demand");
+        data = data:aggregate("scenario", BY_AVERAGE());
+        chart:add("line", data);
+
+        local data = generic:load("results/hydro_generation")
+        data = data:aggregate_agents(BY_SUM(), "Total Hydro")
+        data = data:aggregate("scenario", BY_AVERAGE());
+        chart:add("area_stacking", data, { color = "blue" });
+
+        local data = generic:load("results/thermal_generation");
+        data = data:aggregate_agents(BY_SUM(), "Total Thermal");
+        data = data:aggregate("scenario", BY_AVERAGE());
+        chart:add("area_stacking", data, { color = "red" });
+
+        local data = generic:load("results/deficit");
+        data = data:aggregate_agents(BY_SUM(), "Total Deficit");
+        data = data:aggregate("scenario", BY_AVERAGE());
+        chart:add("area_stacking", data, { color = "black" });
+
+        tab:push(chart);
+    end
+
+    return tab;
+end
+
 local function tab_hydro_analysis()
     local tab = Tab("Hydro Analysis");
 
     for agent = 1, 4 do
-        local chart = Chart("Inflow Scenarios - Agent " .. agent);
+        local chart = Chart("Inflow - Agent " .. agent);
 
         for case_name, generic in pairs(cases) do
-            local inflow_scenarios_train = generic:load("inflow_scenarios_train"):select_agents({ agent }):aggregate(
-                                               "scenario", BY_AVERAGE()
-                                           ):add_suffix(" (train - case " .. case_name .. ")");
-            chart:add("line", inflow_scenarios_train);
+            local data = generic:load("inflow_scenarios_train");
+            data = data:select_agents({ agent });
+            data = data:aggregate("scenario", BY_AVERAGE());
+            data = data:rename_agents({ case_name .. " - train" });
+            chart:add("line", data);
 
-            local inflow_scenarios_simulation = generic:load("inflow_scenarios_simulation"):select_agents({ agent })
-                                                    :aggregate(
-                                                        "scenario", BY_AVERAGE()
-                                                    ):add_suffix(" (simulation - case " .. case_name .. ")");
-            chart:add("line", inflow_scenarios_simulation);
+            local data = generic:load("inflow_scenarios_simulation");
+            data = data:select_agents({ agent });
+            data = data:aggregate("scenario", BY_AVERAGE());
+            data = data:rename_agents({ case_name .. " - simulation" });
+            chart:add("line", data);
+
+            local data = generic:load("results/hydro_inflow");
+            data = data:select_agents({ agent });
+            data = data:aggregate("scenario", BY_AVERAGE());
+            data = data:rename_agents({ case_name .. " - result" });
+            chart:add("line", data);
         end
 
         tab:push(chart);
@@ -62,7 +88,7 @@ end
 local dashboard = Dashboard();
 -- dashboard:push(tab_home());
 -- dashboard:push(tab_cost_analysis());
--- dashboard:push(tab_demand_analysis());
+dashboard:push(tab_demand_analysis());
 dashboard:push(tab_hydro_analysis());
 -- dashboard:push(tab_thermal_analysis());
 -- dashboard:push(tab_renewable_analysis());

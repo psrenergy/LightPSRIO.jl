@@ -1,7 +1,6 @@
 abstract type AbstractChart end
 
 function add(chart::AbstractChart, type::String, expression::AbstractExpression, options::Optional{Dict}=nothing)
-    @show options
     if !has_data(expression)
         return nothing
     end

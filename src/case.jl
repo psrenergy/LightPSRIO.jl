@@ -21,7 +21,7 @@ function register_cases(L::LuaState, paths::Vector{String})
     println(buffer, "    }")
     println(buffer, ")")
 
-    @show code = String(take!(buffer))
+    code = String(take!(buffer))
     LuaNova.safe_script(L, code)
 
     return nothing

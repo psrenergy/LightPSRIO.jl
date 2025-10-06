@@ -7,5 +7,11 @@
         "Tab",
         "BY_SUM",
         "BY_AVERAGE"
-    ]
+    ],
+    "Lua.format.defaultConfig": {
+        "indent_style": "space",
+        "indent_size": "4",
+        "quote_style": "double",
+        "max_line_length": "50"
+    }
 }
