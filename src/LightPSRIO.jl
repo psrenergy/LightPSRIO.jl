@@ -42,12 +42,15 @@ include("expressions/binary/binary.jl")
 # variadic expressions
 include("expressions/variadic/concatenate_agents.jl")
 
-include("dashboard/element.jl")
-include("dashboard/domain_type.jl")
-include("dashboard/series_type.jl")
-include("dashboard/layer.jl")
-include("dashboard/chart.jl")
-include("dashboard/markdown.jl")
+# dashboard elements
+include("dashboard/elements/domain_type.jl")
+include("dashboard/elements/series_type.jl")
+include("dashboard/elements/element.jl")
+include("dashboard/elements/layer.jl")
+include("dashboard/elements/chart.jl")
+include("dashboard/elements/markdown.jl")
+
+# dashboard essentials
 include("dashboard/tab.jl")
 include("dashboard/dashboard.jl")
 
