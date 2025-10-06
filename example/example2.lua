@@ -14,6 +14,10 @@ local colors = { "#ff0029", "#377eb8", "#66a61e", "#984ea3" };
 local function tab_demand_analysis()
     local tab = Tab("Demand Analysis");
 
+    local markdown = Markdown();
+    markdown:add("# Demand Analysis");
+    tab:push(markdown);
+
     for case_name, generic in pairs(cases) do
         local chart = Chart("Balance - " .. case_name);
 

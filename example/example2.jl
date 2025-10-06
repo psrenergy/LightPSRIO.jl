@@ -1,8 +1,12 @@
 using LightPSRIO
 
-case1 = raw"C:\Development\PSRIO\LightPSRIO.jl\data\seasonal_naive_yearly_wise"
-case2 = raw"C:\Development\PSRIO\LightPSRIO.jl\data\seasonal_naive_stage_wise_k1"
-case3 = raw"C:\Development\PSRIO\LightPSRIO.jl\data\seasonal_naive_stage_wise_k3"
+path = raw"C:\Development\PSRIO\LightPSRIO.jl\data"
+# case = "seasonal_naive"
+# case = "auto_arima"
+case = "parp"
+case1 = joinpath(path, "$(case)_yearly_wise")
+case2 = joinpath(path, "$(case)_stage_wise_k1")
+case3 = joinpath(path, "$(case)_stage_wise_k3")
 script_path = raw"C:\Development\PSRIO\LightPSRIO.jl\example\example2.lua"
 
 L = LightPSRIO.initialize(

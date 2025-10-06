@@ -1,4 +1,4 @@
-abstract type AbstractChart end
+abstract type AbstractChart <: AbstractElement end
 
 function add(chart::AbstractChart, type::String, expression::AbstractExpression, options::Optional{Dict}=nothing)
     if !has_data(expression)

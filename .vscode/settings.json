@@ -6,7 +6,8 @@
         "Generic",
         "Tab",
         "BY_SUM",
-        "BY_AVERAGE"
+        "BY_AVERAGE",
+        "Markdown"
     ],
     "Lua.format.defaultConfig": {
         "indent_style": "space",
