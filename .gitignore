@@ -26,3 +26,5 @@ format/Manifest.toml
 revise/Manifest.toml
 
 *.DS_Store
+
+data
