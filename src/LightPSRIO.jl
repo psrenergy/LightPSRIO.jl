@@ -33,6 +33,8 @@ include("expressions/data/quiver.jl")
 include("expressions/unary/convert.jl")
 include("expressions/unary/aggregate_agents.jl")
 include("expressions/unary/aggregate_dimensions.jl")
+include("expressions/unary/rename_agents.jl")
+include("expressions/unary/select_agents.jl")
 
 # binary expressions
 include("expressions/binary/binary.jl")

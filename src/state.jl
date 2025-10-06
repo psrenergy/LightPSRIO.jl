@@ -30,6 +30,8 @@ function initialize(paths::Vector{String}; logger = Logging.Info)
             ExpressionConvert,
             ExpressionAggregateAgents,
             ExpressionAggregateDimensions,
+            ExpressionRenameAgents,
+            ExpressionSelectAgents,
             # binary expressions
             ExpressionBinary,
             # variadic expressions
@@ -40,6 +42,9 @@ function initialize(paths::Vector{String}; logger = Logging.Info)
         "convert", convert,
         "aggregate_agents", aggregate_agents,
         "aggregate", aggregate,
+        "rename_agents", rename_agents,
+        "add_suffix", add_suffix,
+        "select_agents", select_agents,
         # binary expressions
         "__add", add,
         "__sub", sub,

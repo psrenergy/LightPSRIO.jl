@@ -16,7 +16,8 @@ end
 function save(L::LuaState, dashboard::Dashboard, filename::String)
     case = get_case(L, 1)
 
-    path = joinpath(case.path, "$filename.html")
+    # path = joinpath(case.path, "$filename.html")
+    path = joinpath(raw"C:\Development\PSRIO\LightPSRIO.jl\data", "$filename.html")
 
     patchwork = Patchwork.Dashboard(
         "Dashboard",

@@ -1,3 +1,7 @@
+local cases = { yearly_wise = Generic(1), stage_wise_k1 = Generic(2), stage_wise_k3 = Generic(3) };
+
+local colors = { "#ff0029", "#377eb8", "#66a61e", "#984ea3" };
+
 -- local function tab_home()
 --     local tab = Tab("Home");
 --     return tab;
@@ -23,13 +27,22 @@
 local function tab_hydro_analysis()
     local tab = Tab("Hydro Analysis");
 
-    for i = 1, 2 do
-        local generic = Generic(i);
+    for agent = 1, 4 do
+        local chart = Chart("Inflow Scenarios - Agent " .. agent);
 
-        local inflow = generic:load("inflow_scenarios_train");
+        for case_name, generic in pairs(cases) do
+            local inflow_scenarios_train = generic:load("inflow_scenarios_train"):select_agents({ agent }):aggregate(
+                                               "scenario", BY_AVERAGE()
+                                           ):add_suffix(" (train - case " .. case_name .. ")");
+            chart:add("line", inflow_scenarios_train);
 
-        local chart = Chart("Inflow Scenarios - Train - Case " .. i);
-        chart:add("line", inflow);
+            local inflow_scenarios_simulation = generic:load("inflow_scenarios_simulation"):select_agents({ agent })
+                                                    :aggregate(
+                                                        "scenario", BY_AVERAGE()
+                                                    ):add_suffix(" (simulation - case " .. case_name .. ")");
+            chart:add("line", inflow_scenarios_simulation);
+        end
+
         tab:push(chart);
     end
 
