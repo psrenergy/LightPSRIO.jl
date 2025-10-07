@@ -12,6 +12,10 @@ function push(tab::Tab, element::AbstractElement)
     push!(tab.elements, element)
     return nothing
 end
+function push(tab::Tab, string::String)
+    push!(tab.elements, Markdown(string))
+    return nothing
+end
 @define_lua_function push
 
 function create_patchwork(tab::Tab)

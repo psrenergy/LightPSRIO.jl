@@ -1,8 +1,9 @@
 mutable struct Dashboard
+    title::String
     tabs::Vector{Tab}
 
-    function Dashboard()
-        return new(Tab[])
+    function Dashboard(title::String)
+        return new(title, Tab[])
     end
 end
 @define_lua_struct Dashboard
@@ -20,7 +21,7 @@ function save(L::LuaState, dashboard::Dashboard, filename::String)
     path = joinpath(raw"C:\Development\PSRIO\LightPSRIO.jl\data", "$filename.html")
 
     patchwork = Patchwork.Dashboard(
-        "Dashboard",
+        dashboard.title,
         [create_patchwork(tab) for tab in dashboard.tabs],
     )
     Patchwork.save(patchwork, path)
