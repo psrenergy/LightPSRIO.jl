@@ -6,6 +6,7 @@ function add(chart::AbstractChart, type::String, expression::AbstractExpression,
     end
 
     attributes = expression.attributes
+    excluding = Set([:stage])
     println("Adding layer ($attributes)")
 
     date_reference = DateReference(
@@ -18,12 +19,7 @@ function add(chart::AbstractChart, type::String, expression::AbstractExpression,
 
     start!(expression)
     for kwargs in eachindex(expression)
-        key = Vector{Int}()
-        for (dimension, value) in pairs(kwargs)
-            if dimension != :stage
-                push!(key, value)
-            end
-        end
+        key = kwargs_to_key(excluding; kwargs...)
 
         if !haskey(layers, key)
             dimensions_label = get_filtered_dimensions_label(attributes, kwargs)
@@ -59,6 +55,7 @@ function add(chart::AbstractChart, type::String, expression1::AbstractExpression
     end
 
     attributes = expression1.attributes
+    excluding = Set([:stage])
     println("Adding layer ($attributes)")
 
     date_reference = DateReference(
@@ -72,12 +69,7 @@ function add(chart::AbstractChart, type::String, expression1::AbstractExpression
     start!(expression1)
     start!(expression2)
     for kwargs in eachindex(expression1)
-        key = Vector{Int}()
-        for (dimension, value) in pairs(kwargs)
-            if dimension != :stage
-                push!(key, value)
-            end
-        end
+        key = kwargs_to_key(excluding; kwargs...)
 
         if !haskey(layers, key)
             dimensions_label = get_filtered_dimensions_label(attributes, kwargs)
@@ -124,7 +116,7 @@ function create_patchwork(chart::Chart)
     series = "[" * join([create_patchwork(layer) for layer in chart.layers], ",\n") * "]"
     units = unique([layer.unit for layer in chart.layers])
 
-    return Patchwork.Highcharts2(
+    return Highcharts(
         chart.title,
         """
         {

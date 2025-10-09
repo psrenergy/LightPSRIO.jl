@@ -1,17 +1,17 @@
-struct Highcharts2 <: Patchwork.Plugin
+struct Highcharts <: Patchwork.Plugin
     title::String
-    config::Dict{String, Any}
+    config::JSON.Object
 
-    function Highcharts2(title::String, config::Dict{String, Any})
+    function Highcharts(title::String, config::JSON.Object)
         return new(title, config)
     end
 end
 
-function Highcharts2(title::String, config::AbstractString)
+function Highcharts(title::String, config::AbstractString)
     return Highcharts(title, JSON.parse(config))
 end
 
-function Patchwork.to_html(plugin::Highcharts2)
+function Patchwork.to_html(plugin::Highcharts)
     chart_id = "chart-$(uuid4())"
     config_json = JSON.json(plugin.config)
 
@@ -23,19 +23,19 @@ function Patchwork.to_html(plugin::Highcharts2)
     """
 end
 
-Patchwork.css_deps(::Type{Highcharts2}) = String[]
+Patchwork.css_deps(::Type{Highcharts}) = String[]
 
-Patchwork.js_deps(::Type{Highcharts2}) = [
+Patchwork.js_deps(::Type{Highcharts}) = [
     "https://code.highcharts.com/12.4.0/highcharts.js",
     "https://code.highcharts.com/12.4.0/highcharts-more.js",
     "https://code.highcharts.com/12.4.0/modules/exporting.js",
 ]
 
-Patchwork.init_script(::Type{Highcharts2}) = """
+Patchwork.init_script(::Type{Highcharts}) = """
     document.querySelectorAll('.highcharts-chart').forEach(container => {
         const config = JSON.parse(container.getAttribute('data-config'));
         Highcharts.chart(container.id, config);
     });
 """
 
-Patchwork.css(::Type{Highcharts2}) = ""
+Patchwork.css(::Type{Highcharts}) = ""
