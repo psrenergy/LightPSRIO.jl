@@ -1,11 +1,11 @@
 mutable struct ExpressionAggregateDimensions <: AbstractUnary
     attributes::Attributes
     e1::AbstractExpression
-    aggregate_function::AggregateFunction.T
+    aggregate_function::AggregateFunction
     dimension_symbol::Symbol
     dimension_original_size::Int
 
-    function ExpressionAggregateDimensions(e1::AbstractExpression, dimension::String, aggregate_function::AggregateFunction.T)
+    function ExpressionAggregateDimensions(e1::AbstractExpression, dimension::String, aggregate_function::AggregateFunction)
         @debug "AGGREGATE ($dimension): $(e1.attributes)"
 
         attributes = copy(e1.attributes)
@@ -31,7 +31,7 @@ mutable struct ExpressionAggregateDimensions <: AbstractUnary
 end
 @define_lua_struct ExpressionAggregateDimensions
 
-function aggregate(x::AbstractExpression, dimension::String, aggregate_function::AggregateFunction.T)
+function aggregate(x::AbstractExpression, dimension::String, aggregate_function::AggregateFunction)
     return ExpressionAggregateDimensions(x, dimension, aggregate_function)
 end
 @define_lua_function aggregate
@@ -57,14 +57,16 @@ function evaluate(e::ExpressionAggregateDimensions; kwargs...)
         data[i] .= current_value
     end
 
-    if e.aggregate_function == AggregateFunction.Sum
+    if e.aggregate_function.type == AggregateType.Sum
         return sum(data)
-    elseif e.aggregate_function == AggregateFunction.Average
+    elseif e.aggregate_function.type == AggregateType.Average
         return mean(data)
-    elseif e.aggregate_function == AggregateFunction.Min
+    elseif e.aggregate_function.type == AggregateType.Min
         return minimum(data)
-    elseif e.aggregate_function == AggregateFunction.Max
+    elseif e.aggregate_function.type == AggregateType.Max
         return maximum(data)
+    elseif e.aggregate_function.type == AggregateType.Percentile
+        return [quantile(vcat(data...), e.aggregate_function.parameter)]
     else
         error("Aggregate function $(e.aggregate_function) not implemented yet.")
     end

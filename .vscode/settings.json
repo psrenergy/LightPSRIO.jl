@@ -9,7 +9,8 @@
         "BY_AVERAGE",
         "Markdown",
         "BY_MAX",
-        "BY_MIN"
+        "BY_MIN",
+        "BY_PERCENTILE"
     ],
     "Lua.format.defaultConfig": {
         "indent_style": "space",

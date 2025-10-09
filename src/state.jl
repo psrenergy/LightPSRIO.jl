@@ -60,9 +60,10 @@ function initialize(paths::Vector{String}; logger = Logging.Info)
     @push_lua_function(L, "BY_AVERAGE", BY_AVERAGE)
     @push_lua_function(L, "BY_MIN", BY_MIN)
     @push_lua_function(L, "BY_MAX", BY_MAX)
+    @push_lua_function(L, "BY_PERCENTILE", BY_PERCENTILE)
     @push_lua_function(L, "julia_typeof", julia_typeof)
     @push_lua_function(L, "concatenate_agents", concatenate_agents)
-    @push_lua_enumx(L, AggregateFunction)
+    @push_lua_struct(L, AggregateFunction)
 
     @push_lua_struct(
         L,

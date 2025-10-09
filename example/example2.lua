@@ -83,9 +83,9 @@ local function tab_hydro_analysis(agent)
 
             local data = generic:load(prefix .. "results/hydro_inflow");
             data = data:select_agents({ agent });
-            max = data:aggregate("scenario", BY_MAX());
-            min = data:aggregate("scenario", BY_MIN());
-            chart:add("area_range", min, max);
+            local p90 = data:aggregate("scenario", BY_PERCENTILE(90));
+            local p10 = data:aggregate("scenario", BY_PERCENTILE(10));
+            chart:add("area_range", p10, p90, { fillOpacity = 0.4 });
         end
 
         tab:push(chart);

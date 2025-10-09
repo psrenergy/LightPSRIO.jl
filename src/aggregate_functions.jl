@@ -1,13 +1,38 @@
-@enumx AggregateFunction Sum Average Min Max
+@enumx AggregateType begin
+    Sum
+    Average
+    Min
+    Max
+    Percentile
+end
 
-BY_SUM() = AggregateFunction.Sum
+@kwdef struct AggregateFunction
+    type::AggregateType.T
+    parameter::Optional{Float64} = nothing
+end
+@define_lua_struct AggregateFunction
+
+function BY_SUM()
+    return AggregateFunction(type = AggregateType.Sum)
+end
 @define_lua_function BY_SUM
 
-BY_AVERAGE() = AggregateFunction.Average
+function BY_AVERAGE()
+    return AggregateFunction(type = AggregateType.Average)
+end
 @define_lua_function BY_AVERAGE
 
-BY_MIN() = AggregateFunction.Min
+function BY_MIN()
+    return AggregateFunction(type = AggregateType.Min)
+end
 @define_lua_function BY_MIN
 
-BY_MAX() = AggregateFunction.Max
+function BY_MAX()
+    return AggregateFunction(type = AggregateType.Max)
+end
 @define_lua_function BY_MAX
+
+function BY_PERCENTILE(parameter::Float64)
+    return AggregateFunction(type = AggregateType.Percentile, parameter = parameter / 100)
+end
+@define_lua_function BY_PERCENTILE

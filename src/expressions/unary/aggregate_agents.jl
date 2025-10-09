@@ -1,9 +1,9 @@
 mutable struct ExpressionAggregateAgents <: AbstractUnary
     attributes::Attributes
     e1::AbstractExpression
-    aggregate_function::AggregateFunction.T
+    aggregate_function::AggregateFunction
 
-    function ExpressionAggregateAgents(e1::AbstractExpression, aggregate_function::AggregateFunction.T, label::String)
+    function ExpressionAggregateAgents(e1::AbstractExpression, aggregate_function::AggregateFunction, label::String)
         @debug "AGGREGATE AGENTS: $(e1.attributes)"
 
         attributes = copy(e1.attributes)
@@ -25,7 +25,7 @@ mutable struct ExpressionAggregateAgents <: AbstractUnary
 end
 @define_lua_struct ExpressionAggregateAgents
 
-function aggregate_agents(x::AbstractExpression, aggregate_function::AggregateFunction.T, label::String)
+function aggregate_agents(x::AbstractExpression, aggregate_function::AggregateFunction, label::String)
     return ExpressionAggregateAgents(x, aggregate_function, label)
 end
 @define_lua_function aggregate_agents
@@ -37,14 +37,16 @@ function evaluate(e::ExpressionAggregateAgents; kwargs...)
 
     data = evaluate(e.e1; kwargs...)
 
-    if e.aggregate_function == AggregateFunction.Sum
+    if e.aggregate_function.type == AggregateType.Sum
         return [sum(data)]
-    elseif e.aggregate_function == AggregateFunction.Average
+    elseif e.aggregate_function.type == AggregateType.Average
         return [mean(data)]
-    elseif e.aggregate_function == AggregateFunction.Min
+    elseif e.aggregate_function.type == AggregateType.Min
         return [minimum(data)]
-    elseif e.aggregate_function == AggregateFunction.Max
+    elseif e.aggregate_function.type == AggregateType.Max
         return [maximum(data)]
+    elseif e.aggregate_function.type == AggregateType.Percentile
+        return [quantile(data, e.aggregate_function.parameter)]
     else
         error("Aggregate function $(e.aggregate_function) not implemented yet.")
     end
