@@ -1,8 +1,7 @@
 local generic = Generic();
 
 -- local cases = { "parp", "auto_arima", "seasonal_naive" };
-local cases = { "parp", "auto_arima", "seasonal_naive", 
- };
+local cases = { "parp", "seasonal_naive" };
 
 local methodologies = { "yearly_wise", "stage_wise_k1", "stage_wise_k3" };
 
@@ -76,11 +75,17 @@ local function tab_hydro_analysis(agent)
             data = data:rename_agents({ methodology .. " - simulation" });
             chart:add("line", data);
 
-            -- local data = generic:load(prefix .. "results/hydro_inflow");
-            -- data = data:select_agents({ agent });
-            -- data = data:aggregate("scenario", BY_AVERAGE());
-            -- data = data:rename_agents({ methodology .. " - result" });
-            -- chart:add("line", data);
+            local data = generic:load(prefix .. "results/hydro_inflow");
+            data = data:select_agents({ agent });
+            data = data:aggregate("scenario", BY_AVERAGE());
+            data = data:rename_agents({ methodology .. " - result" });
+            chart:add("line", data);
+
+            local data = generic:load(prefix .. "results/hydro_inflow");
+            data = data:select_agents({ agent });
+            max = data:aggregate("scenario", BY_MAX());
+            min = data:aggregate("scenario", BY_MIN());
+            chart:add("area_range", min, max);
         end
 
         tab:push(chart);
@@ -111,4 +116,4 @@ for agent = 1, 4 do
 
 end
 
-dashboard:save("dashboard");
+dashboard:save("dashboard1");

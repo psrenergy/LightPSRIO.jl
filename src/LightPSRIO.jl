@@ -6,11 +6,14 @@ using EnumX
 using JSON
 using Logging
 using LuaNova
-using Patchwork
 using Printf
 using PSRDates
 using Quiver
 using Statistics
+using UUIDs
+
+
+import Patchwork
 
 include("optional.jl")
 include("util.jl")
@@ -43,6 +46,7 @@ include("expressions/binary/binary.jl")
 include("expressions/variadic/concatenate_agents.jl")
 
 # dashboard elements
+include("dashboard/elements/highcharts.jl")
 include("dashboard/elements/domain_type.jl")
 include("dashboard/elements/series_type.jl")
 include("dashboard/elements/element.jl")
