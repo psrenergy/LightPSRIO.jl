@@ -128,6 +128,7 @@ function create_patchwork(chart::Chart)
                 "title": { "text": "$(units[1])" }
             },
             "legend": { "layout": "vertical", "align": "right", "verticalAlign": "top" },
+            "plotOptions": { "series": { "marker": { "enabled": false } } },
             "series": $series,
             "responsive": {
                 "rules": [{
@@ -142,7 +143,8 @@ function create_patchwork(chart::Chart)
                         }
                     }
                 }]
-            }
+            },
+            "credits": { "enabled": false }
         }
         """,
     )

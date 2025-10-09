@@ -28,7 +28,7 @@ Patchwork.css_deps(::Type{Highcharts}) = String[]
 Patchwork.js_deps(::Type{Highcharts}) = [
     "https://code.highcharts.com/12.4.0/highcharts.js",
     "https://code.highcharts.com/12.4.0/highcharts-more.js",
-    "https://code.highcharts.com/12.4.0/modules/exporting.js",
+    # "https://code.highcharts.com/12.4.0/modules/exporting.js",
 ]
 
 Patchwork.init_script(::Type{Highcharts}) = """

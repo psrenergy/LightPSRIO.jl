@@ -1,91 +1,85 @@
 local generic = Generic();
 
--- local cases = { "parp", "auto_arima", "seasonal_naive" };
-local cases = { "parp", "seasonal_naive" };
-
 local methodologies = { "yearly_wise", "stage_wise_k1", "stage_wise_k3" };
 
-local colors = { "#ff0029", "#377eb8", "#66a61e", "#984ea3" };
+local colors = {
+    "#2caffe",
+    "#544fc5",
+    "#00e272",
+    "#fe6a35",
+    "#6b8abc",
+    "#d568fb",
+    "#2ee0ca",
+    "#fa4b42",
+    "#feb56a",
+    "#91e8e1"
+};
 
--- local function tab_home()
---     local tab = Tab("Home");
---     return tab;
--- end
--- local function tab_cost_analysis()
---     local tab = Tab("Cost Analysis");
---     return tab;
--- end
+local function add_percentile(chart, data, color)
+    local avg = data:aggregate("scenario", BY_AVERAGE()):add_suffix(" (avg)");
+    chart:add("line", avg, { color = color });
 
--- local function tab_demand_analysis()
---     local tab = Tab("Demand Analysis");
+    local p90 = data:aggregate("scenario", BY_PERCENTILE(90)):add_suffix(" (p10-p90)");
+    local p10 = data:aggregate("scenario", BY_PERCENTILE(10)):add_suffix(" (p10-p90)");
+    chart:add("area_range", p10, p90, { color = color, fillOpacity = 0.4, visible = false });
+end
 
---     local markdown = Markdown();
---     markdown:add("# Demand Analysis");
---     tab:push(markdown);
-
---     for index, case in ipairs(cases) do
---         local chart = Chart("Balance - " .. case_name);
-
---         local data = generic:load("results/demand");
---         data = data:aggregate_agents(BY_SUM(), "Total Demand");
---         data = data:aggregate("scenario", BY_AVERAGE());
---         chart:add("line", data);
-
---         local data = generic:load("results/hydro_generation")
---         data = data:aggregate_agents(BY_SUM(), "Total Hydro")
---         data = data:aggregate("scenario", BY_AVERAGE());
---         chart:add("area_stacking", data, { color = "blue" });
-
---         local data = generic:load("results/thermal_generation");
---         data = data:aggregate_agents(BY_SUM(), "Total Thermal");
---         data = data:aggregate("scenario", BY_AVERAGE());
---         chart:add("area_stacking", data, { color = "red" });
-
---         local data = generic:load("results/deficit");
---         data = data:aggregate_agents(BY_SUM(), "Total Deficit");
---         data = data:aggregate("scenario", BY_AVERAGE());
---         chart:add("area_stacking", data, { color = "black" });
-
---         tab:push(chart);
---     end
-
---     return tab;
--- end
-
-local function tab_hydro_analysis(agent)
-    local tab = Tab("Hydro Analysis (agent " .. agent .. ")");
-    tab:push("# Inflow Analysis");
+local function tab_cost_analysis(cases)
+    local tab = Tab("Cost Analysis");
 
     for _, case in ipairs(cases) do
-        local chart = Chart(case);
+        local chart = Chart("Total Cost - " .. case);
 
-        for _, methodology in ipairs(methodologies) do
-            print("PROCESSING: " .. case);
+        for j, methodology in ipairs(methodologies) do
             local prefix = case .. "_" .. methodology .. "/";
 
-            local data = generic:load(prefix .. "inflow_scenarios_train");
-            data = data:select_agents({ agent });
-            data = data:aggregate("scenario", BY_AVERAGE());
-            data = data:rename_agents({ methodology .. " - train" });
-            chart:add("line", data);
+            local data = generic:load(prefix .. "results/costs_by_category");
+            data = data:select_agents({ 1 });
+            data = data:rename_agents({ methodology });
+            add_percentile(chart, data, colors[j]);
+        end
 
-            local data = generic:load(prefix .. "inflow_scenarios_simulation");
-            data = data:select_agents({ agent });
-            data = data:aggregate("scenario", BY_AVERAGE());
-            data = data:rename_agents({ methodology .. " - simulation" });
-            chart:add("line", data);
+        tab:push(chart);
+    end
 
-            local data = generic:load(prefix .. "results/hydro_inflow");
-            data = data:select_agents({ agent });
-            data = data:aggregate("scenario", BY_AVERAGE());
-            data = data:rename_agents({ methodology .. " - result" });
-            chart:add("line", data);
+    for _, case in ipairs(cases) do
+        local chart = Chart("Immediate Cost - " .. case);
 
-            local data = generic:load(prefix .. "results/hydro_inflow");
-            data = data:select_agents({ agent });
-            local p90 = data:aggregate("scenario", BY_PERCENTILE(90));
-            local p10 = data:aggregate("scenario", BY_PERCENTILE(10));
-            chart:add("area_range", p10, p90, { fillOpacity = 0.4 });
+        for j, methodology in ipairs(methodologies) do
+            local prefix = case .. "_" .. methodology .. "/";
+
+            local data = generic:load(prefix .. "results/costs_by_category");
+            data = data:select_agents({ 2 });
+            data = data:rename_agents({ methodology });
+            add_percentile(chart, data, colors[j]);
+        end
+
+        tab:push(chart);
+    end
+
+    for _, case in ipairs(cases) do
+        local chart = Chart("Marginal Cost - " .. case);
+
+        for j, methodology in ipairs(methodologies) do
+            local prefix = case .. "_" .. methodology .. "/";
+
+            local data = generic:load(prefix .. "results/load_marginal_cost");
+            data = data:aggregate_agents(BY_AVERAGE(), "methodology");
+            add_percentile(chart, data, colors[j]);
+        end
+
+        tab:push(chart);
+    end
+
+    for _, case in ipairs(cases) do
+        local chart = Chart("Deficit - " .. case);
+
+        for j, methodology in ipairs(methodologies) do
+            local prefix = case .. "_" .. methodology .. "/";
+
+            local data = generic:load(prefix .. "results/deficit");
+            data = data:aggregate_agents(BY_AVERAGE(), "methodology");
+            add_percentile(chart, data, colors[j]);
         end
 
         tab:push(chart);
@@ -94,26 +88,126 @@ local function tab_hydro_analysis(agent)
     return tab;
 end
 
--- local function tab_thermal_analysis()
---     local tab = Tab("Thermal Analysis");
---     return tab;
--- end
+local function tab_demand_analysis(cases)
+    local tab = Tab("Demand Analysis");
 
--- local function tab_renewable_analysis()
---     local tab = Tab("Renewable Analysis");
---     return tab;
--- end
+    for _, case in ipairs(cases) do
+        for j, methodology in ipairs(methodologies) do
+            local prefix = case .. "_" .. methodology;
 
-local dashboard = Dashboard("PSR");
-for agent = 1, 4 do
+            local chart = Chart("Balance - " .. prefix);
 
-    -- dashboard:push(tab_home());
-    -- dashboard:push(tab_cost_analysis());
-    -- dashboard:push(tab_demand_analysis());
-    dashboard:push(tab_hydro_analysis(agent));
-    -- dashboard:push(tab_thermal_analysis());
-    -- dashboard:push(tab_renewable_analysis());
+            local data = generic:load(prefix .. "/results/demand");
+            data = data:aggregate_agents(BY_SUM(), "Total Demand");
+            data = data:aggregate("scenario", BY_AVERAGE());
+            chart:add("line", data, { color = "orange" });
 
+            local data = generic:load(prefix .. "/results/hydro_generation");
+            data = data:aggregate_agents(BY_SUM(), "Total Hydro")
+            data = data:aggregate("scenario", BY_AVERAGE());
+            chart:add("area_stacking", data, { color = "blue" });
+
+            local data = generic:load(prefix .. "/results/thermal_generation");
+            data = data:aggregate_agents(BY_SUM(), "Total Thermal");
+            data = data:aggregate("scenario", BY_AVERAGE());
+            chart:add("area_stacking", data, { color = "red" });
+
+            local data = generic:load(prefix .. "/results/deficit");
+            data = data:aggregate_agents(BY_SUM(), "Total Deficit");
+            data = data:aggregate("scenario", BY_AVERAGE());
+            chart:add("area_stacking", data, { color = "black" });
+
+            tab:push(chart);
+        end
+    end
+
+    return tab;
 end
 
-dashboard:save("dashboard1");
+local function tab_hydro_analysis(cases, agent)
+    local tab = Tab("Hydro Analysis (agent " .. agent .. ")");
+
+    for _, case in ipairs(cases) do
+        local chart = Chart("Inflow - " .. case);
+
+        for j, methodology in ipairs(methodologies) do
+            local prefix = case .. "_" .. methodology .. "/";
+
+            local data = generic:load(prefix .. "inflow_scenarios_train");
+            data = data:select_agents({ agent });
+            data = data:rename_agents({ methodology .. " - train (avg)" });
+            data = data:aggregate("scenario", BY_AVERAGE());
+            chart:add("line", data, { color = colors[j] });
+
+            local data = generic:load(prefix .. "inflow_scenarios_simulation");
+            data = data:select_agents({ agent });
+            data = data:rename_agents({ methodology .. " - simulation (avg)" });
+            data = data:aggregate("scenario", BY_AVERAGE());
+            chart:add("line", data, { color = colors[j] });
+
+            local data = generic:load(prefix .. "results/hydro_inflow");
+            data = data:select_agents({ agent });
+            data = data:rename_agents({ methodology .. " - result" });
+            add_percentile(chart, data, colors[j]);
+        end
+
+        tab:push(chart);
+    end
+
+    for _, case in ipairs(cases) do
+        local chart = Chart("Final Volume - " .. case);
+
+        for j, methodology in ipairs(methodologies) do
+            local prefix = case .. "_" .. methodology .. "/";
+
+            local data = generic:load(prefix .. "results/hydro_final_volume");
+            data = data:select_agents({ agent });
+            data = data:rename_agents({ methodology });
+            add_percentile(chart, data, colors[j]);
+        end
+
+        tab:push(chart);
+    end
+
+    return tab;
+end
+
+local function tab_thermal_analysis(cases, agent)
+    local tab = Tab("Thermal Analysis (agent " .. agent .. ")");
+
+    for _, case in ipairs(cases) do
+        local chart = Chart("Deficit - " .. case);
+
+        for j, methodology in ipairs(methodologies) do
+            local prefix = case .. "_" .. methodology .. "/";
+
+            local data = generic:load(prefix .. "results/thermal_generation");
+            data = data:select_agents({ agent });
+            data = data:rename_agents({ methodology });
+            add_percentile(chart, data, colors[j]);
+        end
+
+        tab:push(chart);
+    end
+
+    return tab;
+end
+
+local configurations = { "2000f_36t_100s_25o_1p", "2000f_36t_100s_25o_6p" };
+
+for _, configuration in ipairs(configurations) do
+    local cases = { configuration .. "/parp", configuration .. "/auto_arima" };
+
+    local dashboard = Dashboard(configuration);
+
+    dashboard:push(tab_demand_analysis(cases));
+    dashboard:push(tab_cost_analysis(cases));
+
+    for agent = 1, 1 do
+        dashboard:push(tab_hydro_analysis(cases, agent));
+        dashboard:push(tab_thermal_analysis(cases, agent));
+    end
+
+    dashboard:save(configuration);
+end
+

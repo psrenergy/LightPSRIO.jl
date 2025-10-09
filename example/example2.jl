@@ -1,6 +1,6 @@
 using LightPSRIO
 
-path = raw"C:\Development\PSRIO\LightPSRIO.jl\data2"
+path = raw"C:\Development\PSRIO\LightPSRIO.jl\data3"
 script_path = raw"C:\Development\PSRIO\LightPSRIO.jl\example\example2.lua"
 
 L = LightPSRIO.initialize([path])
