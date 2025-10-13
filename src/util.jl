@@ -9,7 +9,7 @@ end
 
 function to_json_string(dict::Dict)
     json = JSON.json(dict)
-    return json[2:end-1]
+    return json[2:(end-1)]
 end
 
 function kwargs_to_key(excluding::Set{Symbol}; kwargs...)
