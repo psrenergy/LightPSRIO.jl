@@ -64,7 +64,7 @@ local function tab_cost_analysis(cases)
             local prefix = case .. "_" .. methodology .. "/";
 
             local data = generic:load(prefix .. "results/load_marginal_cost");
-            data = data:aggregate_agents(BY_AVERAGE(), "methodology");
+            data = data:aggregate_agents(BY_AVERAGE(), methodology);
             add_percentile(chart, data, colors[j]);
         end
 
@@ -139,9 +139,9 @@ local function tab_hydro_analysis(cases, agent)
             data = data:aggregate("scenario", BY_AVERAGE());
             chart:add("line", data, { color = colors[j] });
 
-            local data = generic:load(prefix .. "inflow_scenarios_simulation");
+            local data = generic:load(prefix .. "inflow_scenarios_simulate");
             data = data:select_agents({ agent });
-            data = data:rename_agents({ methodology .. " - simulation (avg)" });
+            data = data:rename_agents({ methodology .. " - simulate (avg)" });
             data = data:aggregate("scenario", BY_AVERAGE());
             chart:add("line", data, { color = colors[j] });
 
@@ -193,7 +193,7 @@ local function tab_thermal_analysis(cases, agent)
     return tab;
 end
 
-local configurations = { "2000f_36t_100s_25o_1p", "2000f_36t_100s_25o_6p" };
+local configurations = { "2000f_36t_100s_25o_6p" };
 
 for _, configuration in ipairs(configurations) do
     local cases = { configuration .. "/parp", configuration .. "/auto_arima" };
