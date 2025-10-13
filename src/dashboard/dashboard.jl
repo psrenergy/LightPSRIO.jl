@@ -6,6 +6,10 @@ mutable struct Dashboard
         return new(title, Tab[])
     end
 end
+
+function Dashboard()
+    return Dashboard("PSRIO")
+end
 @define_lua_struct Dashboard
 
 function push(dashboard::Dashboard, tab::Tab)
