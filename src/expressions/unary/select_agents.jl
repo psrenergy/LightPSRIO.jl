@@ -16,8 +16,25 @@ mutable struct ExpressionSelectAgents <: AbstractUnary
 end
 @define_lua_struct ExpressionSelectAgents
 
-function select_agents(x::AbstractExpression, indices::Vector)
-    return ExpressionSelectAgents(x, Int.(indices))
+function select_agents(x::AbstractExpression, vector::Vector)
+    indices = Int[]
+    labels = x.attributes.labels
+
+    for item in vector
+        if isa(item, String)
+            index = findfirst(==(item), labels)
+            if index === nothing
+                throw(ArgumentError("Label '$item' not found in expression labels: $(labels)"))
+            end
+            push!(indices, index)
+        elseif isa(item, Number)
+            index = Int(item)
+            push!(indices, index)
+        else
+            throw(ArgumentError("Invalid item type: $(typeof(item)). Must be String or Number."))
+        end
+    end
+    return ExpressionSelectAgents(x, indices)
 end
 @define_lua_function select_agents
 
