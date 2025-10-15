@@ -2,18 +2,24 @@ mutable struct ExpressionSelectAgents <: AbstractUnary
     attributes::Attributes
     e1::AbstractExpression
     indices::Vector{Int}
-
-    function ExpressionSelectAgents(e1::AbstractExpression, indices::Vector)
-        @debug "SELECT AGENTS: $(e1.attributes)"
-
-        attributes = copy(e1.attributes)
-        attributes.labels = attributes.labels[indices]
-
-        @debug "SELECT AGENTS= $attributes"
-
-        return new(attributes, e1, indices)
-    end
 end
+
+function ExpressionSelectAgents(e1::AbstractExpression, indices::Vector)
+    if !has_data(e1)
+        return ExpressionNull()
+    end
+
+    @debug "SELECT AGENTS: $(e1.attributes)"
+
+    attributes = copy(e1.attributes)
+    @show indices
+    attributes.labels = attributes.labels[indices]
+
+    @debug "SELECT AGENTS= $attributes"
+
+    return ExpressionSelectAgents(attributes, e1, indices)
+end
+
 @define_lua_struct ExpressionSelectAgents
 
 function select_agents(x::AbstractExpression, vector::Vector)

@@ -2,6 +2,7 @@
     Line
     AreaStacking
     AreaRange
+    Column
 end
 
 function to_series_type(type::String)
@@ -11,6 +12,8 @@ function to_series_type(type::String)
         return SeriesType.AreaStacking
     elseif type == "area_range"
         return SeriesType.AreaRange
+    elseif type == "column"
+        return SeriesType.Column
     else
         error("Unsupported series type: $type")
     end
@@ -29,6 +32,10 @@ function highcharts(type::SeriesType.T)
     elseif type == SeriesType.AreaRange
         return """
 "type": "arearange",
+        """
+    elseif type == SeriesType.Column
+        return """
+"type": "column",
         """
     else
         error("Unsupported series type: $type")

@@ -3,3 +3,5 @@
 SET BASEPATH=%~dp0
 
 CALL "%JULIA_1113%" --project=%BASEPATH% %BASEPATH%\main.jl %*
+
+PAUSE

@@ -3,6 +3,10 @@ mutable struct ExpressionRenameAgents <: AbstractUnary
     e1::AbstractExpression
 
     function ExpressionRenameAgents(e1::AbstractExpression, labels::Vector)
+        if !has_data(e1)
+            return ExpressionNull()
+        end
+
         @debug "RENAME AGENTS: $(e1.attributes)"
 
         attributes = copy(e1.attributes)

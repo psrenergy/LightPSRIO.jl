@@ -9,6 +9,7 @@ function has_data(e::AbstractExpression)
     end
     return has_data(e.attributes)
 end
+@define_lua_function has_data
 
 function Base.eachindex(e::AbstractExpression)
     attributes = e.attributes

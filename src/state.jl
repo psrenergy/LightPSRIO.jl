@@ -55,6 +55,8 @@ function initialize(paths::Vector{String}; logger = Logging.Info)
         # variadic expressions
         # abstract 
         "save", save,
+        # other
+        "has_data", has_data,
     )
 
     @push_lua_function(L, "BY_SUM", BY_SUM)
@@ -62,8 +64,9 @@ function initialize(paths::Vector{String}; logger = Logging.Info)
     @push_lua_function(L, "BY_MIN", BY_MIN)
     @push_lua_function(L, "BY_MAX", BY_MAX)
     @push_lua_function(L, "BY_PERCENTILE", BY_PERCENTILE)
-    @push_lua_function(L, "julia_typeof", julia_typeof)
     @push_lua_function(L, "concatenate_agents", concatenate_agents)
+    @push_lua_function(L, "julia_typeof", julia_typeof)
+
     @push_lua_struct(L, AggregateFunction)
 
     @push_lua_struct(

@@ -1,6 +1,8 @@
 using LightPSRIO
 
-path = raw"C:\Development\PSRIO\LightPSRIO.jl\data"
+# path = raw"C:\Development\PSRIO\LightPSRIO.jl\data"
+# path = raw"C:\Development\Papers\GeneralTimeSeriesApproximationInSDDP.jl\results"
+path = raw"C:\Development\Papers\GeneralTimeSeriesApproximationInSDDP.jl\data"
 script_path = raw"C:\Development\PSRIO\LightPSRIO.jl\example\example2.lua"
 
 L = LightPSRIO.initialize([path])
