@@ -4,31 +4,33 @@ mutable struct ExpressionAggregateDimensions <: AbstractUnary
     aggregate_function::AggregateFunction
     dimension_symbol::Symbol
     dimension_original_size::Int
-
-    function ExpressionAggregateDimensions(e1::AbstractExpression, dimension::String, aggregate_function::AggregateFunction)
-        @debug "AGGREGATE ($dimension): $(e1.attributes)"
-
-        attributes = copy(e1.attributes)
-        dimension_symbol = Symbol(dimension)
-
-        dimension_index = findfirst(==(dimension_symbol), attributes.dimensions)
-        if dimension_index === nothing
-            error("Dimension $dimension not found (dimensions: $(attributes.dimensions))")
-        end
-        dimension_original_size = attributes.dimension_size[dimension_index]
-        attributes.dimension_size[dimension_index] = 1
-
-        @debug "AGGREGATE ($dimension)= $attributes"
-
-        return new(
-            attributes,
-            e1,
-            aggregate_function,
-            dimension_symbol,
-            dimension_original_size,
-        )
-    end
 end
+
+function ExpressionAggregateDimensions(e1::AbstractExpression, dimension::String, aggregate_function::AggregateFunction)
+    @debug "AGGREGATE ($dimension): $(e1.attributes)"
+
+    attributes = copy(e1.attributes)
+    dimension_symbol = Symbol(dimension)
+
+    dimension_index = findfirst(==(dimension_symbol), attributes.dimensions)
+    if dimension_index === nothing
+        println("Dimension $dimension not found (dimensions: $(attributes.dimensions))")
+        return ExpressionNull()
+    end
+    dimension_original_size = attributes.dimension_size[dimension_index]
+    attributes.dimension_size[dimension_index] = 1
+
+    @debug "AGGREGATE ($dimension)= $attributes"
+
+    return ExpressionAggregateDimensions(
+        attributes,
+        e1,
+        aggregate_function,
+        dimension_symbol,
+        dimension_original_size,
+    )
+end
+
 @define_lua_struct ExpressionAggregateDimensions
 
 function aggregate(x::AbstractExpression, dimension::String, aggregate_function::AggregateFunction)

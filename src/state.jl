@@ -24,6 +24,7 @@ function initialize(paths::Vector{String}; logger = Logging.Info)
     @push_lua_structs(
         L,
         [
+            ExpressionNull,
             # data expressions
             ExpressionDataQuiver,
             # unary expressions

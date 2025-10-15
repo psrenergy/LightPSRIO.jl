@@ -26,6 +26,7 @@ include("collections/collection_study.jl")
 include("attributes.jl")
 
 include("expressions/expression.jl")
+include("expressions/expression_null.jl")
 
 # data expressions
 include("expressions/data/number.jl")

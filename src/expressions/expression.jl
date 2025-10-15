@@ -4,6 +4,9 @@ Base.promote_rule(::Type{<:AbstractExpression}, ::Type{<:Number}) = AbstractExpr
 Base.promote_rule(::Type{<:Number}, ::Type{<:AbstractExpression}) = AbstractExpression
 
 function has_data(e::AbstractExpression)
+    if e isa ExpressionNull
+        return false
+    end
     return has_data(e.attributes)
 end
 
