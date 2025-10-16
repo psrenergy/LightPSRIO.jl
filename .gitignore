@@ -28,3 +28,4 @@ revise/Manifest.toml
 *.DS_Store
 
 data*
+dashboard.html
