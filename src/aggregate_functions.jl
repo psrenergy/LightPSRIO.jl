@@ -32,3 +32,7 @@ function BY_MAX()
 end
 @define_lua_function BY_MAX
 
+function BY_PERCENTILE(parameter::Float64)
+    return AggregateFunction(type = AggregateType.Percentile, parameter = parameter / 100)
+end
+@define_lua_function BY_PERCENTILE

@@ -203,7 +203,7 @@ local function tab_hydro_analysis(agent)
 
     local data = generic:load(label .. "/inflow_real_historical");
     data = data:select_agents({ agent });
-    data = data:profile("stage", BY_MONTH(BY_MAX()));
+    data = data:year_profile(BY_MIN());
     data = data:rename_agents({ label });
     chart:add("line", data);
     tab:push(chart);

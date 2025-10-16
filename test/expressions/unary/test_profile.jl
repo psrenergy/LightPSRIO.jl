@@ -16,12 +16,12 @@ include("../../conftest.jl")
         L,
         """
 local generic = Generic();
-local input3 = generic:load("input3");
+local input1 = generic:load("input_month_36t_1s_1b");
 
-local output1 = input3:year_profile(BY_MAX());
+local output1 = input1:year_profile(BY_MIN());
 output1:save("output1");
 
-local output2 = input3:year_profile(BY_MIN());
+local output2 = input1:year_profile(BY_MAX());
 output2:save("output2");
     """,
     )
@@ -30,6 +30,7 @@ output2:save("output2");
 
     create_quiver_tests("input3")
     create_quiver_tests("output1")
+    create_quiver_tests("output2")
 
     delete_files(["output1"])
 

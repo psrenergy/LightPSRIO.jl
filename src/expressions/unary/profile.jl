@@ -25,14 +25,15 @@ function ExpressionProfile(e1::AbstractExpression, profile_type::ProfileType.T, 
     dimension_original_size = attributes.dimension_size[dimension_index]
 
     # Calculate new dimension size based on profile type
+    # The profile type determines the pattern granularity, not the final size
     new_size = if profile_type == ProfileType.Day
-        7  # Days in a week
+        7  # Days in a week (weekly pattern)
     elseif profile_type == ProfileType.Week
-        52  # Weeks in a year (approximate)
+        52  # Weeks in a year (yearly weekly pattern)
     elseif profile_type == ProfileType.Month
-        12  # Months in a year
+        12  # Months in a year (yearly monthly pattern)
     elseif profile_type == ProfileType.Year
-        1  # Single average per year
+        12  # Months in a year (yearly pattern based on input frequency)
     else
         error("Unknown profile type: $(profile_type)")
     end
@@ -90,10 +91,21 @@ function evaluate(e::ExpressionProfile; kwargs...)
     # Collect all data points that belong to this period
     data_for_period = Vector{Vector{Float64}}()
 
+    # Determine the input frequency to calculate date offsets correctly
+    input_frequency = "month" # attributes.frequency
+
     # Iterate through all original time steps
     for i in 1:dimension_original_size
-        # Calculate which period this time step belongs to
-        current_date = attributes.initial_date + Dates.Day(i - 1)
+        # Calculate the date for this time step based on input frequency
+        current_date = if input_frequency == "month"
+            attributes.initial_date + Dates.Month(i - 1)
+        elseif input_frequency == "day"
+            attributes.initial_date + Dates.Day(i - 1)
+        elseif input_frequency == "week"
+            attributes.initial_date + Dates.Week(i - 1)
+        else
+            attributes.initial_date + Dates.Day(i - 1)  # Default to daily
+        end
 
         belongs_to_period = if profile_type == ProfileType.Day
             dayofweek(current_date) == period_idx
@@ -102,7 +114,8 @@ function evaluate(e::ExpressionProfile; kwargs...)
         elseif profile_type == ProfileType.Month
             month(current_date) == period_idx
         elseif profile_type == ProfileType.Year
-            true  # All data belongs to single yearly average
+            # For year profile, group by month of year
+            month(current_date) == period_idx
         else
             false
         end

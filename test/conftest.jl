@@ -2,7 +2,7 @@ function get_data_directory()
     return joinpath(@__DIR__, "data")
 end
 
-function create_quiver(filename; n_stages::Integer, n_blocks::Integer, n_scenarios::Integer, constant::Float64, unit::String)
+function create_quiver(filename; n_stages::Integer, n_blocks::Integer, n_scenarios::Integer, constant::Float64, frequency::String, unit::String)
     writer = Quiver.Writer{Quiver.binary}(
         joinpath(@__DIR__, "data", filename);
         dimensions = ["stage", "scenario", "block"],
@@ -11,7 +11,7 @@ function create_quiver(filename; n_stages::Integer, n_blocks::Integer, n_scenari
         dimension_size = [n_stages, n_scenarios, n_blocks],
         initial_date = DateTime(2024, 1, 1),
         unit = unit,
-        frequency = "month"
+        frequency = frequency,
     )
 
     for stage in 1:n_stages
@@ -72,9 +72,10 @@ function create_quiver_tests(filename::String)
 end
 
 function initialize_tests()
-    create_quiver("input1"; n_stages = 2, n_scenarios = 2, n_blocks = 2, constant = 2.0, unit = "GWh")
-    create_quiver("input2"; n_stages = 2, n_scenarios = 2, n_blocks = 2, constant = 2.0, unit = "MWh")
-    create_quiver("input3"; n_stages = 36, n_scenarios = 2, n_blocks = 2, constant = 2.0, unit = "")
+    create_quiver("input1"; n_stages = 2, n_scenarios = 2, n_blocks = 2, constant = 2.0, frequency = "month", unit = "GWh")
+    create_quiver("input2"; n_stages = 2, n_scenarios = 2, n_blocks = 2, constant = 2.0, frequency = "month", unit = "MWh")
+
+    create_quiver("input_month_36t_1s_1b"; n_stages = 36, n_scenarios = 1, n_blocks = 1, constant = 1.0, frequency = "month", unit = "")
     return nothing
 end
 
