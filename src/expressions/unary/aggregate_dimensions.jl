@@ -7,6 +7,8 @@ mutable struct ExpressionAggregateDimensions <: AbstractUnary
 end
 
 function ExpressionAggregateDimensions(e1::AbstractExpression, dimension::String, aggregate_function::AggregateFunction)
+    @if_expression_has_no_data_return_null e1
+
     @debug "AGGREGATE ($dimension): $(e1.attributes)"
 
     attributes = copy(e1.attributes)

@@ -5,14 +5,11 @@ mutable struct ExpressionSelectAgents <: AbstractUnary
 end
 
 function ExpressionSelectAgents(e1::AbstractExpression, indices::Vector)
-    if !has_data(e1)
-        return ExpressionNull()
-    end
+    @if_expression_has_no_data_return_null e1
 
     @debug "SELECT AGENTS: $(e1.attributes)"
 
     attributes = copy(e1.attributes)
-    @show indices
     attributes.labels = attributes.labels[indices]
 
     @debug "SELECT AGENTS= $attributes"

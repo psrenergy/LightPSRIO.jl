@@ -8,3 +8,11 @@ end
 function finish!(::ExpressionNull)
     return nothing
 end
+
+macro if_expression_has_no_data_return_null(expr)
+    return quote
+        if !has_data($(esc(expr)))
+            return ExpressionNull()
+        end
+    end
+end

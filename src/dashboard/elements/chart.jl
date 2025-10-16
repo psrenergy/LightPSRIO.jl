@@ -113,6 +113,10 @@ end
 @define_lua_struct Chart
 
 function create_patchwork(chart::Chart)
+    if length(chart.layers) == 0
+        return Patchwork.Markdown("No data to display")
+    end
+
     series = "[" * join([create_patchwork(layer) for layer in chart.layers], ",\n") * "]"
     units = unique([layer.unit for layer in chart.layers])
 

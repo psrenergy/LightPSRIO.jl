@@ -1,22 +1,21 @@
 mutable struct ExpressionRenameAgents <: AbstractUnary
     attributes::Attributes
     e1::AbstractExpression
-
-    function ExpressionRenameAgents(e1::AbstractExpression, labels::Vector)
-        if !has_data(e1)
-            return ExpressionNull()
-        end
-
-        @debug "RENAME AGENTS: $(e1.attributes)"
-
-        attributes = copy(e1.attributes)
-        attributes.labels = labels
-
-        @debug "RENAME AGENTS= $attributes"
-
-        return new(attributes, e1)
-    end
 end
+
+function ExpressionRenameAgents(e1::AbstractExpression, labels::Vector)
+    @if_expression_has_no_data_return_null e1
+
+    @debug "RENAME AGENTS: $(e1.attributes)"
+
+    attributes = copy(e1.attributes)
+    attributes.labels = labels
+
+    @debug "RENAME AGENTS= $attributes"
+
+    return ExpressionRenameAgents(attributes, e1)
+end
+
 @define_lua_struct ExpressionRenameAgents
 
 function rename_agents(x::AbstractExpression, labels::Vector)
@@ -24,9 +23,11 @@ function rename_agents(x::AbstractExpression, labels::Vector)
 end
 @define_lua_function rename_agents
 
-function add_suffix(x::AbstractExpression, suffix::String)
-    labels = [label * suffix for label in x.attributes.labels]
-    return rename_agents(x, labels)
+function add_suffix(e1::AbstractExpression, suffix::String)
+    @if_expression_has_no_data_return_null e1
+
+    labels = [label * suffix for label in e1.attributes.labels]
+    return rename_agents(e1, labels)
 end
 @define_lua_function add_suffix
 
