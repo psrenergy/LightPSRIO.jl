@@ -1,4 +1,4 @@
-mutable struct ExpressionProfileDimensions <: AbstractUnary
+mutable struct ExpressionProfile <: AbstractUnary
     attributes::Attributes
     e1::AbstractExpression
     profile_type::ProfileType.T
@@ -8,86 +8,72 @@ mutable struct ExpressionProfileDimensions <: AbstractUnary
     dimension_original_size::Int
 end
 
-function ExpressionProfileDimensions(e1::AbstractExpression, dimension::String, profile_type::ProfileType.T, aggregate_function::AggregateFunction)
+function ExpressionProfile(e1::AbstractExpression, profile_type::ProfileType.T, aggregate_function::AggregateFunction)
     @if_expression_has_no_data_return_null e1
 
-    @debug "PROFILE ($dimension): $(e1.attributes)"
-
     attributes = copy(e1.attributes)
-    dimension_symbol = Symbol(dimension)
+
+    # Use the time dimension from attributes
+    dimension_symbol = :stage # attributes.time_dimension
 
     dimension_index = findfirst(==(dimension_symbol), attributes.dimensions)
     if dimension_index === nothing
-        println("Dimension $dimension not found (dimensions: $(attributes.dimensions))")
-        return ExpressionNull()
-    end
-
-    # Check if dimension is "stage" (time dimension)
-    if dimension_symbol != :stage
-        println("Profile operation only supported on time dimension 'stage', got: $dimension")
+        println("Time dimension $(dimension_symbol) not found (dimensions: $(attributes.dimensions))")
         return ExpressionNull()
     end
 
     dimension_original_size = attributes.dimension_size[dimension_index]
 
     # Calculate new dimension size based on profile type
-    new_size = if profile_function.type == ProfileType.Day
+    new_size = if profile_type == ProfileType.Day
         7  # Days in a week
-    elseif profile_function.type == ProfileType.Week
+    elseif profile_type == ProfileType.Week
         52  # Weeks in a year (approximate)
-    elseif profile_function.type == ProfileType.Month
+    elseif profile_type == ProfileType.Month
         12  # Months in a year
-    elseif profile_function.type == ProfileType.Year
+    elseif profile_type == ProfileType.Year
         1  # Single average per year
     else
-        error("Unknown profile type: $(profile_function.type)")
+        error("Unknown profile type: $(profile_type)")
     end
 
     attributes.dimension_size[dimension_index] = new_size
 
-    @debug "PROFILE ($dimension)= $attributes"
+    @debug "PROFILE ($(dimension_symbol)): $(e1.attributes) -> $attributes"
 
-    return ExpressionProfileDimensions(
+    return ExpressionProfile(
         attributes,
         e1,
-        profile_function,
+        profile_type,
+        aggregate_function,
         dimension_symbol,
         dimension_original_size,
     )
 end
 
-@define_lua_struct ExpressionProfileDimensions
+@define_lua_struct ExpressionProfile
 
-# function profile(x::AbstractExpression, dimension::String, profile_function::ProfileFunction)
-#     return ExpressionProfileDimensions(x, dimension, profile_function)
-# end
-# @define_lua_function profile
+function day_profile(x::AbstractExpression, aggregate_function::AggregateFunction)
+    return ExpressionProfile(x, ProfileType.Day, aggregate_function)
+end
+@define_lua_function day_profile
 
-# function day_profile(x::AbstractExpression, aggregate_function::AggregateFunction)
-#     profile_function = ProfileFunction(type = ProfileType.Day, aggregate_function = aggregate_function)
-#     return ExpressionProfileDimensions(x, "stage", profile_function)
-# end
-# @define_lua_function day_profile
+function week_profile(x::AbstractExpression, aggregate_function::AggregateFunction)
+    return ExpressionProfile(x, ProfileType.Week, aggregate_function)
+end
+@define_lua_function week_profile
 
-# function week_profile(x::AbstractExpression, aggregate_function::AggregateFunction)
-#     profile_function = ProfileFunction(type = ProfileType.Week, aggregate_function = aggregate_function)
-#     return ExpressionProfileDimensions(x, "stage", profile_function)
-# end
-# @define_lua_function week_profile
-
-# function month_profile(x::AbstractExpression, aggregate_function::AggregateFunction)
-#     profile_function = ProfileFunction(type = ProfileType.Month, aggregate_function = aggregate_function)
-#     return ExpressionProfileDimensions(x, "stage", profile_function)
-# end
-# @define_lua_function month_profile
+function month_profile(x::AbstractExpression, aggregate_function::AggregateFunction)
+    return ExpressionProfile(x, ProfileType.Month, aggregate_function)
+end
+@define_lua_function month_profile
 
 function year_profile(x::AbstractExpression, aggregate_function::AggregateFunction)
-    profile_function = ProfileFunction(type = ProfileType.Year, aggregate_function = aggregate_function)
-    return ExpressionProfileDimensions(x, "stage", profile_function)
+    return ExpressionProfile(x, ProfileType.Year, aggregate_function)
 end
 @define_lua_function year_profile
 
-function evaluate(e::ExpressionProfileDimensions; kwargs...)
+function evaluate(e::ExpressionProfile; kwargs...)
     if !has_data(e)
         return Float64[]
     end
@@ -95,24 +81,11 @@ function evaluate(e::ExpressionProfileDimensions; kwargs...)
     attributes = e.attributes
     labels_size = length(attributes.labels)
     dimension_original_size = e.dimension_original_size
-    profile_type = e.profile_function.type
-    aggregate_func = e.profile_function.aggregate_function
+    profile_type = e.profile_type
+    aggregate_func = e.aggregate_function
 
     # Determine which period index we're computing for
     period_idx = get(kwargs, e.dimension_symbol, 1)
-
-    # Calculate the period size
-    period_size = if profile_type == ProfileType.Day
-        7
-    elseif profile_type == ProfileType.Week
-        52
-    elseif profile_type == ProfileType.Month
-        12
-    elseif profile_type == ProfileType.Year
-        1
-    else
-        error("Unknown profile type: $profile_type")
-    end
 
     # Collect all data points that belong to this period
     data_for_period = Vector{Vector{Float64}}()
