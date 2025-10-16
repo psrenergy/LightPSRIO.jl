@@ -1,4 +1,4 @@
-module TestConvert
+module TestReplicate
 
 using DataFrames
 using Dates
@@ -18,7 +18,7 @@ include("../../conftest.jl")
 local generic = Generic();
 local input1 = generic:load("input_month_2t_2s_2b");
 
-local output1 = concatenate("stage", input1, input1, input1, input1);
+local output1 = input1:replicate("stage", 4);
 output1:save("output1");
     """,
     )

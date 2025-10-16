@@ -41,7 +41,7 @@ include("expressions/unary/profile.jl")
 include("expressions/unary/rename_agents.jl")
 include("expressions/unary/select_agents.jl")
 include("expressions/unary/set_attribute.jl")
-include("expressions/unary/repeat.jl")
+include("expressions/unary/replicate.jl")
 
 # binary expressions
 include("expressions/binary/binary.jl")
