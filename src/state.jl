@@ -31,6 +31,7 @@ function initialize(paths::Vector{String}; logger = Logging.Info)
             ExpressionConvert,
             ExpressionAggregateAgents,
             ExpressionAggregateDimensions,
+            ExpressionProfileDimensions,
             ExpressionRenameAgents,
             ExpressionSelectAgents,
             # binary expressions
