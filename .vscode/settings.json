@@ -12,7 +12,8 @@
         "BY_MIN",
         "BY_PERCENTILE",
         "BY_YEAR",
-        "BY_MONTH"
+        "BY_MONTH",
+        "concatenate"
     ],
     "Lua.format.defaultConfig": {
         "indent_style": "space",

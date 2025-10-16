@@ -189,9 +189,7 @@ local function tab_hydro_analysis(agent)
     data = data:select_agents({ agent }):rename_agents({ "min-max" });
     local min = data:year_profile(BY_MIN());
     local max = data:year_profile(BY_MAX());
-    for year = 1931, 2012 do
-        chart:add("area_range", min:set_initial_year(year), max:set_initial_year(year), { fillOpacity = 0.4 });
-    end
+        chart:add("area_range", concatenate({min, min, min}), concatenate({max, max, max}), { fillOpacity = 0.4 });
 
     for _, model in ipairs(models) do
 
