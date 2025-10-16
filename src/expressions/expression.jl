@@ -11,6 +11,14 @@ function has_data(e::AbstractExpression)
 end
 @define_lua_function has_data
 
+function get_years(e::AbstractExpression)
+        if e isa ExpressionNull
+        return 0
+    end
+    return get_years(e.attributes)
+end
+@define_lua_function get_years
+
 function Base.eachindex(e::AbstractExpression)
     attributes = e.attributes
     dimensions = attributes.dimensions

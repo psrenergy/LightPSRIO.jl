@@ -66,6 +66,7 @@ function initialize(paths::Vector{String}; logger = Logging.Info)
         "save", save,
         # other
         "has_data", has_data,
+        "get_years", get_years,
     )
 
     @push_lua_function(L, "BY_SUM", BY_SUM)

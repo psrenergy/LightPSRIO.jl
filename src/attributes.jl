@@ -63,3 +63,12 @@ function get_filtered_dimensions_label(attributes::Attributes, kwargs)
     end
     return join(["$dimension=$(kwargs[dimension])" for dimension in dimensions], ", ")
 end
+
+function get_years(attributes::Attributes)
+    if :stage in attributes.dimensions
+        index = findfirst(==(:stage), attributes.dimensions)
+        n_stages = attributes.dimension_size[index]
+        return Int(ceil(n_stages / 12))
+    end
+    return 0
+end
