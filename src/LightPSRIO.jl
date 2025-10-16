@@ -47,7 +47,7 @@ include("expressions/binary/binary.jl")
 
 # variadic expressions
 include("expressions/variadic/concatenate_agents.jl")
-include("expressions/variadic/concatenate_dimension.jl")
+include("expressions/variadic/concatenate.jl")
 
 # dashboard elements
 include("dashboard/elements/highcharts.jl")
