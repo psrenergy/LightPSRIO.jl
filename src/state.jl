@@ -50,6 +50,7 @@ function initialize(paths::Vector{String}; logger = Logging.Info)
         "day_profile", day_profile,
         "month_profile", month_profile,
         "rename_agents", rename_agents,
+        "repeat", repeat,
         "select_agents", select_agents,
         "set_initial_year", set_initial_year,
         "week_profile", week_profile,

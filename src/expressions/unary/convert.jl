@@ -11,8 +11,9 @@ function ExpressionConvert(e1::AbstractExpression, unit::String)
     return ExpressionConvert(attributes, e1)
 end
 
-
-convert(x::AbstractExpression, unit::String) = ExpressionConvert(x, unit)
+function convert(e1::AbstractExpression, unit::String)
+    return ExpressionConvert(e1, unit)
+end
 @define_lua_function convert
 
 function evaluate(e::ExpressionConvert; kwargs...)

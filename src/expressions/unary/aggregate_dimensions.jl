@@ -34,7 +34,6 @@ function ExpressionAggregateDimensions(e1::AbstractExpression, dimension::String
     )
 end
 
-
 function aggregate(x::AbstractExpression, dimension::String, aggregate_function::AggregateFunction)
     return ExpressionAggregateDimensions(x, dimension, aggregate_function)
 end
