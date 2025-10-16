@@ -11,6 +11,7 @@ function create_quiver(filename; n_stages::Integer, n_blocks::Integer, n_scenari
         dimension_size = [n_stages, n_scenarios, n_blocks],
         initial_date = DateTime(2024, 1, 1),
         unit = unit,
+        frequency = "month"
     )
 
     for stage in 1:n_stages
@@ -73,6 +74,7 @@ end
 function initialize_tests()
     create_quiver("input1"; n_stages = 2, n_scenarios = 2, n_blocks = 2, constant = 2.0, unit = "GWh")
     create_quiver("input2"; n_stages = 2, n_scenarios = 2, n_blocks = 2, constant = 2.0, unit = "MWh")
+    create_quiver("input3"; n_stages = 36, n_scenarios = 2, n_blocks = 2, constant = 2.0, unit = "")
     return nothing
 end
 

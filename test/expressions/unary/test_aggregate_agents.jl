@@ -81,6 +81,8 @@ output4:save("output4");
         @test Quiver.goto!(q; stage = 2, scenario = 2, block = 1) ≈ [2.0]
         @test Quiver.goto!(q; stage = 2, scenario = 2, block = 2) ≈ [2.0]
     end
+    
+    delete_files(["output1", "output2", "output3", "output4"])
 
     return nothing
 end

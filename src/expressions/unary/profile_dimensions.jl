@@ -119,6 +119,11 @@ function evaluate(e::ExpressionProfileDimensions; kwargs...)
         end
     end
 
+    println("============================")
+    @show data_for_period
+    @show maximum(data_for_period)
+    println("============================")
+
     # If no data for this period, return zeros
     if isempty(data_for_period)
         return zeros(labels_size)

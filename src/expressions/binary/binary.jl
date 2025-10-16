@@ -61,6 +61,7 @@ mutable struct ExpressionBinary{F <: Function} <: AbstractBinary
         end
 
         attributes = Attributes(
+            initial_date = a1.initial_date,
             labels = labels,
             collection = e1.attributes.collection,
             dimensions = dimensions,

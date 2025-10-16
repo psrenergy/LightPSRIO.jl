@@ -199,10 +199,7 @@ local function tab_hydro_analysis(agent)
     tab:push(chart);
 
     local chart = Chart("Real Historical Data");
-    local model = models[1];
-    local configuration = configurations[1];
-    local strategy = strategies[1];
-    local label = configuration .. "/" .. model .. "_" .. strategy;
+    local label = configurations[1] .. "/" .. models[1] .. "_" .. strategies[1];
 
     local data = generic:load(label .. "/inflow_real_historical");
     data = data:select_agents({ agent });

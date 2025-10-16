@@ -25,6 +25,8 @@ output1:save("output1");
 
     finalize(L)
 
+    delete_files(["output1"])
+
     return nothing
 end
 
