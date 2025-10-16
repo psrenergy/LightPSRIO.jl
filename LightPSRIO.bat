@@ -1,7 +1,7 @@
 @echo off
 
 SET BASEPATH=%~dp0
+SET JULIA=1.12.0
 
-CALL "%JULIA_1113%" --project=%BASEPATH% %BASEPATH%\main.jl %*
-
-PAUSE
+CALL juliaup add %JULIA%
+CALL julia +%JULIA% --project=%BASEPATH% %BASEPATH%\main.jl %*

@@ -1,5 +1,5 @@
 {
-    "julia.executablePath": "${env:JULIA_1113}",
+    "julia.executablePath": "julia +1.12.0",
     "Lua.diagnostics.globals": [
         "Chart",
         "Dashboard",
