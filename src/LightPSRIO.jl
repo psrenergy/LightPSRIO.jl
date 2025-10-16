@@ -34,12 +34,13 @@ include("expressions/data/number.jl")
 include("expressions/data/quiver.jl")
 
 # unary expressions
-include("expressions/unary/convert.jl")
 include("expressions/unary/aggregate_agents.jl")
 include("expressions/unary/aggregate_dimensions.jl")
+include("expressions/unary/convert.jl")
 include("expressions/unary/profile.jl")
 include("expressions/unary/rename_agents.jl")
 include("expressions/unary/select_agents.jl")
+include("expressions/unary/set_attribute.jl")
 
 # binary expressions
 include("expressions/binary/binary.jl")

@@ -183,6 +183,16 @@ local function tab_hydro_analysis(agent)
     local tab = Tab("Hydro Analysis (agent " .. agent .. ")");
 
     local chart = Chart("Real Historical Data");
+
+    local data =
+        generic:load(configurations[1] .. "/" .. models[1] .. "_" .. strategies[1] .. "/inflow_real_historical");
+    data = data:select_agents({ agent }):rename_agents({ "min-max" });
+    local min = data:year_profile(BY_MIN());
+    local max = data:year_profile(BY_MAX());
+    for year = 1931, 2012 do
+        chart:add("area_range", min:set_initial_year(year), max:set_initial_year(year), { fillOpacity = 0.4 });
+    end
+
     for _, model in ipairs(models) do
 
         for _, configuration in ipairs(configurations) do
@@ -196,16 +206,6 @@ local function tab_hydro_analysis(agent)
             end
         end
     end
-    tab:push(chart);
-
-    local chart = Chart("Real Historical Data");
-    local label = configurations[1] .. "/" .. models[1] .. "_" .. strategies[1];
-
-    local data = generic:load(label .. "/inflow_real_historical");
-    data = data:select_agents({ agent });
-    data = data:year_profile(BY_MIN());
-    data = data:rename_agents({ label });
-    chart:add("line", data);
     tab:push(chart);
 
     local chart = Chart("Fake Historical Data");

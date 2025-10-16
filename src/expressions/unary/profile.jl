@@ -7,6 +7,7 @@ mutable struct ExpressionProfile <: AbstractUnary
     dimension_symbol::Symbol
     dimension_original_size::Int
 end
+@define_lua_struct ExpressionProfile
 
 function ExpressionProfile(e1::AbstractExpression, profile_type::ProfileType.T, aggregate_function::AggregateFunction)
     @if_expression_has_no_data_return_null e1
@@ -52,7 +53,6 @@ function ExpressionProfile(e1::AbstractExpression, profile_type::ProfileType.T, 
     )
 end
 
-@define_lua_struct ExpressionProfile
 
 function day_profile(x::AbstractExpression, aggregate_function::AggregateFunction)
     return ExpressionProfile(x, ProfileType.Day, aggregate_function)

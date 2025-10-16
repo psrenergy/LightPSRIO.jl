@@ -5,6 +5,7 @@ mutable struct ExpressionAggregateDimensions <: AbstractUnary
     dimension_symbol::Symbol
     dimension_original_size::Int
 end
+@define_lua_struct ExpressionAggregateDimensions
 
 function ExpressionAggregateDimensions(e1::AbstractExpression, dimension::String, aggregate_function::AggregateFunction)
     @if_expression_has_no_data_return_null e1
@@ -33,7 +34,6 @@ function ExpressionAggregateDimensions(e1::AbstractExpression, dimension::String
     )
 end
 
-@define_lua_struct ExpressionAggregateDimensions
 
 function aggregate(x::AbstractExpression, dimension::String, aggregate_function::AggregateFunction)
     return ExpressionAggregateDimensions(x, dimension, aggregate_function)

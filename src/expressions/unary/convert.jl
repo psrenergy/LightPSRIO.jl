@@ -2,6 +2,7 @@ mutable struct ExpressionConvert <: AbstractUnary
     attributes::Attributes
     e1::AbstractExpression
 end
+@define_lua_struct ExpressionConvert
 
 function ExpressionConvert(e1::AbstractExpression, unit::String)
     @if_expression_has_no_data_return_null e1
@@ -10,7 +11,6 @@ function ExpressionConvert(e1::AbstractExpression, unit::String)
     return ExpressionConvert(attributes, e1)
 end
 
-@define_lua_struct ExpressionConvert
 
 convert(x::AbstractExpression, unit::String) = ExpressionConvert(x, unit)
 @define_lua_function convert

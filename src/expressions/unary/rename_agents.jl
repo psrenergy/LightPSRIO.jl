@@ -2,6 +2,7 @@ mutable struct ExpressionRenameAgents <: AbstractUnary
     attributes::Attributes
     e1::AbstractExpression
 end
+@define_lua_struct ExpressionRenameAgents
 
 function ExpressionRenameAgents(e1::AbstractExpression, labels::Vector)
     @if_expression_has_no_data_return_null e1
@@ -15,8 +16,6 @@ function ExpressionRenameAgents(e1::AbstractExpression, labels::Vector)
 
     return ExpressionRenameAgents(attributes, e1)
 end
-
-@define_lua_struct ExpressionRenameAgents
 
 function rename_agents(x::AbstractExpression, labels::Vector)
     return ExpressionRenameAgents(x, String.(labels))

@@ -28,12 +28,13 @@ function initialize(paths::Vector{String}; logger = Logging.Info)
             # data expressions
             ExpressionDataQuiver,
             # unary expressions
-            ExpressionConvert,
             ExpressionAggregateAgents,
             ExpressionAggregateDimensions,
+            ExpressionConvert,
             ExpressionProfile,
             ExpressionRenameAgents,
             ExpressionSelectAgents,
+            ExpressionSetAttribute,
             # binary expressions
             ExpressionBinary,
             # variadic expressions
@@ -42,22 +43,23 @@ function initialize(paths::Vector{String}; logger = Logging.Info)
         ],
         # data expressions
         # unary expressions
-        "convert", convert,
+        "add_suffix", add_suffix,
         "aggregate_agents", aggregate_agents,
         "aggregate", aggregate,
+        "convert", convert,
         "day_profile", day_profile,
-        "week_profile", week_profile,
         "month_profile", month_profile,
-        "year_profile", year_profile,
         "rename_agents", rename_agents,
-        "add_suffix", add_suffix,
         "select_agents", select_agents,
+        "set_initial_year", set_initial_year,
+        "week_profile", week_profile,
+        "year_profile", year_profile,
         # binary expressions
         "__add", add,
-        "__sub", sub,
-        "__mul", mul,
         "__div", div,
+        "__mul", mul,
         "__pow", pow,
+        "__sub", sub,
         # variadic expressions
         # abstract 
         "save", save,
@@ -69,6 +71,7 @@ function initialize(paths::Vector{String}; logger = Logging.Info)
     @push_lua_function(L, "BY_AVERAGE", BY_AVERAGE)
     @push_lua_function(L, "BY_MIN", BY_MIN)
     @push_lua_function(L, "BY_MAX", BY_MAX)
+    @push_lua_function(L, "BY_PERCENTILE", BY_PERCENTILE)
     @push_lua_function(L, "concatenate_agents", concatenate_agents)
     @push_lua_function(L, "concatenate_dimensions", concatenate_dimensions)
     @push_lua_function(L, "julia_typeof", julia_typeof)

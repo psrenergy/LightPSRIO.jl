@@ -48,6 +48,12 @@ function has_data(attributes::Attributes)
     return length(attributes.labels) > 0
 end
 
+function set_initial_year!(attributes::Attributes, year::Integer)
+    dt = attributes.initial_date
+    attributes.initial_date = DateTime(year, month(dt), day(dt), hour(dt), minute(dt), second(dt))
+    return nothing
+end
+
 function get_filtered_dimensions_label(attributes::Attributes, kwargs)
     dimensions = Symbol[]
     for (index, dimension) in enumerate(attributes.dimensions)

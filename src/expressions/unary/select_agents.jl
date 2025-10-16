@@ -3,6 +3,7 @@ mutable struct ExpressionSelectAgents <: AbstractUnary
     e1::AbstractExpression
     indices::Vector{Int}
 end
+@define_lua_struct ExpressionSelectAgents
 
 function ExpressionSelectAgents(e1::AbstractExpression, indices::Vector)
     @if_expression_has_no_data_return_null e1
@@ -16,8 +17,6 @@ function ExpressionSelectAgents(e1::AbstractExpression, indices::Vector)
 
     return ExpressionSelectAgents(attributes, e1, indices)
 end
-
-@define_lua_struct ExpressionSelectAgents
 
 function select_agents(e1::AbstractExpression, vector::Vector)
     @if_expression_has_no_data_return_null e1

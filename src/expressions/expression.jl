@@ -59,6 +59,8 @@ function save(L::LuaState, e::AbstractExpression, filename::String)
 
     Quiver.close!(writer)
 
+    # Quiver.convert(path, Quiver.binary, Quiver.csv, filename = filename * "_converted")
+
     return nothing
 end
 @define_lua_function save
