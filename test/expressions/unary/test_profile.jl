@@ -1,4 +1,4 @@
-module TestProfileDimensions
+module TestProfile
 
 using DataFrames
 using Dates
