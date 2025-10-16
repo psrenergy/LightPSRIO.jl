@@ -1,9 +1,9 @@
 local generic = Generic();
 
 -- local configurations = { "2000f_36t_100s_25o_6p", "2000f_36t_100s_100o_6p", "2000f_36t_100s_200o_6p" };
-local configurations = { "13h_12t_2s_1o_6p", "24h_24t_2s_1o_6p", "81h_60t_2s_1o_6p" };
+local configurations = { "81h_60t_2s_1o_6p" };
 -- local models = { "parp", "auto_arima" };
-local models = { "parp" };
+local models = { "parp", "seasonal_avg" };
 local strategies = { "yearly_wise", "stage_wise_k1", "stage_wise_k3" };
 
 local colors = {
@@ -182,17 +182,15 @@ end
 local function tab_hydro_analysis(agent)
     local tab = Tab("Hydro Analysis (agent " .. agent .. ")");
 
-    local chart = Chart("Real Historical Data");
+    local label = configurations[1] .. "/" .. models[1] .. "_" .. strategies[1];
+    local data = generic:load(label .. "/inflow_real_historical"):select_agents({ agent }):rename_agents({ "real historical (min-max)" });
+    local min = data:year_profile(BY_MIN()):replicate("stage", 82);
+    local max = data:year_profile(BY_MAX()):replicate("stage", 82);
 
-    local data =
-        generic:load(configurations[1] .. "/" .. models[1] .. "_" .. strategies[1] .. "/inflow_real_historical");
-    data = data:select_agents({ agent }):rename_agents({ "min-max" });
-    local min = data:year_profile(BY_MIN());
-    local max = data:year_profile(BY_MAX());
-        chart:add("area_range", min:replicate("stage", 10), max:replicate("stage", 10), { fillOpacity = 0.4 });
+    local chart = Chart("Real Historical Data");
+    chart:add("area_range", min, max, { fillOpacity = 0.4, color = "gray" });
 
     for _, model in ipairs(models) do
-
         for _, configuration in ipairs(configurations) do
             for _, strategy in ipairs(strategies) do
                 local label = configuration .. "/" .. model .. "_" .. strategy;
@@ -207,6 +205,7 @@ local function tab_hydro_analysis(agent)
     tab:push(chart);
 
     local chart = Chart("Fake Historical Data");
+    chart:add("area_range", min, max, { fillOpacity = 0.4, color = "gray" });
     for _, model in ipairs(models) do
 
         for _, configuration in ipairs(configurations) do

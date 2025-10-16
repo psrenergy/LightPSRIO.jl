@@ -3,8 +3,13 @@ function get_data_directory()
 end
 
 function create_quiver(filename; n_stages::Integer, n_blocks::Integer, n_scenarios::Integer, constant::Float64, frequency::String, unit::String = "")
+    path = joinpath(@__DIR__, "data", filename)
+    if isfile("$path.toml")
+        return nothing
+    end
+
     writer = Quiver.Writer{Quiver.binary}(
-        joinpath(@__DIR__, "data", filename);
+        path;
         dimensions = ["stage", "scenario", "block"],
         labels = ["data_stage", "data_scenario", "data_block", "data_constant"],
         time_dimension = "stage",

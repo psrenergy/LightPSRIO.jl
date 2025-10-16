@@ -2,36 +2,36 @@ mutable struct ExpressionConcatenate <: AbstractVariadic
     attributes::Attributes
     expressions::Vector{AbstractExpression}
     dimension::Symbol
-
-    function ExpressionConcatenate(dimension::String, expressions::Vector{<:AbstractExpression})
-        dimension_symbol = Symbol(dimension)
-
-        for expression in expressions
-            @debug "CONCATENATE: $(expression.attributes)"
-        end
-
-        attributes = copy(expressions[1].attributes)
-
-        # Find the index of the dimension to concatenate
-        dim_index = findfirst(==(dimension_symbol), attributes.dimensions)
-        if dim_index === nothing
-            error("Dimension '$dimension' not found in expression attributes")
-        end
-
-        # Update the size of the concatenated dimension
-        attributes.dimension_size[dim_index] =
-            sum(expr.attributes.dimension_size[dim_index] for expr in expressions)
-
-        @debug "CONCATENATE= $attributes"
-
-        return new(
-            attributes,
-            expressions,
-            dimension_symbol,
-        )
-    end
 end
 @define_lua_struct ExpressionConcatenate
+
+function ExpressionConcatenate(dimension::String, expressions::Vector{<:AbstractExpression})
+    filtered_expressions = [e for e in expressions if has_data(e)]
+    if length(filtered_expressions) == 0
+        return ExpressionNull()
+    end
+
+    for e in filtered_expressions
+        @debug "CONCATENATE: $(expression.attributes)"
+    end
+
+    dimension_symbol = Symbol(dimension)
+    attributes = copy(filtered_expressions[1].attributes)
+
+    # Find the index of the dimension to concatenate
+    dim_index = findfirst(==(dimension_symbol), attributes.dimensions)
+    if dim_index === nothing
+        error("Dimension '$dimension' not found in expression attributes")
+    end
+
+    # Update the size of the concatenated dimension
+    attributes.dimension_size[dim_index] =
+        sum(e.attributes.dimension_size[dim_index] for e in filtered_expressions)
+
+    @debug "CONCATENATE= $attributes"
+
+    return ExpressionConcatenate(attributes, filtered_expressions, dimension_symbol)
+end
 
 function concatenate(dimension::String, x::AbstractExpression...)
     return ExpressionConcatenate(dimension, [x...])
