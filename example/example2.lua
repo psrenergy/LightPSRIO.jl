@@ -1,7 +1,7 @@
 local generic = Generic();
 
 -- local configurations = { "2000f_36t_100s_25o_6p", "2000f_36t_100s_100o_6p", "2000f_36t_100s_200o_6p" };
-local configurations = { "2f_12t_2s_1o_6p" };
+local configurations = { "13h_12t_2s_1o_6p", "24h_24t_2s_1o_6p", "81h_60t_2s_1o_6p" };
 -- local models = { "parp", "auto_arima" };
 local models = { "parp" };
 local strategies = { "yearly_wise", "stage_wise_k1", "stage_wise_k3" };
@@ -182,22 +182,37 @@ end
 local function tab_hydro_analysis(agent)
     local tab = Tab("Hydro Analysis (agent " .. agent .. ")");
 
-    local chart = Chart("Historical Data");
+    local chart = Chart("Real Historical Data");
     for _, model in ipairs(models) do
 
         for _, configuration in ipairs(configurations) do
             for _, strategy in ipairs(strategies) do
                 local label = configuration .. "/" .. model .. "_" .. strategy;
 
-                local data = generic:load(label .. "/inflow_historical");
+                local data = generic:load(label .. "/inflow_real_historical");
                 data = data:select_agents({ agent });
                 data = data:rename_agents({ label });
                 chart:add("line", data);
             end
         end
-
-        tab:push(chart);
     end
+    tab:push(chart);
+
+    local chart = Chart("Fake Historical Data");
+    for _, model in ipairs(models) do
+
+        for _, configuration in ipairs(configurations) do
+            for _, strategy in ipairs(strategies) do
+                local label = configuration .. "/" .. model .. "_" .. strategy;
+
+                local data = generic:load(label .. "/inflow_fake_historical");
+                data = data:select_agents({ agent });
+                data = data:rename_agents({ label });
+                chart:add("line", data);
+            end
+        end
+    end
+    tab:push(chart);
 
     for _, model in ipairs(models) do
         local chart = Chart("Inflow - " .. model);

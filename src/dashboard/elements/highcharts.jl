@@ -8,13 +8,12 @@ struct Highcharts <: Patchwork.Plugin
 end
 
 function Highcharts(title::String, config::AbstractString)
-    @show config
     return Highcharts(title, JSON.parse(config; allownan = true))
 end
 
 function Patchwork.to_html(plugin::Highcharts)
     chart_id = "chart-$(uuid4())"
-    config_json = JSON.json(plugin.config; allownan = true, nan = "null")
+    config_json = JSON.json(plugin.config; allownan = true, nan = "null", inf = "null", ninf = "null", pretty = false)
 
     return """
     <div>
