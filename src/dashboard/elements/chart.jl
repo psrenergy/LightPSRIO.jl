@@ -125,6 +125,12 @@ function create_patchwork(chart::Chart)
         """
         {
             "title": { "text": null },
+            "chart": {
+                "animation": false,
+                "zoomType": "x",
+                "panning": true,
+                "panKey": "shift"
+            },
             "xAxis": {
                 "type": "datetime"
             },

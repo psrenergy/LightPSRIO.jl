@@ -38,6 +38,7 @@ function initialize(paths::Vector{String}; logger = Logging.Info)
             ExpressionBinary,
             # variadic expressions
             ExpressionConcatenateAgents,
+            ExpressionConcatenateDimensions,
         ],
         # data expressions
         # unary expressions
@@ -71,6 +72,7 @@ function initialize(paths::Vector{String}; logger = Logging.Info)
     @push_lua_function(L, "BY_MONTH", BY_MONTH)
     @push_lua_function(L, "BY_YEAR", BY_YEAR)
     @push_lua_function(L, "concatenate_agents", concatenate_agents)
+    @push_lua_function(L, "concatenate_dimensions", concatenate_dimensions)
     @push_lua_function(L, "julia_typeof", julia_typeof)
 
     @push_lua_struct(L, AggregateFunction)
