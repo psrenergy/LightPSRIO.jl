@@ -6,10 +6,7 @@
     <title>PSR</title>
     <script src="https://cdn.jsdelivr.net/npm/vue@3.5.12/dist/vue.global.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/styles/github-light.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/highlight.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/julia.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.11.1/languages/lua.min.js"></script>
+
     <script src="https://code.highcharts.com/12.4.0/highcharts.js"></script>
     <script src="https://code.highcharts.com/12.4.0/highcharts-more.js"></script>
 </head>
@@ -72,113 +69,7 @@
     </div>
 
     <style>
-        /* Markdown content styling */
-h1 {
-    font-size: 1.875rem;
-    font-weight: 600;
-    margin: 1.5rem 0 1rem 0;
-    color: #111827;
-    letter-spacing: -0.025em;
-}
-
-h2 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin: 1.25rem 0 0.75rem 0;
-    color: #111827;
-    letter-spacing: -0.025em;
-}
-
-h3 {
-    font-size: 1.25rem;
-    font-weight: 600;
-    margin: 1rem 0 0.5rem 0;
-    color: #111827;
-}
-
-h4, h5, h6 {
-    font-size: 1rem;
-    font-weight: 600;
-    margin: 0.875rem 0 0.5rem 0;
-    color: #374151;
-}
-
-p {
-    margin: 0.75rem 0;
-    line-height: 1.7;
-    color: #374151;
-}
-
-ul, ol {
-    margin: 0.75rem 0;
-    padding-left: 1.5rem;
-    line-height: 1.7;
-    color: #374151;
-}
-
-li {
-    margin: 0.375rem 0;
-}
-
-blockquote {
-    margin: 1rem 0;
-    padding-left: 1rem;
-    border-left: 3px solid #e5e7eb;
-    color: #6b7280;
-    font-style: italic;
-}
-
-code {
-    background: #f9fafb;
-    padding: 0.125rem 0.375rem;
-    border-radius: 0.25rem;
-    font-family: 'Monaco', 'Menlo', 'Consolas', monospace;
-    font-size: 0.875em;
-    color: #1f2937;
-    border: 1px solid #e5e7eb;
-}
-
-pre {
-    padding: 1rem;
-    border-radius: 0.5rem;
-    overflow-x: auto;
-    margin: 1rem 0;
-    border: 1px solid #e5e7eb;
-}
-
-pre code {
-    background: transparent !important;
-    padding: 0;
-    border: none;
-}
-
-a {
-    color: #111827;
-    text-decoration: underline;
-    text-decoration-color: #d1d5db;
-    text-underline-offset: 2px;
-    transition: text-decoration-color 0.2s;
-}
-
-a:hover {
-    text-decoration-color: #111827;
-}
-
-strong {
-    font-weight: 600;
-    color: #111827;
-}
-
-em {
-    font-style: italic;
-}
-
-hr {
-    border: none;
-    border-top: 1px solid #e5e7eb;
-    margin: 2rem 0;
-}
-
+        
         
     </style>
 
@@ -191,7 +82,7 @@ hr {
                     activeTab: 0,
                     searchQuery: '',
                     sidebarOpen: false,
-                    tabs: [{"label":"Demand Analysis","plugins":[{"id":"plugin-92d527ed-720e-4298-bbed-8aa5d0ccd0fb","html":"<p>No data to display</p>\n","type":"markdown"},{"id":"plugin-d5c71e3b-6ee2-4203-9b54-9c8699f349d9","html":"<p>No data to display</p>\n","type":"markdown"},{"id":"plugin-1c4f0610-53d9-47f3-9a55-d6c9c4a33d16","html":"<p>No data to display</p>\n","type":"markdown"}]},{"label":"Cost Analysis","plugins":[{"id":"plugin-4a91b176-9e1c-4c58-884c-2595b7fb5c05","html":"<p>No data to display</p>\n","type":"markdown"},{"id":"plugin-b93ccf1d-f1b0-47f8-94ad-403140da48f2","html":"<p>No data to display</p>\n","type":"markdown"},{"id":"plugin-9efd3188-e927-4d2a-8cb9-85dcb877b228","html":"<p>No data to display</p>\n","type":"markdown"},{"id":"plugin-8eba9988-9b39-4ef7-a1dd-87ef57ac4d1b","html":"<p>No data to display</p>\n","type":"markdown"},{"id":"plugin-cdcfe214-fdb6-44ae-8639-8b585a68af6b","html":"<p>No data to display</p>\n","type":"markdown"}]},{"label":"Hydro Analysis (agent 1)","plugins":[{"id":"plugin-14ba848f-6992-4456-b9e7-d60a1060c9da","html":"<div>\n    <h3 class=\"text-lg font-semibold mb-4\">Inflow - parp</h3>\n    <div id=\"chart-bf284d63-d058-4323-87b2-1c6f68aa1ad2\" class=\"highcharts-chart\" data-config='{\"title\":{\"text\":null},\"xAxis\":{\"type\":\"datetime\"},\"yAxis\":{\"title\":{\"text\":\"m3/s\"}},\"legend\":{\"layout\":\"vertical\",\"align\":\"right\",\"verticalAlign\":\"top\"},\"plotOptions\":{\"series\":{\"marker\":{\"enabled\":false}}},\"series\":[{\"name\":\"2f_12t_2s_1o_6p/parp_yearly_wise - train (avg)\",\"color\":\"#2caffe\",\"type\":\"line\",\"pointInterval\":2.6784e9,\"pointIntervalUnit\":\"month\",\"tooltip\":{\"valueSuffix\":\" m3/s\"},\"data\":[[1.7592768e12,NaN],[1.7619552e12,NaN],[1.7645472e12,NaN],[1.7672256e12,NaN],[1.769904e12,NaN],[1.7723232e12,NaN],[1.7750016e12,NaN],[1.7775936e12,NaN],[1.780272e12,NaN],[1.782864e12,NaN],[1.7855424e12,NaN],[1.7882208e12,NaN]]},{\"name\":\"2f_12t_2s_1o_6p/parp_yearly_wise - simulate (avg)\",\"color\":\"#2caffe\",\"type\":\"line\",\"pointInterval\":2.6784e9,\"pointIntervalUnit\":\"month\",\"tooltip\":{\"valueSuffix\":\" m3/s\"},\"data\":[[1.7592768e12,54.818],[1.7619552e12,46.045],[1.7645472e12,51.52],[1.7672256e12,40.465],[1.769904e12,31.486],[1.7723232e12,26.344],[1.7750016e12,22.851],[1.7775936e12,18.66],[1.780272e12,18.969],[1.782864e12,23.611],[1.7855424e12,31.948],[1.7882208e12,49.142]]},{\"name\":\"2f_12t_2s_1o_6p/parp_stage_wise_k1 - train (avg)\",\"color\":\"#544fc5\",\"type\":\"line\",\"pointInterval\":2.6784e9,\"pointIntervalUnit\":\"month\",\"tooltip\":{\"valueSuffix\":\" m3/s\"},\"data\":[[1.7592768e12,NaN],[1.7619552e12,NaN],[1.7645472e12,NaN],[1.7672256e12,NaN],[1.769904e12,NaN],[1.7723232e12,NaN],[1.7750016e12,NaN],[1.7775936e12,NaN],[1.780272e12,NaN],[1.782864e12,NaN],[1.7855424e12,NaN],[1.7882208e12,NaN]]},{\"name\":\"2f_12t_2s_1o_6p/parp_stage_wise_k1 - simulate (avg)\",\"color\":\"#544fc5\",\"type\":\"line\",\"pointInterval\":2.6784e9,\"pointIntervalUnit\":\"month\",\"tooltip\":{\"valueSuffix\":\" m3/s\"},\"data\":[[1.7592768e12,54.818],[1.7619552e12,46.045],[1.7645472e12,51.52],[1.7672256e12,40.465],[1.769904e12,31.486],[1.7723232e12,26.344],[1.7750016e12,22.851],[1.7775936e12,18.66],[1.780272e12,18.969],[1.782864e12,23.611],[1.7855424e12,31.948],[1.7882208e12,49.142]]},{\"name\":\"2f_12t_2s_1o_6p/parp_stage_wise_k3 - train (avg)\",\"color\":\"#00e272\",\"type\":\"line\",\"pointInterval\":2.6784e9,\"pointIntervalUnit\":\"month\",\"tooltip\":{\"valueSuffix\":\" m3/s\"},\"data\":[[1.7592768e12,NaN],[1.7619552e12,NaN],[1.7645472e12,NaN],[1.7672256e12,NaN],[1.769904e12,NaN],[1.7723232e12,NaN],[1.7750016e12,NaN],[1.7775936e12,NaN],[1.780272e12,NaN],[1.782864e12,NaN],[1.7855424e12,NaN],[1.7882208e12,NaN]]},{\"name\":\"2f_12t_2s_1o_6p/parp_stage_wise_k3 - simulate (avg)\",\"color\":\"#00e272\",\"type\":\"line\",\"pointInterval\":2.6784e9,\"pointIntervalUnit\":\"month\",\"tooltip\":{\"valueSuffix\":\" m3/s\"},\"data\":[[1.7592768e12,54.818],[1.7619552e12,46.045],[1.7645472e12,51.52],[1.7672256e12,40.465],[1.769904e12,31.486],[1.7723232e12,26.344],[1.7750016e12,22.851],[1.7775936e12,18.66],[1.780272e12,18.969],[1.782864e12,23.611],[1.7855424e12,31.948],[1.7882208e12,49.142]]}],\"responsive\":{\"rules\":[{\"condition\":{\"maxWidth\":500.0},\"chartOptions\":{\"legend\":{\"layout\":\"horizontal\",\"align\":\"center\",\"verticalAlign\":\"bottom\"}}}]},\"credits\":{\"enabled\":false}}' style=\"height: 400px;\"></div>\n</div>\n","type":"highcharts"},{"id":"plugin-176c1701-1c28-4eba-ad2d-fe3c8e0e95e5","html":"<p>No data to display</p>\n","type":"markdown"},{"id":"plugin-aa633c45-1054-4a98-90bc-d2fcffb6c60e","html":"<p>No data to display</p>\n","type":"markdown"}]},{"label":"Thermal Analysis (agent 1)","plugins":[{"id":"plugin-45eea108-f792-4593-8c6d-3aa60c90cedf","html":"<p>No data to display</p>\n","type":"markdown"}]}]
+                    tabs: [{"label":"Hydro Analysis (agent 1)","plugins":[{"id":"plugin-0482d5dc-fd5a-43c9-b725-5fdfd11f464a","html":"<div>\n    <h3 class=\"text-lg font-semibold mb-4\">Historical Data</h3>\n    <div id=\"chart-c2421c60-1349-4d5b-9eac-4fa4843a8b6c\" class=\"highcharts-chart\" data-config='{\"title\":{\"text\":null},\"xAxis\":{\"type\":\"datetime\"},\"yAxis\":{\"title\":{\"text\":\"m3/s\"}},\"legend\":{\"layout\":\"vertical\",\"align\":\"right\",\"verticalAlign\":\"top\"},\"plotOptions\":{\"series\":{\"marker\":{\"enabled\":false}}},\"series\":[{\"name\":\"2f_12t_2s_1o_6p/parp_yearly_wise\",\"type\":\"line\",\"pointInterval\":2.6784e9,\"pointIntervalUnit\":\"month\",\"tooltip\":{\"valueSuffix\":\" m3/s\"},\"data\":[[1.29384e12,47947.977],[1.2965184e12,66232.828],[1.2989376e12,53020.344],[1.301616e12,28255.748],[1.304208e12,26635.549],[1.3068864e12,16590.611],[1.3094784e12,13755.462],[1.3121568e12,12567.084],[1.3148352e12,10797.824],[1.3174272e12,10173.949],[1.3201056e12,16244.775],[1.3226976e12,19512.064],[1.325376e12,35048.441],[1.3280544e12,48711.012],[1.33056e12,40512.828],[1.3332384e12,37242.898],[1.3358304e12,22569.469],[1.3385088e12,17402.199],[1.3411008e12,14842.375],[1.3437792e12,14389.907],[1.3464576e12,17786.352],[1.3490496e12,27107.92],[1.351728e12,31129.207],[1.35432e12,39869.844]]},{\"name\":\"2f_12t_2s_1o_6p/parp_stage_wise_k1\",\"type\":\"line\",\"pointInterval\":2.6784e9,\"pointIntervalUnit\":\"month\",\"tooltip\":{\"valueSuffix\":\" m3/s\"},\"data\":[[1.29384e12,47947.977],[1.2965184e12,66232.828],[1.2989376e12,53020.344],[1.301616e12,28255.748],[1.304208e12,26635.549],[1.3068864e12,16590.611],[1.3094784e12,13755.462],[1.3121568e12,12567.084],[1.3148352e12,10797.824],[1.3174272e12,10173.949],[1.3201056e12,16244.775],[1.3226976e12,19512.064],[1.325376e12,35048.441],[1.3280544e12,48711.012],[1.33056e12,40512.828],[1.3332384e12,37242.898],[1.3358304e12,22569.469],[1.3385088e12,17402.199],[1.3411008e12,14842.375],[1.3437792e12,14389.907],[1.3464576e12,17786.352],[1.3490496e12,27107.92],[1.351728e12,31129.207],[1.35432e12,39869.844]]},{\"name\":\"2f_12t_2s_1o_6p/parp_stage_wise_k3\",\"type\":\"line\",\"pointInterval\":2.6784e9,\"pointIntervalUnit\":\"month\",\"tooltip\":{\"valueSuffix\":\" m3/s\"},\"data\":[[1.29384e12,47947.977],[1.2965184e12,66232.828],[1.2989376e12,53020.344],[1.301616e12,28255.748],[1.304208e12,26635.549],[1.3068864e12,16590.611],[1.3094784e12,13755.462],[1.3121568e12,12567.084],[1.3148352e12,10797.824],[1.3174272e12,10173.949],[1.3201056e12,16244.775],[1.3226976e12,19512.064],[1.325376e12,35048.441],[1.3280544e12,48711.012],[1.33056e12,40512.828],[1.3332384e12,37242.898],[1.3358304e12,22569.469],[1.3385088e12,17402.199],[1.3411008e12,14842.375],[1.3437792e12,14389.907],[1.3464576e12,17786.352],[1.3490496e12,27107.92],[1.351728e12,31129.207],[1.35432e12,39869.844]]}],\"responsive\":{\"rules\":[{\"condition\":{\"maxWidth\":500.0},\"chartOptions\":{\"legend\":{\"layout\":\"horizontal\",\"align\":\"center\",\"verticalAlign\":\"bottom\"}}}]},\"credits\":{\"enabled\":false}}' style=\"height: 400px;\"></div>\n</div>\n","type":"highcharts"},{"id":"plugin-45d8d24f-11e5-41e5-8e29-ee7d261570e9","html":"<div>\n    <h3 class=\"text-lg font-semibold mb-4\">Inflow - parp</h3>\n    <div id=\"chart-3bdcd15a-6c4a-4466-a531-1b472b675d01\" class=\"highcharts-chart\" data-config='{\"title\":{\"text\":null},\"xAxis\":{\"type\":\"datetime\"},\"yAxis\":{\"title\":{\"text\":\"m3/s\"}},\"legend\":{\"layout\":\"vertical\",\"align\":\"right\",\"verticalAlign\":\"top\"},\"plotOptions\":{\"series\":{\"marker\":{\"enabled\":false}}},\"series\":[{\"name\":\"2f_12t_2s_1o_6p/parp_yearly_wise - train (avg)\",\"color\":\"#2caffe\",\"type\":\"line\",\"pointInterval\":2.6784e9,\"pointIntervalUnit\":\"month\",\"tooltip\":{\"valueSuffix\":\" m3/s\"},\"data\":[[1.3569984e12,null],[1.3596768e12,null],[1.362096e12,null],[1.3647744e12,null],[1.3673664e12,null],[1.3700448e12,null],[1.3726368e12,null],[1.3753152e12,null],[1.3779936e12,null],[1.3805856e12,null],[1.383264e12,null],[1.385856e12,null]]},{\"name\":\"2f_12t_2s_1o_6p/parp_yearly_wise - simulate (avg)\",\"color\":\"#2caffe\",\"type\":\"line\",\"pointInterval\":2.6784e9,\"pointIntervalUnit\":\"month\",\"tooltip\":{\"valueSuffix\":\" m3/s\"},\"data\":[[1.3569984e12,54.818],[1.3596768e12,46.045],[1.362096e12,51.52],[1.3647744e12,40.465],[1.3673664e12,31.486],[1.3700448e12,26.344],[1.3726368e12,22.851],[1.3753152e12,18.66],[1.3779936e12,18.969],[1.3805856e12,23.611],[1.383264e12,31.948],[1.385856e12,49.142]]},{\"name\":\"2f_12t_2s_1o_6p/parp_stage_wise_k1 - train (avg)\",\"color\":\"#544fc5\",\"type\":\"line\",\"pointInterval\":2.6784e9,\"pointIntervalUnit\":\"month\",\"tooltip\":{\"valueSuffix\":\" m3/s\"},\"data\":[[1.3569984e12,null],[1.3596768e12,null],[1.362096e12,null],[1.3647744e12,null],[1.3673664e12,null],[1.3700448e12,null],[1.3726368e12,null],[1.3753152e12,null],[1.3779936e12,null],[1.3805856e12,null],[1.383264e12,null],[1.385856e12,null]]},{\"name\":\"2f_12t_2s_1o_6p/parp_stage_wise_k1 - simulate (avg)\",\"color\":\"#544fc5\",\"type\":\"line\",\"pointInterval\":2.6784e9,\"pointIntervalUnit\":\"month\",\"tooltip\":{\"valueSuffix\":\" m3/s\"},\"data\":[[1.3569984e12,54.818],[1.3596768e12,46.045],[1.362096e12,51.52],[1.3647744e12,40.465],[1.3673664e12,31.486],[1.3700448e12,26.344],[1.3726368e12,22.851],[1.3753152e12,18.66],[1.3779936e12,18.969],[1.3805856e12,23.611],[1.383264e12,31.948],[1.385856e12,49.142]]},{\"name\":\"2f_12t_2s_1o_6p/parp_stage_wise_k3 - train (avg)\",\"color\":\"#00e272\",\"type\":\"line\",\"pointInterval\":2.6784e9,\"pointIntervalUnit\":\"month\",\"tooltip\":{\"valueSuffix\":\" m3/s\"},\"data\":[[1.3569984e12,null],[1.3596768e12,null],[1.362096e12,null],[1.3647744e12,null],[1.3673664e12,null],[1.3700448e12,null],[1.3726368e12,null],[1.3753152e12,null],[1.3779936e12,null],[1.3805856e12,null],[1.383264e12,null],[1.385856e12,null]]},{\"name\":\"2f_12t_2s_1o_6p/parp_stage_wise_k3 - simulate (avg)\",\"color\":\"#00e272\",\"type\":\"line\",\"pointInterval\":2.6784e9,\"pointIntervalUnit\":\"month\",\"tooltip\":{\"valueSuffix\":\" m3/s\"},\"data\":[[1.3569984e12,54.818],[1.3596768e12,46.045],[1.362096e12,51.52],[1.3647744e12,40.465],[1.3673664e12,31.486],[1.3700448e12,26.344],[1.3726368e12,22.851],[1.3753152e12,18.66],[1.3779936e12,18.969],[1.3805856e12,23.611],[1.383264e12,31.948],[1.385856e12,49.142]]}],\"responsive\":{\"rules\":[{\"condition\":{\"maxWidth\":500.0},\"chartOptions\":{\"legend\":{\"layout\":\"horizontal\",\"align\":\"center\",\"verticalAlign\":\"bottom\"}}}]},\"credits\":{\"enabled\":false}}' style=\"height: 400px;\"></div>\n</div>\n","type":"highcharts"}]}]
                 }
             },
             mounted() {
@@ -208,11 +99,7 @@ hr {
             },
             methods: {
                 initializeContent() {
-                        document.querySelectorAll('pre code').forEach((block) => {
-        hljs.highlightElement(block);
-    });
-
-    document.querySelectorAll('.highcharts-chart').forEach(container => {
+                        document.querySelectorAll('.highcharts-chart').forEach(container => {
         const config = JSON.parse(container.getAttribute('data-config'));
         Highcharts.chart(container.id, config);
     });

@@ -19,9 +19,11 @@ end
 
 @define_lua_struct ExpressionSelectAgents
 
-function select_agents(x::AbstractExpression, vector::Vector)
+function select_agents(e1::AbstractExpression, vector::Vector)
+    @if_expression_has_no_data_return_null e1
+
     indices = Int[]
-    labels = x.attributes.labels
+    labels = e1.attributes.labels
 
     for item in vector
         if isa(item, String)
@@ -37,7 +39,7 @@ function select_agents(x::AbstractExpression, vector::Vector)
             throw(ArgumentError("Invalid item type: $(typeof(item)). Must be String or Number."))
         end
     end
-    return ExpressionSelectAgents(x, indices)
+    return ExpressionSelectAgents(e1, indices)
 end
 @define_lua_function select_agents
 

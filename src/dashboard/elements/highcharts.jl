@@ -14,7 +14,7 @@ end
 
 function Patchwork.to_html(plugin::Highcharts)
     chart_id = "chart-$(uuid4())"
-    config_json = JSON.json(plugin.config; allownan = true)
+    config_json = JSON.json(plugin.config; allownan = true, nan = "null")
 
     return """
     <div>

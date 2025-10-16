@@ -1,10 +1,10 @@
 @kwdef mutable struct Attributes
-    initial_date::DateTime = now()
-    labels::Vector{String} = []
-    collection::Collection = Collection()
-    dimensions::Vector{Symbol} = []
-    dimension_size::Vector{Int} = []
-    unit::String = ""
+    initial_date::DateTime
+    labels::Vector{String}
+    collection::Collection
+    dimensions::Vector{Symbol}
+    dimension_size::Vector{Int}
+    unit::String
 end
 
 function Attributes(quiver::Quiver.Reader)
@@ -26,6 +26,7 @@ end
 
 function Base.copy(a::Attributes)
     return Attributes(
+        initial_date = a.initial_date,
         labels = copy(a.labels),
         collection = a.collection,
         dimensions = copy(a.dimensions),

@@ -182,6 +182,23 @@ end
 local function tab_hydro_analysis(agent)
     local tab = Tab("Hydro Analysis (agent " .. agent .. ")");
 
+    local chart = Chart("Historical Data");
+    for _, model in ipairs(models) do
+
+        for _, configuration in ipairs(configurations) do
+            for _, strategy in ipairs(strategies) do
+                local label = configuration .. "/" .. model .. "_" .. strategy;
+
+                local data = generic:load(label .. "/inflow_historical");
+                data = data:select_agents({ agent });
+                data = data:rename_agents({ label });
+                chart:add("line", data);
+            end
+        end
+
+        tab:push(chart);
+    end
+
     for _, model in ipairs(models) do
         local chart = Chart("Inflow - " .. model);
 
@@ -214,8 +231,8 @@ local function tab_hydro_analysis(agent)
         tab:push(chart);
     end
 
-    add_percentile_to_tab(tab, "Hydro Generation", "results/hydro_generation", agent);
-    add_percentile_to_tab(tab, "Final Volume", "results/hydro_final_volume", agent);
+    -- add_percentile_to_tab(tab, "Hydro Generation", "results/hydro_generation", agent);
+    -- add_percentile_to_tab(tab, "Final Volume", "results/hydro_final_volume", agent);
 
     return tab;
 end
@@ -229,10 +246,10 @@ local function tab_thermal_analysis(agent)
 end
 
 local dashboard = Dashboard("PSR");
-dashboard:push(tab_demand_analysis());
-dashboard:push(tab_cost_analysis());
+-- dashboard:push(tab_demand_analysis());
+-- dashboard:push(tab_cost_analysis());
 for agent = 1, 1 do
     dashboard:push(tab_hydro_analysis(agent));
-    dashboard:push(tab_thermal_analysis(agent));
+    -- dashboard:push(tab_thermal_analysis(agent));
 end
 dashboard:save("dashboard");

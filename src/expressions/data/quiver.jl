@@ -4,21 +4,21 @@ mutable struct ExpressionDataQuiver <: AbstractExpression
     filename::String
     attributes::Attributes
     reader::Optional{Quiver.Reader}
+end
 
-    function ExpressionDataQuiver(path::String, filename::String)
-        try
-            reader = Quiver.Reader{Quiver.binary}(joinpath(path, filename))
-            attributes = Attributes(reader)
-            println("Loading $filename ($attributes)")
-            Quiver.close!(reader)
-            return new(path, filename, attributes, nothing)
-        catch ArgumentError
-            println("The output $filename has no data")
-            attributes = Attributes()
-            return new(path, filename, attributes, nothing)
-        end
+function ExpressionDataQuiver(path::String, filename::String)
+    try
+        reader = Quiver.Reader{Quiver.binary}(joinpath(path, filename))
+        attributes = Attributes(reader)
+        println("Loading $filename ($attributes)")
+        Quiver.close!(reader)
+        return ExpressionDataQuiver(path, filename, attributes, nothing)
+    catch ArgumentError
+        println("The output $filename has no data")
+        return ExpressionNull()
     end
 end
+
 @define_lua_struct ExpressionDataQuiver
 
 function start!(e::ExpressionDataQuiver)
