@@ -12,7 +12,7 @@ end
 @define_lua_function has_data
 
 function get_years(e::AbstractExpression)
-        if e isa ExpressionNull
+    if e isa ExpressionNull
         return 0
     end
     return get_years(e.attributes)
