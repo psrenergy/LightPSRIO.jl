@@ -17,6 +17,7 @@ import Patchwork
 include("optional.jl")
 include("util.jl")
 include("aggregate_functions.jl")
+include("profile_type.jl")
 include("case.jl")
 
 include("collections/collection.jl")

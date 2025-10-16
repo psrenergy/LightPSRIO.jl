@@ -45,7 +45,7 @@ function initialize(paths::Vector{String}; logger = Logging.Info)
         "convert", convert,
         "aggregate_agents", aggregate_agents,
         "aggregate", aggregate,
-        "profile", profile,
+        "year_profile", year_profile,
         "rename_agents", rename_agents,
         "add_suffix", add_suffix,
         "select_agents", select_agents,

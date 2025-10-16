@@ -1,12 +1,14 @@
 mutable struct ExpressionProfileDimensions <: AbstractUnary
     attributes::Attributes
     e1::AbstractExpression
-    profile_function::ProfileFunction
+    profile_type::ProfileType.T
+    aggregate_function::AggregateFunction
+    
     dimension_symbol::Symbol
     dimension_original_size::Int
 end
 
-function ExpressionProfileDimensions(e1::AbstractExpression, dimension::String, profile_function::ProfileFunction)
+function ExpressionProfileDimensions(e1::AbstractExpression, dimension::String, profile_type::ProfileType.T, aggregate_function::AggregateFunction)
     @if_expression_has_no_data_return_null e1
 
     @debug "PROFILE ($dimension): $(e1.attributes)"
@@ -56,10 +58,34 @@ end
 
 @define_lua_struct ExpressionProfileDimensions
 
-function profile(x::AbstractExpression, dimension::String, profile_function::ProfileFunction)
-    return ExpressionProfileDimensions(x, dimension, profile_function)
+# function profile(x::AbstractExpression, dimension::String, profile_function::ProfileFunction)
+#     return ExpressionProfileDimensions(x, dimension, profile_function)
+# end
+# @define_lua_function profile
+
+# function day_profile(x::AbstractExpression, aggregate_function::AggregateFunction)
+#     profile_function = ProfileFunction(type = ProfileType.Day, aggregate_function = aggregate_function)
+#     return ExpressionProfileDimensions(x, "stage", profile_function)
+# end
+# @define_lua_function day_profile
+
+# function week_profile(x::AbstractExpression, aggregate_function::AggregateFunction)
+#     profile_function = ProfileFunction(type = ProfileType.Week, aggregate_function = aggregate_function)
+#     return ExpressionProfileDimensions(x, "stage", profile_function)
+# end
+# @define_lua_function week_profile
+
+# function month_profile(x::AbstractExpression, aggregate_function::AggregateFunction)
+#     profile_function = ProfileFunction(type = ProfileType.Month, aggregate_function = aggregate_function)
+#     return ExpressionProfileDimensions(x, "stage", profile_function)
+# end
+# @define_lua_function month_profile
+
+function year_profile(x::AbstractExpression, aggregate_function::AggregateFunction)
+    profile_function = ProfileFunction(type = ProfileType.Year, aggregate_function = aggregate_function)
+    return ExpressionProfileDimensions(x, "stage", profile_function)
 end
-@define_lua_function profile
+@define_lua_function year_profile
 
 function evaluate(e::ExpressionProfileDimensions; kwargs...)
     if !has_data(e)
@@ -118,11 +144,6 @@ function evaluate(e::ExpressionProfileDimensions; kwargs...)
             push!(data_for_period, current_value)
         end
     end
-
-    println("============================")
-    @show data_for_period
-    @show maximum(data_for_period)
-    println("============================")
 
     # If no data for this period, return zeros
     if isempty(data_for_period)
