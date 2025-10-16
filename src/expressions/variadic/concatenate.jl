@@ -52,7 +52,10 @@ function evaluate(e::ExpressionConcatenate; kwargs...)
         if dim_value <= cumulative_size + expr_dim_size
             # Adjust the dimension value for this expression
             adjusted_value = dim_value - cumulative_size
-            adjusted_kwargs = merge(kwargs, NamedTuple{(e.dimension,)}((adjusted_value,)))
+            adjusted_kwargs = merge(
+                NamedTuple(kwargs),
+                NamedTuple{(e.dimension,)}((adjusted_value,)),
+            )
             return evaluate(expression; adjusted_kwargs...)
         end
         cumulative_size += expr_dim_size
