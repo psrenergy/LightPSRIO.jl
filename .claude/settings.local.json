@@ -5,7 +5,8 @@
       "Bash(dir:*)",
       "Bash(grep:*)",
       "Bash(cmd /c:*)",
-      "Bash(/dev/null)"
+      "Bash(/dev/null)",
+      "Bash(formatformat.bat)"
     ],
     "deny": [],
     "ask": []

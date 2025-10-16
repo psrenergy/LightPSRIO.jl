@@ -44,6 +44,7 @@ function initialize(paths::Vector{String}; logger = Logging.Info)
         "convert", convert,
         "aggregate_agents", aggregate_agents,
         "aggregate", aggregate,
+        "profile", profile,
         "rename_agents", rename_agents,
         "add_suffix", add_suffix,
         "select_agents", select_agents,
@@ -65,10 +66,15 @@ function initialize(paths::Vector{String}; logger = Logging.Info)
     @push_lua_function(L, "BY_MIN", BY_MIN)
     @push_lua_function(L, "BY_MAX", BY_MAX)
     @push_lua_function(L, "BY_PERCENTILE", BY_PERCENTILE)
+    @push_lua_function(L, "BY_DAY", BY_DAY)
+    @push_lua_function(L, "BY_WEEK", BY_WEEK)
+    @push_lua_function(L, "BY_MONTH", BY_MONTH)
+    @push_lua_function(L, "BY_YEAR", BY_YEAR)
     @push_lua_function(L, "concatenate_agents", concatenate_agents)
     @push_lua_function(L, "julia_typeof", julia_typeof)
 
     @push_lua_struct(L, AggregateFunction)
+    @push_lua_struct(L, ProfileFunction)
 
     @push_lua_struct(
         L,

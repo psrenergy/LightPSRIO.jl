@@ -10,7 +10,9 @@
         "Markdown",
         "BY_MAX",
         "BY_MIN",
-        "BY_PERCENTILE"
+        "BY_PERCENTILE",
+        "BY_YEAR",
+        "BY_MONTH"
     ],
     "Lua.format.defaultConfig": {
         "indent_style": "space",

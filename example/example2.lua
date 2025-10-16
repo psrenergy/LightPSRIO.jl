@@ -198,6 +198,19 @@ local function tab_hydro_analysis(agent)
     end
     tab:push(chart);
 
+    local chart = Chart("Real Historical Data");
+    local model = models[1];
+    local configuration = configurations[1];
+    local strategy = strategies[1];
+    local label = configuration .. "/" .. model .. "_" .. strategy;
+
+    local data = generic:load(label .. "/inflow_real_historical");
+    data = data:select_agents({ agent });
+    data = data:profile("stage", BY_MONTH(BY_MAX()));
+    data = data:rename_agents({ label });
+    chart:add("line", data);
+    tab:push(chart);
+
     local chart = Chart("Fake Historical Data");
     for _, model in ipairs(models) do
 
