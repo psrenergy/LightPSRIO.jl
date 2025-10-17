@@ -12,7 +12,7 @@ function ExpressionConcatenate(dimension::String, expressions::Vector{<:Abstract
     end
 
     for e in filtered_expressions
-        @debug "CONCATENATE: $(expression.attributes)"
+        @debug "CONCATENATE: $(e.attributes)"
     end
 
     dimension_symbol = Symbol(dimension)

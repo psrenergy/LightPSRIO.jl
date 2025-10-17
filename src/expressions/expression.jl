@@ -41,13 +41,12 @@ function save(L::LuaState, e::AbstractExpression, filename::String)
 
     writer = Quiver.Writer{Quiver.binary}(
         joinpath(case.path, filename);
-        labels = a.labels,
-        dimensions = string.(a.dimensions),
-        time_dimension = "stage",
         dimension_size = a.dimension_size,
+        dimensions = string.(a.dimensions),
         initial_date = a.initial_date,
+        labels = a.labels,
+        time_dimension = string(a.time_dimension),
         unit = a.unit,
-        # frequency = metadata.frequency,
     )
 
     start!(e)

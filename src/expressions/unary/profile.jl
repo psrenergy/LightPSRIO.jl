@@ -4,7 +4,7 @@ mutable struct ExpressionProfile <: AbstractUnary
     profile_type::ProfileType.T
     aggregate_function::AggregateFunction
 
-    dimension_symbol::Symbol
+    time_dimension::Symbol
     dimension_original_size::Int
 end
 @define_lua_struct ExpressionProfile
@@ -15,11 +15,11 @@ function ExpressionProfile(e1::AbstractExpression, profile_type::ProfileType.T, 
     attributes = copy(e1.attributes)
 
     # Use the time dimension from attributes
-    dimension_symbol = :stage # attributes.time_dimension
+    time_dimension = attributes.time_dimension
 
-    dimension_index = findfirst(==(dimension_symbol), attributes.dimensions)
+    dimension_index = findfirst(==(time_dimension), attributes.dimensions)
     if dimension_index === nothing
-        println("Time dimension $(dimension_symbol) not found (dimensions: $(attributes.dimensions))")
+        println("Time dimension $(time_dimension) not found (dimensions: $(attributes.dimensions))")
         return ExpressionNull()
     end
 
@@ -41,14 +41,14 @@ function ExpressionProfile(e1::AbstractExpression, profile_type::ProfileType.T, 
 
     attributes.dimension_size[dimension_index] = new_size
 
-    @debug "PROFILE ($(dimension_symbol)): $(e1.attributes) -> $attributes"
+    @debug "PROFILE ($(time_dimension)): $(e1.attributes) -> $attributes"
 
     return ExpressionProfile(
         attributes,
         e1,
         profile_type,
         aggregate_function,
-        dimension_symbol,
+        time_dimension,
         dimension_original_size,
     )
 end
@@ -85,7 +85,7 @@ function evaluate(e::ExpressionProfile; kwargs...)
     aggregate_func = e.aggregate_function
 
     # Determine which period index we're computing for
-    period_idx = get(kwargs, e.dimension_symbol, 1)
+    period_idx = get(kwargs, e.time_dimension, 1)
 
     # Collect all data points that belong to this period
     data_for_period = Vector{Vector{Float64}}()
@@ -122,7 +122,7 @@ function evaluate(e::ExpressionProfile; kwargs...)
         if belongs_to_period
             modified_kwargs = merge(
                 NamedTuple(kwargs),
-                NamedTuple{(e.dimension_symbol,)}((i,)),
+                NamedTuple{(e.time_dimension,)}((i,)),
             )
 
             current_value = evaluate(e.e1; modified_kwargs...)

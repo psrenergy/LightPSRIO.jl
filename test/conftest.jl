@@ -10,13 +10,13 @@ function create_quiver(filename; n_stages::Integer, n_blocks::Integer, n_scenari
 
     writer = Quiver.Writer{Quiver.binary}(
         path;
+        dimension_size = [n_stages, n_scenarios, n_blocks],
         dimensions = ["stage", "scenario", "block"],
+        frequency = frequency,
+        initial_date = DateTime(2024, 1, 1),
         labels = ["data_stage", "data_scenario", "data_block", "data_constant"],
         time_dimension = "stage",
-        dimension_size = [n_stages, n_scenarios, n_blocks],
-        initial_date = DateTime(2024, 1, 1),
         unit = unit,
-        frequency = frequency,
     )
 
     for stage in 1:n_stages

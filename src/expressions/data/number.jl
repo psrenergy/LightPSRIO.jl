@@ -4,11 +4,12 @@ mutable struct ExpressionDataNumber{T <: Number} <: AbstractExpression
 
     function ExpressionDataNumber(x::T) where {T <: Number}
         attributes = Attributes(
+            collection = Collection(),
+            dimension_size = [],
+            dimensions = [],
             initial_date = now(),
             labels = ["constant"],
-            collection = Collection(),
-            dimensions = [],
-            dimension_size = [],
+            time_dimension = :none,
             unit = "",
         )
         return new{T}(attributes, x)

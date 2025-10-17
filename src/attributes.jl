@@ -1,19 +1,21 @@
 @kwdef mutable struct Attributes
+    collection::Collection
+    dimension_size::Vector{Int}
+    dimensions::Vector{Symbol}
     initial_date::DateTime
     labels::Vector{String}
-    collection::Collection
-    dimensions::Vector{Symbol}
-    dimension_size::Vector{Int}
+    time_dimension::Symbol
     unit::String
 end
 
 function Attributes(quiver::Quiver.Reader)
     return Attributes(
+        collection = Collection(),
+        dimension_size = copy(quiver.metadata.dimension_size),
+        dimensions = copy(quiver.metadata.dimensions),
         initial_date = quiver.metadata.initial_date,
         labels = copy(quiver.metadata.labels),
-        collection = Collection(),
-        dimensions = copy(quiver.metadata.dimensions),
-        dimension_size = copy(quiver.metadata.dimension_size),
+        time_dimension = quiver.metadata.time_dimension,
         unit = quiver.metadata.unit,
     )
 end
@@ -26,11 +28,12 @@ end
 
 function Base.copy(a::Attributes)
     return Attributes(
+        collection = a.collection,
+        dimension_size = copy(a.dimension_size),
+        dimensions = copy(a.dimensions),
         initial_date = a.initial_date,
         labels = copy(a.labels),
-        collection = a.collection,
-        dimensions = copy(a.dimensions),
-        dimension_size = copy(a.dimension_size),
+        time_dimension = a.time_dimension,
         unit = a.unit,
     )
 end
@@ -57,7 +60,7 @@ end
 function get_filtered_dimensions_label(attributes::Attributes, kwargs)
     dimensions = Symbol[]
     for (index, dimension) in enumerate(attributes.dimensions)
-        if attributes.dimension_size[index] > 1 && dimension != :stage
+        if attributes.dimension_size[index] > 1 && dimension != attributes.time_dimension
             push!(dimensions, dimension)
         end
     end
@@ -65,8 +68,8 @@ function get_filtered_dimensions_label(attributes::Attributes, kwargs)
 end
 
 function get_years(attributes::Attributes)
-    if :stage in attributes.dimensions
-        index = findfirst(==(:stage), attributes.dimensions)
+    if attributes.time_dimension in attributes.dimensions
+        index = findfirst(==(attributes.time_dimension), attributes.dimensions)
         n_stages = attributes.dimension_size[index]
         return Int(ceil(n_stages / 12))
     end

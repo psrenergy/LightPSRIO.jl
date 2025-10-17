@@ -31,6 +31,16 @@ mutable struct ExpressionBinary{F <: Function} <: AbstractBinary
             error("Attributes must match for binary operations.")
         end
 
+        time_dimension = if a1.time_dimension == :none
+            a2.time_dimension
+        elseif a2.time_dimension == :none
+            a1.time_dimension
+        elseif a1.time_dimension == a2.time_dimension
+            a1.time_dimension
+        else
+            error("Time dimensions must match for binary operations ($(a1.time_dimension) and $(a2.time_dimension))")
+        end
+
         dimension_size = zeros(Int, length(dimensions))
         e1_dimension_size = a1.dimension_size
         e2_dimension_size = a2.dimension_size
@@ -61,11 +71,12 @@ mutable struct ExpressionBinary{F <: Function} <: AbstractBinary
         end
 
         attributes = Attributes(
+            collection = e1.attributes.collection,
+            dimension_size = dimension_size,
+            dimensions = dimensions,
             initial_date = a1.initial_date,
             labels = labels,
-            collection = e1.attributes.collection,
-            dimensions = dimensions,
-            dimension_size = dimension_size,
+            time_dimension = time_dimension,
             unit = unit,
         )
 
