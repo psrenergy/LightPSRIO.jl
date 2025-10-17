@@ -28,6 +28,7 @@ include("attributes.jl")
 
 include("expressions/expression.jl")
 include("expressions/expression_null.jl")
+include("expressions/get_attribute.jl")
 
 # data expressions
 include("expressions/data/number.jl")

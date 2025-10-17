@@ -4,7 +4,7 @@ local configurations = { "200h_60t_100s_50o_6p" };
 local models = { "parp", "seasonal_avg" };
 local strategies = { "yearly_wise", "stage_wise_k1", "stage_wise_k3" };
 
-local colors = {
+local colours = {
     "#2caffe",
     "#544fc5",
     "#00e272",
@@ -38,7 +38,7 @@ local function add_percentile_to_tab(tab, title, filename, agent)
                 local data = generic:load(label .. "/" .. filename);
                 data = data:select_agents({ agent });
                 data = data:rename_agents({ label });
-                add_percentile(chart, data, colors[i]);
+                add_percentile(chart, data, colours[i]);
                 i = i + 1;
             end
         end
@@ -60,7 +60,7 @@ local function tab_cost_analysis()
                 local data = generic:load(label .. "/results/costs_by_category");
                 data = data:select_agents({ 1 });
                 data = data:rename_agents({ label });
-                add_percentile(chart, data, colors[i]);
+                add_percentile(chart, data, colours[i]);
                 i = i + 1;
             end
         end
@@ -95,7 +95,7 @@ local function tab_cost_analysis()
                 local data = generic:load(label .. "/results/costs_by_category");
                 data = data:select_agents({ 2 });
                 data = data:rename_agents({ label });
-                add_percentile(chart, data, colors[i]);
+                add_percentile(chart, data, colours[i]);
                 i = i + 1;
             end
         end
@@ -112,7 +112,7 @@ local function tab_cost_analysis()
 
                 local data = generic:load(label .. "/results/load_marginal_cost");
                 data = data:aggregate_agents(BY_AVERAGE(), label);
-                add_percentile(chart, data, colors[i]);
+                add_percentile(chart, data, colours[i]);
                 i = i + 1;
             end
         end
@@ -129,7 +129,7 @@ local function tab_cost_analysis()
 
                 local data = generic:load(label .. "/results/deficit");
                 data = data:aggregate_agents(BY_AVERAGE(), label);
-                add_percentile(chart, data, colors[i]);
+                add_percentile(chart, data, colours[i]);
                 i = i + 1;
             end
         end
@@ -177,25 +177,50 @@ local function tab_demand_analysis()
     return tab;
 end
 
+local function get_years(filename)
+    local years = 0;
+    for _, model in ipairs(models) do
+        for _, configuration in ipairs(configurations) do
+            for _, strategy in ipairs(strategies) do
+                local data = generic:load(configuration .. "/" .. model .. "_" .. strategy .. "/" .. filename);
+                years = math.max(years, data:get_years());
+            end
+        end
+    end
+    return years;
+end
+
 local function tab_hydro_analysis(agent)
     local tab = Tab("Hydro Analysis (agent " .. agent .. ")");
 
-    local label = configurations[1] .. "/" .. models[1] .. "_" .. strategies[1];
-    local data = generic:load(label .. "/inflow_real_historical");
-    data = data:select_agents({ agent });
-    data = data:rename_agents({ "real historical" });
-    local min = data:year_profile(BY_MIN()):replicate("stage", 82):add_suffix("(min-max)");
-    local max = data:year_profile(BY_MAX()):replicate("stage", 82):add_suffix("(min-max)");
+    local real = generic
+        :load(configurations[1] .. "/" .. models[1] .. "_" .. strategies[1] .. "/inflow_real_historical")
+        :select_agents({ agent })
+        :rename_agents({ "real historical" });
+
+    local real_min = real:year_profile(BY_MIN()):add_suffix("(min-max)");
+    local real_max = real:year_profile(BY_MAX()):add_suffix("(min-max)");
 
     local chart = Chart("Real Historical Data");
-    chart:add("area_range", min, max, { fillOpacity = 0.4, color = "gray" });
-    chart:add("line", data);
+    chart:add(
+        "area_range",
+        real_min:replicate("stage", 82),
+        real_max:replicate("stage", 82),
+        { fillOpacity = 0.4, color = "gray" }
+    );
+    chart:add("line", real);
     tab:push(chart);
 
-    local chart = Chart("Fake Historical Data");
-    chart:add("area_range", min, max, { fillOpacity = 0.4, color = "gray" });
-    for _, model in ipairs(models) do
+    local fake_years = get_years("inflow_fake_historical");
 
+    local chart = Chart("Fake Historical Data");
+    chart:add(
+        "area_range",
+        real_min:replicate("stage", fake_years):set_initial_year(1813),
+        real_max:replicate("stage", fake_years):set_initial_year(1813),
+        { fillOpacity = 0.4, color = "gray" }
+    );
+    for _, model in ipairs(models) do
         for _, configuration in ipairs(configurations) do
             for _, strategy in ipairs(strategies) do
                 local label = configuration .. "/" .. model .. "_" .. strategy;
@@ -221,18 +246,18 @@ local function tab_hydro_analysis(agent)
                 data = data:select_agents({ agent });
                 data = data:rename_agents({ label .. " - train (avg)" });
                 data = data:aggregate("scenario", BY_AVERAGE());
-                chart:add("line", data, { color = colors[i] });
+                chart:add("line", data, { color = colours[i] });
 
                 local data = generic:load(label .. "/inflow_scenarios_simulate");
                 data = data:select_agents({ agent });
                 data = data:rename_agents({ label .. " - simulate (avg)" });
                 data = data:aggregate("scenario", BY_AVERAGE());
-                chart:add("line", data, { color = colors[i] });
+                chart:add("line", data, { color = colours[i] });
 
                 local data = generic:load(label .. "/results/hydro_inflow");
                 data = data:select_agents({ agent });
                 data = data:rename_agents({ label .. " - result" });
-                add_percentile(chart, data, colors[i]);
+                add_percentile(chart, data, colours[i]);
 
                 i = i + 1;
             end
@@ -256,10 +281,12 @@ local function tab_thermal_analysis(agent)
 end
 
 local dashboard = Dashboard("PSR");
--- dashboard:push(tab_demand_analysis());
--- dashboard:push(tab_cost_analysis());
+dashboard:push(tab_demand_analysis());
+dashboard:push(tab_cost_analysis());
 for agent = 1, 1 do
     dashboard:push(tab_hydro_analysis(agent));
-    -- dashboard:push(tab_thermal_analysis(agent));
+    dashboard:push(tab_thermal_analysis(agent));
 end
 dashboard:save("dashboard");
+
+
