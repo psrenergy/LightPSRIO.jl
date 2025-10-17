@@ -41,6 +41,16 @@ mutable struct ExpressionBinary{F <: Function} <: AbstractBinary
             error("Time dimensions must match for binary operations ($(a1.time_dimension) and $(a2.time_dimension))")
         end
 
+        frequency = if isempty(a1.frequency)
+            a2.frequency
+        elseif isempty(a2.frequency)
+            a1.frequency
+        elseif a1.frequency == a2.frequency
+            a1.frequency
+        else
+            error("Frequencies must match for binary operations ($(a1.frequency) and $(a2.frequency))")
+        end
+
         dimension_size = zeros(Int, length(dimensions))
         e1_dimension_size = a1.dimension_size
         e2_dimension_size = a2.dimension_size
@@ -74,6 +84,7 @@ mutable struct ExpressionBinary{F <: Function} <: AbstractBinary
             collection = e1.attributes.collection,
             dimension_size = dimension_size,
             dimensions = dimensions,
+            frequency = frequency,
             initial_date = a1.initial_date,
             labels = labels,
             time_dimension = time_dimension,

@@ -9,11 +9,7 @@ function add(chart::AbstractChart, type::String, expression::AbstractExpression,
     excluding = Set([:stage])
     println("Adding layer ($attributes)")
 
-    date_reference = DateReference(
-        StageType.MONTH,
-        Dates.month(attributes.initial_date),
-        Dates.year(attributes.initial_date),
-    )
+    date_reference = get_date_reference(attributes)
 
     layers = Dict{Vector{Int}, Vector{Layer1}}()
 
@@ -58,11 +54,7 @@ function add(chart::AbstractChart, type::String, expression1::AbstractExpression
     excluding = Set([:stage])
     println("Adding layer ($attributes)")
 
-    date_reference = DateReference(
-        StageType.MONTH,
-        Dates.month(attributes.initial_date),
-        Dates.year(attributes.initial_date),
-    )
+    date_reference = get_date_reference(attributes)
 
     layers = Dict{Vector{Int}, Vector{Layer2}}()
 

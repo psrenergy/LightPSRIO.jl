@@ -7,6 +7,7 @@ mutable struct ExpressionDataNumber{T <: Number} <: AbstractExpression
             collection = Collection(),
             dimension_size = [],
             dimensions = [],
+            frequency = "",
             initial_date = now(),
             labels = ["constant"],
             time_dimension = :none,

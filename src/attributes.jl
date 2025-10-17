@@ -2,6 +2,7 @@
     collection::Collection
     dimension_size::Vector{Int}
     dimensions::Vector{Symbol}
+    frequency::String
     initial_date::DateTime
     labels::Vector{String}
     time_dimension::Symbol
@@ -13,6 +14,7 @@ function Attributes(quiver::Quiver.Reader)
         collection = Collection(),
         dimension_size = copy(quiver.metadata.dimension_size),
         dimensions = copy(quiver.metadata.dimensions),
+        frequency = quiver.metadata.frequency,
         initial_date = quiver.metadata.initial_date,
         labels = copy(quiver.metadata.labels),
         time_dimension = quiver.metadata.time_dimension,
@@ -31,6 +33,7 @@ function Base.copy(a::Attributes)
         collection = a.collection,
         dimension_size = copy(a.dimension_size),
         dimensions = copy(a.dimensions),
+        frequency = a.frequency,
         initial_date = a.initial_date,
         labels = copy(a.labels),
         time_dimension = a.time_dimension,
@@ -71,7 +74,22 @@ function get_years(attributes::Attributes)
     if attributes.time_dimension in attributes.dimensions
         index = findfirst(==(attributes.time_dimension), attributes.dimensions)
         n_stages = attributes.dimension_size[index]
-        return Int(ceil(n_stages / 12))
+        if attributes.frequency == "month"
+            return Int(ceil(n_stages / 12))
+        else
+            error("Unsupported frequency: $(attributes.frequency)")
+        end
     end
     return 0
+end
+
+function get_date_reference(attributes::Attributes)
+    month = Dates.month(attributes.initial_date)
+    year = Dates.year(attributes.initial_date)
+
+    if attributes.frequency == "month"
+        return DateReference(StageType.MONTH, month, year)
+    else
+        error("Unsupported frequency: $(attributes.frequency)")
+    end
 end
