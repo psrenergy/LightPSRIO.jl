@@ -34,12 +34,19 @@ function create_quiver(filename; n_stages::Integer, n_blocks::Integer, n_scenari
 end
 
 function open_quiver(f::Function, filename::String)
-    reader = Quiver.Reader{Quiver.binary}(joinpath(get_data_directory(), filename))
+    filepath = joinpath(get_data_directory(), filename)
+    reader = Quiver.Reader{Quiver.binary}(filepath)
+
     try
         f(reader)
     finally
         Quiver.close!(reader)
+        if isfile(filepath)
+            rm(filepath)
+        end
     end
+
+    return nothing
 end
 
 function create_quiver_tests(filename::String)
@@ -78,6 +85,8 @@ end
 
 function initialize_tests()
     create_quiver("input1"; n_stages = 2, n_scenarios = 2, n_blocks = 2, constant = 2.0, frequency = "month", unit = "GWh")
+    create_quiver("input_month_2t_2s_2b_GWh"; n_stages = 2, n_scenarios = 2, n_blocks = 2, constant = 2.0, frequency = "month", unit = "GWh")
+
     create_quiver("input2"; n_stages = 2, n_scenarios = 2, n_blocks = 2, constant = 2.0, frequency = "month", unit = "MWh")
 
     create_quiver("input_month_2t_2s_2b"; n_stages = 2, n_scenarios = 2, n_blocks = 2, constant = 2.0, frequency = "month")
@@ -85,15 +94,5 @@ function initialize_tests()
 
     create_quiver("input_month_GWh"; n_stages = 2, n_scenarios = 2, n_blocks = 2, constant = 2.0, frequency = "month", unit = "GWh")
 
-    return nothing
-end
-
-function delete_files(filenames::Vector{String})
-    for filename in filenames
-        filepath = joinpath(get_data_directory(), filename)
-        if isfile(filepath)
-            rm(filepath)
-        end
-    end
     return nothing
 end
