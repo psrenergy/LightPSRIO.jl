@@ -59,7 +59,6 @@ function initialize(paths::Vector{String}; logger = Logging.Info)
         "__add", add,
         "__div", div,
         "__mul", mul,
-        "__pow", pow,
         "__sub", sub,
         # variadic expressions
         # abstract 

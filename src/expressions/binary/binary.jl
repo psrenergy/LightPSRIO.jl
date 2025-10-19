@@ -1,18 +1,17 @@
-@enumx ExpressionBinaryOperator begin
+@enumx UnitOperator begin
     Same
     Multiply
     Divide
-    Power
 end
 
 mutable struct ExpressionBinary{F <: Function} <: AbstractBinary
     attributes::Attributes
     e1::AbstractExpression
     e2::AbstractExpression
-    f::F
     factor::Float64
+    f::F
 
-    function ExpressionBinary(e1::AbstractExpression, e2::AbstractExpression, unit_operator::ExpressionBinaryOperator.T, f::F) where {F <: Function}
+    function ExpressionBinary(e1::AbstractExpression, e2::AbstractExpression, unit_operator::UnitOperator.T, f::F) where {F <: Function}
         @debug "BINARY: $(e1.attributes)"
         @debug "BINARY: $(e2.attributes)"
 
@@ -78,20 +77,14 @@ mutable struct ExpressionBinary{F <: Function} <: AbstractBinary
             end
         end
 
-        # unit = if isempty(a1.unit)
-        #     a2.unit
-        # elseif isempty(a2.unit)
-        #     a1.unit
-        # elseif a1.unit == a2.unit
-        #     a1.unit
-        # else
-
-        # end
-
         factor = 1.0
         unit = ""
-        if unit_operator == ExpressionBinaryOperator.Same
+        if unit_operator == UnitOperator.Same
             if a1.unit == a2.unit
+                unit = a1.unit
+            elseif isempty(a1.unit)
+                unit = a2.unit
+            elseif isempty(a2.unit)
                 unit = a1.unit
             else
                 try
@@ -101,12 +94,24 @@ mutable struct ExpressionBinary{F <: Function} <: AbstractBinary
                     error("Cannot unify units '$(a1.unit)' and '$(a2.unit)'.")
                 end
             end
-        elseif unit_operator == ExpressionBinaryOperator.Multiply
-            unit = "$(a1.unit)*$(a2.unit)"
-        elseif unit_operator == ExpressionBinaryOperator.Divide
-            unit = "$(a1.unit)/$(a2.unit)"
-        elseif unit_operator == ExpressionBinaryOperator.Power
-            unit = "$(a1.unit)^$(a2.unit)"
+        elseif unit_operator == UnitOperator.Multiply
+            if isempty(a1.unit)
+                unit = a2.unit
+            elseif isempty(a2.unit)
+                unit = a1.unit
+            else
+                unit = "($(a1.unit))*($(a2.unit))"
+            end
+        elseif unit_operator == UnitOperator.Divide
+            if isempty(a1.unit)
+                unit = "1/$(a2.unit)"
+            elseif isempty(a2.unit)
+                unit = a1.unit
+            else
+                unit = "($(a1.unit))/($(a2.unit))"
+            end
+        else
+            error("Unknown unit operator: $(unit_operator)")
         end
 
         attributes = Attributes(
@@ -127,38 +132,32 @@ mutable struct ExpressionBinary{F <: Function} <: AbstractBinary
 end
 @define_lua_struct ExpressionBinary
 
-Base.:+(x::AbstractExpression, y::AbstractExpression) = ExpressionBinary(x, y, Base.:+)
-Base.:+(x::AbstractExpression, y) = ExpressionBinary(promote(x, y)..., Base.:+)
-Base.:+(x, y::AbstractExpression) = ExpressionBinary(promote(x, y)..., Base.:+)
+Base.:+(x::AbstractExpression, y::AbstractExpression) = ExpressionBinary(x, y, UnitOperator.Same, Base.:+)
+Base.:+(x::AbstractExpression, y) = Base.:+(promote(x, y)...)
+Base.:+(x, y::AbstractExpression) = Base.:+(promote(x, y)...)
 add(x, y) = Base.:+(x, y)
 @define_lua_function add
 
-Base.:-(x::AbstractExpression, y::AbstractExpression) = ExpressionBinary(x, y, Base.:−)
-Base.:-(x::AbstractExpression, y) = ExpressionBinary(promote(x, y)..., Base.:−)
-Base.:-(x, y::AbstractExpression) = ExpressionBinary(promote(x, y)..., Base.:−)
+Base.:-(x::AbstractExpression, y::AbstractExpression) = ExpressionBinary(x, y, UnitOperator.Same, Base.:−)
+Base.:-(x::AbstractExpression, y) = Base.:-(promote(x, y)...)
+Base.:-(x, y::AbstractExpression) = Base.:-(promote(x, y)...)
 sub(x, y) = Base.:-(x, y)
 @define_lua_function sub
 
-Base.:*(x::AbstractExpression, y::AbstractExpression) = ExpressionBinary(x, y, Base.:*)
-Base.:*(x::AbstractExpression, y) = ExpressionBinary(promote(x, y)..., Base.:*)
-Base.:*(x, y::AbstractExpression) = ExpressionBinary(promote(x, y)..., Base.:*)
+Base.:*(x::AbstractExpression, y::AbstractExpression) = ExpressionBinary(x, y, UnitOperator.Multiply, Base.:*)
+Base.:*(x::AbstractExpression, y) = Base.:*(promote(x, y)...)
+Base.:*(x, y::AbstractExpression) = Base.:*(promote(x, y)...)
 mul(x, y) = Base.:*(x, y)
 @define_lua_function mul
 
-Base.:/(x::AbstractExpression, y::AbstractExpression) = ExpressionBinary(x, y, Base.:/)
-Base.:/(x::AbstractExpression, y) = ExpressionBinary(promote(x, y)..., Base.:/)
-Base.:/(x, y::AbstractExpression) = ExpressionBinary(promote(x, y)..., Base.:/)
+Base.:/(x::AbstractExpression, y::AbstractExpression) = ExpressionBinary(x, y, UnitOperator.Divide, Base.:/)
+Base.:/(x::AbstractExpression, y) = Base.:/(promote(x, y)...)
+Base.:/(x, y::AbstractExpression) = Base.:/(promote(x, y)...)
 div(x, y) = Base.:/(x, y)
 @define_lua_function div
-
-Base.:^(x::AbstractExpression, y::AbstractExpression) = ExpressionBinary(x, y, Base.:^)
-Base.:^(x::AbstractExpression, y) = ExpressionBinary(promote(x, y)..., Base.:^)
-Base.:^(x, y::AbstractExpression) = ExpressionBinary(promote(x, y)..., Base.:^)
-pow(x, y) = Base.:^(x, y)
-@define_lua_function pow
 
 # Base.show(io::IO, e::ExpressionBinary) = print(io, "($(e.e1) $(e.f) $(e.e2))")
 
 function evaluate(e::ExpressionBinary; kwargs...)
-    return e.f.(evaluate(e.e1; kwargs...), evaluate(e.e2; kwargs...))
+    return e.f.(evaluate(e.e1; kwargs...), evaluate(e.e2; kwargs...) .* e.factor)
 end

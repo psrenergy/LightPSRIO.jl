@@ -41,12 +41,6 @@ output7:save("output7");
 
 local output8 = input1 / 2;
 output8:save("output8");
-
-local output9 = input1 ^ 2;
-output9:save("output9");
-
-local output10 = 2 ^ input1;
-output10:save("output10");
     """,
     )
 
@@ -137,7 +131,7 @@ output10:save("output10");
     end
 
     open_quiver("output7") do q
-        @test q.metadata.unit == "GWh"
+        @test q.metadata.unit == "1/GWh"
         @test Quiver.goto!(q; stage = 1, scenario = 1, block = 1) ≈ [2.0, 2.0, 2.0, 1.0]
         @test Quiver.goto!(q; stage = 1, scenario = 1, block = 2) ≈ [2.0, 2.0, 1.0, 1.0]
         @test Quiver.goto!(q; stage = 1, scenario = 2, block = 1) ≈ [2.0, 1.0, 2.0, 1.0]
@@ -158,30 +152,6 @@ output10:save("output10");
         @test Quiver.goto!(q; stage = 2, scenario = 1, block = 2) ≈ [1.0, 0.5, 1.0, 1.0]
         @test Quiver.goto!(q; stage = 2, scenario = 2, block = 1) ≈ [1.0, 1.0, 0.5, 1.0]
         @test Quiver.goto!(q; stage = 2, scenario = 2, block = 2) ≈ [1.0, 1.0, 1.0, 1.0]
-    end
-
-    open_quiver("output9") do q
-        @test q.metadata.unit == "GWh"
-        @test Quiver.goto!(q; stage = 1, scenario = 1, block = 1) ≈ [1.0, 1.0, 1.0, 4.0]
-        @test Quiver.goto!(q; stage = 1, scenario = 1, block = 2) ≈ [1.0, 1.0, 4.0, 4.0]
-        @test Quiver.goto!(q; stage = 1, scenario = 2, block = 1) ≈ [1.0, 4.0, 1.0, 4.0]
-        @test Quiver.goto!(q; stage = 1, scenario = 2, block = 2) ≈ [1.0, 4.0, 4.0, 4.0]
-        @test Quiver.goto!(q; stage = 2, scenario = 1, block = 1) ≈ [4.0, 1.0, 1.0, 4.0]
-        @test Quiver.goto!(q; stage = 2, scenario = 1, block = 2) ≈ [4.0, 1.0, 4.0, 4.0]
-        @test Quiver.goto!(q; stage = 2, scenario = 2, block = 1) ≈ [4.0, 4.0, 1.0, 4.0]
-        @test Quiver.goto!(q; stage = 2, scenario = 2, block = 2) ≈ [4.0, 4.0, 4.0, 4.0]
-    end
-
-    open_quiver("output10") do q
-        @test q.metadata.unit == "GWh"
-        @test Quiver.goto!(q; stage = 1, scenario = 1, block = 1) ≈ [2.0, 2.0, 2.0, 4.0]
-        @test Quiver.goto!(q; stage = 1, scenario = 1, block = 2) ≈ [2.0, 2.0, 4.0, 4.0]
-        @test Quiver.goto!(q; stage = 1, scenario = 2, block = 1) ≈ [2.0, 4.0, 2.0, 4.0]
-        @test Quiver.goto!(q; stage = 1, scenario = 2, block = 2) ≈ [2.0, 4.0, 4.0, 4.0]
-        @test Quiver.goto!(q; stage = 2, scenario = 1, block = 1) ≈ [4.0, 2.0, 2.0, 4.0]
-        @test Quiver.goto!(q; stage = 2, scenario = 1, block = 2) ≈ [4.0, 2.0, 4.0, 4.0]
-        @test Quiver.goto!(q; stage = 2, scenario = 2, block = 1) ≈ [4.0, 4.0, 2.0, 4.0]
-        @test Quiver.goto!(q; stage = 2, scenario = 2, block = 2) ≈ [4.0, 4.0, 4.0, 4.0]
     end
 
     delete_files(["output1", "output2", "output3", "output4", "output5", "output6", "output7", "output8", "output9", "output10"])
