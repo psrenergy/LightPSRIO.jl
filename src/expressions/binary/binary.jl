@@ -1,10 +1,18 @@
+@enumx ExpressionBinaryOperator begin
+    Same
+    Multiply
+    Divide
+    Power
+end
+
 mutable struct ExpressionBinary{F <: Function} <: AbstractBinary
     attributes::Attributes
     e1::AbstractExpression
     e2::AbstractExpression
     f::F
+    factor::Float64
 
-    function ExpressionBinary(e1::AbstractExpression, e2::AbstractExpression, f::F) where {F <: Function}
+    function ExpressionBinary(e1::AbstractExpression, e2::AbstractExpression, unit_operator::ExpressionBinaryOperator.T, f::F) where {F <: Function}
         @debug "BINARY: $(e1.attributes)"
         @debug "BINARY: $(e2.attributes)"
 
@@ -70,14 +78,35 @@ mutable struct ExpressionBinary{F <: Function} <: AbstractBinary
             end
         end
 
-        unit = if isempty(a1.unit)
-            a2.unit
-        elseif isempty(a2.unit)
-            a1.unit
-        elseif a1.unit == a2.unit
-            a1.unit
-        else
-            error("Units must match for binary operations ($(a1.unit) and $(a2.unit))")
+        # unit = if isempty(a1.unit)
+        #     a2.unit
+        # elseif isempty(a2.unit)
+        #     a1.unit
+        # elseif a1.unit == a2.unit
+        #     a1.unit
+        # else
+
+        # end
+
+        factor = 1.0
+        unit = ""
+        if unit_operator == ExpressionBinaryOperator.Same
+            if a1.unit == a2.unit
+                unit = a1.unit
+            else
+                try
+                    factor = convert_unit(1.0, a2.unit, a1.unit)
+                    unit = a1.unit
+                catch
+                    error("Cannot unify units '$(a1.unit)' and '$(a2.unit)'.")
+                end
+            end
+        elseif unit_operator == ExpressionBinaryOperator.Multiply
+            unit = "$(a1.unit)*$(a2.unit)"
+        elseif unit_operator == ExpressionBinaryOperator.Divide
+            unit = "$(a1.unit)/$(a2.unit)"
+        elseif unit_operator == ExpressionBinaryOperator.Power
+            unit = "$(a1.unit)^$(a2.unit)"
         end
 
         attributes = Attributes(
@@ -93,7 +122,7 @@ mutable struct ExpressionBinary{F <: Function} <: AbstractBinary
 
         @debug "BINARY= $attributes"
 
-        return new{F}(attributes, e1, e2, f)
+        return new{F}(attributes, e1, e2, factor, f)
     end
 end
 @define_lua_struct ExpressionBinary

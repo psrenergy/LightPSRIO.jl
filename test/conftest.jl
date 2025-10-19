@@ -47,7 +47,7 @@ function create_quiver_tests(filename::String)
 
     open_quiver(filename) do q
         println("    @test q.metadata.frequency == \"$(q.metadata.frequency)\"")
-        println("    # @test q.metadata.initial_date == DateTime(\"$(q.metadata.initial_date)\")")
+        println("    @test q.metadata.initial_date == DateTime(\"$(q.metadata.initial_date)\")")
         println("    @test q.metadata.number_of_dimensions == $(q.metadata.number_of_dimensions)")
         println("    @test q.metadata.dimensions == $(q.metadata.dimensions)")
         println("    @test q.metadata.time_dimension == :$(q.metadata.time_dimension)")
