@@ -1,6 +1,6 @@
 local generic = Generic();
 
-local configurations = { "200h_60t_100s_50o_6p" };
+local configurations = { "400h_60t_200s_100o_6p" };
 local models = { "parp", "seasonal_avg" };
 local strategies = { "yearly_wise", "stage_wise_k1", "stage_wise_k3" };
 

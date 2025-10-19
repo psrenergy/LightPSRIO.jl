@@ -83,6 +83,8 @@ function initialize_tests()
     create_quiver("input_month_2t_2s_2b"; n_stages = 2, n_scenarios = 2, n_blocks = 2, constant = 2.0, frequency = "month")
     create_quiver("input_month_36t_1s_1b"; n_stages = 36, n_scenarios = 1, n_blocks = 1, constant = 1.0, frequency = "month")
 
+    create_quiver("input_month_GWh"; n_stages = 2, n_scenarios = 2, n_blocks = 2, constant = 2.0, frequency = "month", unit = "GWh")
+
     return nothing
 end
 

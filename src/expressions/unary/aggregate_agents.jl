@@ -2,28 +2,30 @@ mutable struct ExpressionAggregateAgents <: AbstractUnary
     attributes::Attributes
     e1::AbstractExpression
     aggregate_function::AggregateFunction
-
-    function ExpressionAggregateAgents(e1::AbstractExpression, aggregate_function::AggregateFunction, label::String)
-        @debug "AGGREGATE AGENTS: $(e1.attributes)"
-
-        attributes = copy(e1.attributes)
-
-        attributes.labels = if has_data(e1)
-            String[label]
-        else
-            String[]
-        end
-
-        @debug "AGGREGATE AGENTS= $attributes"
-
-        return new(
-            attributes,
-            e1,
-            aggregate_function,
-        )
-    end
 end
 @define_lua_struct ExpressionAggregateAgents
+
+function ExpressionAggregateAgents(e1::AbstractExpression, aggregate_function::AggregateFunction, label::String)
+    @if_expression_has_no_data_return_null e1
+
+    @debug "AGGREGATE AGENTS: $(e1.attributes)"
+
+    attributes = copy(e1.attributes)
+
+    attributes.labels = if has_data(e1)
+        String[label]
+    else
+        String[]
+    end
+
+    @debug "AGGREGATE AGENTS= $attributes"
+
+    return ExpressionAggregateAgents(
+        attributes,
+        e1,
+        aggregate_function,
+    )
+end
 
 function aggregate_agents(x::AbstractExpression, aggregate_function::AggregateFunction, label::String)
     return ExpressionAggregateAgents(x, aggregate_function, label)
