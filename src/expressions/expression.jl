@@ -34,8 +34,9 @@ function save(L::LuaState, e::AbstractExpression, filename::String)
         return nothing
     end
 
-    case = get_case(L, 1)
+    e = resolve_units(e)
 
+    case = get_case(L, 1)
     a = e.attributes
     println("Saving $filename ($a)")
 
@@ -63,6 +64,41 @@ function save(L::LuaState, e::AbstractExpression, filename::String)
     return nothing
 end
 @define_lua_function save
+
+function resolve_units(e::AbstractExpression)
+    if e isa ExpressionConvert
+        return e
+    end
+
+    from_unit = e.attributes.unit
+    factors = Tuple{Float64, Int, Float64, String}[]
+
+    if isempty(from_unit)
+        return e
+    end
+
+    for to_unit in FAVORITE_UNITS
+        try
+            factor = convert_unit(1.0, from_unit, to_unit)
+            gap = abs(factor - 1.0)
+            distance = levenshtein(from_unit, to_unit)
+            push!(factors, (gap, distance, factor, to_unit))
+        catch e
+        end
+    end
+
+    sort!(factors)
+
+    if !isempty(factors)
+        (_, _, factor, to_unit) = first(factors)
+        if from_unit != to_unit
+            @debug "Auto-converting from unit '$from_unit' to '$to_unit' with factor $factor"
+            return convert(e, to_unit)
+        end
+    end
+
+    return e
+end
 
 abstract type AbstractUnary <: AbstractExpression end
 

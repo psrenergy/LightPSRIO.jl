@@ -15,8 +15,14 @@ using UUIDs
 
 import Patchwork
 
+const FAVORITE_UNITS = Set([
+    "MWh",
+    "GWh",
+])
+
 include("optional.jl")
 include("util.jl")
+include("units.jl")
 include("aggregate_functions.jl")
 include("profile_type.jl")
 include("case.jl")

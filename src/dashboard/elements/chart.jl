@@ -1,11 +1,13 @@
 abstract type AbstractChart <: AbstractElement end
 
-function add(chart::AbstractChart, type::String, expression::AbstractExpression, options::Optional{Dict} = nothing)
-    if !has_data(expression)
+function add(chart::AbstractChart, type::String, e1::AbstractExpression, options::Optional{Dict} = nothing)
+    if !has_data(e1)
         return nothing
     end
 
-    attributes = expression.attributes
+    e1 = resolve_units(e1)
+
+    attributes = e1.attributes
     excluding = Set([:stage])
     println("Adding layer ($attributes)")
 
@@ -13,8 +15,8 @@ function add(chart::AbstractChart, type::String, expression::AbstractExpression,
 
     layers = Dict{Vector{Int}, Vector{Layer1}}()
 
-    start!(expression)
-    for kwargs in eachindex(expression)
+    start!(e1)
+    for kwargs in eachindex(e1)
         key = kwargs_to_key(excluding; kwargs...)
 
         if !haskey(layers, key)
@@ -29,12 +31,12 @@ function add(chart::AbstractChart, type::String, expression::AbstractExpression,
                 ) for label in attributes.labels]
         end
 
-        result = evaluate(expression; kwargs...)
+        result = evaluate(e1; kwargs...)
         for (i, layer) in enumerate(layers[key])
             add(layer, kwargs[:stage], result[i])
         end
     end
-    finish!(expression)
+    finish!(e1)
 
     for layer_group in values(layers)
         for layer in layer_group
@@ -45,12 +47,15 @@ function add(chart::AbstractChart, type::String, expression::AbstractExpression,
     return nothing
 end
 
-function add(chart::AbstractChart, type::String, expression1::AbstractExpression, expression2::AbstractExpression, options::Optional{Dict} = nothing)
-    if !has_data(expression1) || !has_data(expression2)
+function add(chart::AbstractChart, type::String, e1::AbstractExpression, e2::AbstractExpression, options::Optional{Dict} = nothing)
+    if !has_data(e1) || !has_data(e2)
         return nothing
     end
 
-    attributes = expression1.attributes
+    e1 = resolve_units(e1)
+    e2 = resolve_units(e2)
+
+    attributes = e1.attributes
     excluding = Set([:stage])
     println("Adding layer ($attributes)")
 
@@ -58,9 +63,9 @@ function add(chart::AbstractChart, type::String, expression1::AbstractExpression
 
     layers = Dict{Vector{Int}, Vector{Layer2}}()
 
-    start!(expression1)
-    start!(expression2)
-    for kwargs in eachindex(expression1)
+    start!(e1)
+    start!(e2)
+    for kwargs in eachindex(e1)
         key = kwargs_to_key(excluding; kwargs...)
 
         if !haskey(layers, key)
@@ -75,14 +80,14 @@ function add(chart::AbstractChart, type::String, expression1::AbstractExpression
                 ) for label in attributes.labels]
         end
 
-        result1 = evaluate(expression1; kwargs...)
-        result2 = evaluate(expression2; kwargs...)
+        result1 = evaluate(e1; kwargs...)
+        result2 = evaluate(e2; kwargs...)
         for (i, layer) in enumerate(layers[key])
             add(layer, kwargs[:stage], result1[i], result2[i])
         end
     end
-    finish!(expression1)
-    finish!(expression2)
+    finish!(e1)
+    finish!(e2)
 
     for layer_group in values(layers)
         for layer in layer_group

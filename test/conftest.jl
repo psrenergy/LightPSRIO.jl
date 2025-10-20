@@ -35,7 +35,7 @@ end
 
 function remove_quiver(filename::String)
     filepath = joinpath(get_data_directory(), filename)
-    for extension in [".toml", ".quiv", ".qvr",".csv"]
+    for extension in [".toml", ".quiv", ".qvr", ".csv"]
         if isfile(filepath * extension)
             rm(filepath * extension)
         end
@@ -44,12 +44,14 @@ function remove_quiver(filename::String)
 end
 
 function open_quiver(f::Function, filename::String)
-    reader = Quiver.Reader{Quiver.binary}(joinpath(get_data_directory(), filename))
+    path = joinpath(get_data_directory(), filename)
+    reader = Quiver.Reader{Quiver.binary}(path)
 
     try
         f(reader)
     finally
         Quiver.close!(reader)
+        remove_quiver(filename)
     end
 
     return nothing
