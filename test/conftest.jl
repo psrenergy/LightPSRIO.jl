@@ -30,7 +30,7 @@ function create_quiver(filename; n_stages::Integer, n_blocks::Integer, n_scenari
 
     Quiver.close!(writer)
 
-    return nothing
+    return filename
 end
 
 function open_quiver(f::Function, filename::String)
@@ -41,8 +41,10 @@ function open_quiver(f::Function, filename::String)
         f(reader)
     finally
         Quiver.close!(reader)
-        if isfile(filepath)
-            rm(filepath)
+        for extension in [".toml", ".bin", ".csv"]
+            if isfile(filepath * extension)
+                rm(filepath * extension)
+            end
         end
     end
 
@@ -93,6 +95,33 @@ function initialize_tests()
     create_quiver("input_month_36t_1s_1b"; n_stages = 36, n_scenarios = 1, n_blocks = 1, constant = 1.0, frequency = "month")
 
     create_quiver("input_month_GWh"; n_stages = 2, n_scenarios = 2, n_blocks = 2, constant = 2.0, frequency = "month", unit = "GWh")
+
+    return nothing
+end
+
+function initialize_tests2(f::Function, filenames::String...)
+    L = LightPSRIO.initialize([get_data_directory()])
+    @show filenames
+    try
+        return f(L)
+    finally
+        # optionally clean up L here if needed, e.g. close it
+        # LightPSRIO.close(L)  # if there's such a method
+    end
+
+    # filepath = joinpath(get_data_directory(), filename)
+    # reader = Quiver.Reader{Quiver.binary}(filepath)
+
+    # try
+    #     f(reader)
+    # finally
+    #     Quiver.close!(reader)
+    #     for extension in [".toml", ".bin", ".csv"]
+    #         if isfile(filepath * extension)
+    #             rm(filepath * extension)
+    #         end
+    #     end
+    # end
 
     return nothing
 end

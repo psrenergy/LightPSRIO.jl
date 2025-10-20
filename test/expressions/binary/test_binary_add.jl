@@ -9,6 +9,24 @@ using Test
 include("../../conftest.jl")
 
 @testset "Binary Add" begin
+    initialize_tests2(
+        create_quiver("input1"; n_stages = 2, n_scenarios = 2, n_blocks = 2, constant = 2.0, frequency = "month", unit = "GWh"),
+    ) do L
+        return LightPSRIO.run_script(
+            L,
+            """
+local generic = Generic();
+local input1 = generic:load("input_month_2t_2s_2b_GWh");
+    
+local output1 = 0.5 + input1;
+output1:save("output1");
+    
+local output2 = input1 + 0.5;
+output2:save("output2");
+""",
+        )
+    end
+
     initialize_tests()
     L = LightPSRIO.initialize([get_data_directory()])
 
