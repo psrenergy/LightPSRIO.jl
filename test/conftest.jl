@@ -5,7 +5,7 @@ end
 function create_quiver(filename; n_stages::Integer, n_blocks::Integer, n_scenarios::Integer, constant::Float64, frequency::String, unit::String = "")
     path = joinpath(@__DIR__, "data", filename)
     if isfile("$path.toml")
-        return nothing
+        return filename
     end
 
     writer = Quiver.Writer{Quiver.binary}(
@@ -33,19 +33,23 @@ function create_quiver(filename; n_stages::Integer, n_blocks::Integer, n_scenari
     return filename
 end
 
-function open_quiver(f::Function, filename::String)
+function remove_quiver(filename::String)
     filepath = joinpath(get_data_directory(), filename)
-    reader = Quiver.Reader{Quiver.binary}(filepath)
+    for extension in [".toml", ".quiv", ".qvr",".csv"]
+        if isfile(filepath * extension)
+            rm(filepath * extension)
+        end
+    end
+    return nothing
+end
+
+function open_quiver(f::Function, filename::String)
+    reader = Quiver.Reader{Quiver.binary}(joinpath(get_data_directory(), filename))
 
     try
         f(reader)
     finally
         Quiver.close!(reader)
-        for extension in [".toml", ".bin", ".csv"]
-            if isfile(filepath * extension)
-                rm(filepath * extension)
-            end
-        end
     end
 
     return nothing
@@ -85,43 +89,17 @@ function create_quiver_tests(filename::String)
     return nothing
 end
 
-function initialize_tests()
-    create_quiver("input1"; n_stages = 2, n_scenarios = 2, n_blocks = 2, constant = 2.0, frequency = "month", unit = "GWh")
-    create_quiver("input_month_2t_2s_2b_GWh"; n_stages = 2, n_scenarios = 2, n_blocks = 2, constant = 2.0, frequency = "month", unit = "GWh")
-
-    create_quiver("input2"; n_stages = 2, n_scenarios = 2, n_blocks = 2, constant = 2.0, frequency = "month", unit = "MWh")
-
-    create_quiver("input_month_2t_2s_2b"; n_stages = 2, n_scenarios = 2, n_blocks = 2, constant = 2.0, frequency = "month")
-    create_quiver("input_month_36t_1s_1b"; n_stages = 36, n_scenarios = 1, n_blocks = 1, constant = 1.0, frequency = "month")
-
-    create_quiver("input_month_GWh"; n_stages = 2, n_scenarios = 2, n_blocks = 2, constant = 2.0, frequency = "month", unit = "GWh")
-
-    return nothing
-end
-
-function initialize_tests2(f::Function, filenames::String...)
+function setup_tests(f::Function, filenames::String...)
     L = LightPSRIO.initialize([get_data_directory()])
-    @show filenames
     try
         return f(L)
     finally
-        # optionally clean up L here if needed, e.g. close it
-        # LightPSRIO.close(L)  # if there's such a method
+        LightPSRIO.finalize(L)
+        GC.gc()
+
+        for filename in filenames
+            remove_quiver(filename)
+        end
     end
-
-    # filepath = joinpath(get_data_directory(), filename)
-    # reader = Quiver.Reader{Quiver.binary}(filepath)
-
-    # try
-    #     f(reader)
-    # finally
-    #     Quiver.close!(reader)
-    #     for extension in [".toml", ".bin", ".csv"]
-    #         if isfile(filepath * extension)
-    #             rm(filepath * extension)
-    #         end
-    #     end
-    # end
-
     return nothing
 end
