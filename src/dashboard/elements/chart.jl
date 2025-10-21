@@ -8,7 +8,7 @@ function add(chart::AbstractChart, type::String, e1::AbstractExpression, options
     e1 = resolve_units(e1)
 
     attributes = e1.attributes
-    excluding = Set([:stage])
+    excluding = Set([attributes.time_dimension])
     println("Adding layer ($attributes)")
 
     date_reference = get_date_reference(attributes)
@@ -33,7 +33,7 @@ function add(chart::AbstractChart, type::String, e1::AbstractExpression, options
 
         result = evaluate(e1; kwargs...)
         for (i, layer) in enumerate(layers[key])
-            add(layer, kwargs[:stage], result[i])
+            add(layer, kwargs[attributes.time_dimension], result[i])
         end
     end
     finish!(e1)
@@ -56,7 +56,7 @@ function add(chart::AbstractChart, type::String, e1::AbstractExpression, e2::Abs
     e2 = resolve_units(e2)
 
     attributes = e1.attributes
-    excluding = Set([:stage])
+    excluding = Set([attributes.time_dimension])
     println("Adding layer ($attributes)")
 
     date_reference = get_date_reference(attributes)
@@ -83,7 +83,7 @@ function add(chart::AbstractChart, type::String, e1::AbstractExpression, e2::Abs
         result1 = evaluate(e1; kwargs...)
         result2 = evaluate(e2; kwargs...)
         for (i, layer) in enumerate(layers[key])
-            add(layer, kwargs[:stage], result1[i], result2[i])
+            add(layer, kwargs[attributes.time_dimension], result1[i], result2[i])
         end
     end
     finish!(e1)
