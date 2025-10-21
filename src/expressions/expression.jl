@@ -126,6 +126,22 @@ function finish!(e::AbstractBinary)
     return nothing
 end
 
+abstract type AbstractTernary <: AbstractExpression end
+
+function start!(e::AbstractTernary)
+    start!(e.e1)
+    start!(e.e2)
+    start!(e.e3)
+    return nothing
+end
+
+function finish!(e::AbstractTernary)
+    finish!(e.e1)
+    finish!(e.e2)
+    finish!(e.e3)
+    return nothing
+end
+
 abstract type AbstractVariadic <: AbstractExpression end
 
 function start!(e::AbstractVariadic)
