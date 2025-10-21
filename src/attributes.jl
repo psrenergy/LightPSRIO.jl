@@ -89,6 +89,8 @@ function get_date_reference(attributes::Attributes)
 
     if attributes.frequency == "month"
         return DateReference(StageType.MONTH, month, year)
+    elseif attributes.frequency == "year"
+        return DateReference(StageType.YEAR, month, year)
     else
         error("Unsupported frequency: $(attributes.frequency)")
     end
