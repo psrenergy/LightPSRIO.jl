@@ -4,6 +4,11 @@ function highcharts(type::StageType.T)
 "pointInterval": $(60000 * 60 * 24 * 31),
 "pointIntervalUnit": "month",
 """
+    elseif type == StageType.YEAR
+        return """
+"pointInterval": $(60000 * 60 * 24 * 365),
+"pointIntervalUnit": "year",
+"""
     else
         error("Unsupported stage type: $type")
     end
