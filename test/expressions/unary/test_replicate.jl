@@ -10,7 +10,7 @@ include("../../conftest.jl")
 
 @testset "Convert" begin
     setup_tests(
-        create_quiver("input2"; n_stages = 2, n_scenarios = 2, n_blocks = 2, constant = 2.0, frequency = "month")
+        create_quiver("input2"; n_stages = 2, n_scenarios = 2, n_blocks = 2, constant = 2.0, frequency = "month"),
     ) do L
         LightPSRIO.run_script(
             L,

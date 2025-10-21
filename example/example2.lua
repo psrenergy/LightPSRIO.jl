@@ -1,7 +1,7 @@
 local generic = Generic();
 
 local configurations = { "400h_60t_200s_100o_6p" };
-local models = { "parp", "seasonal_avg" };
+local models = { "parp", "auto_arima", "seasonal_avg", "seasonal_naive", "unobserved_components" };
 local strategies = { "yearly_wise", "stage_wise_k1", "stage_wise_k3" };
 
 local colours = {
@@ -214,12 +214,12 @@ local function tab_hydro_analysis(agent)
     local fake_years = get_years("inflow_fake_historical");
 
     local chart = Chart("Fake Historical Data");
-    chart:add(
-        "area_range",
-        real_min:replicate("stage", fake_years):set_initial_year(1813),
-        real_max:replicate("stage", fake_years):set_initial_year(1813),
-        { fillOpacity = 0.4, color = "gray" }
-    );
+    -- chart:add(
+    --     "area_range",
+    --     real_min:replicate("stage", fake_years):set_initial_year(1813),
+    --     real_max:replicate("stage", fake_years):set_initial_year(1813),
+    --     { fillOpacity = 0.4, color = "gray" }
+    -- );
     for _, model in ipairs(models) do
         for _, configuration in ipairs(configurations) do
             for _, strategy in ipairs(strategies) do

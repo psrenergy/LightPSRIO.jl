@@ -1,7 +1,7 @@
 function levenshtein(
     source::AbstractString,
     target::AbstractString,
-    costs::Matrix = Array{Float64}(undef, 2, length(target) + 1)
+    costs::Matrix = Array{Float64}(undef, 2, length(target) + 1),
 )
     deletion_cost = 1
     insertion_cost = 1
@@ -19,7 +19,7 @@ function levenshtein(
 
             costs[old_cost_index, 1] = 0
             for i in 1:length(target)
-                costs[old_cost_index, i + 1] = i * insertion_cost
+                costs[old_cost_index, i+1] = i * insertion_cost
             end
 
             i = 0
@@ -33,21 +33,21 @@ function levenshtein(
                 for c in target
                     j += 1
 
-                    deletion = costs[old_cost_index, j + 1] + deletion_cost
+                    deletion = costs[old_cost_index, j+1] + deletion_cost
                     insertion = costs[new_cost_index, j] + insertion_cost
                     substitution = costs[old_cost_index, j]
                     if r != c
                         substitution += substitution_cost
                     end
 
-                    costs[new_cost_index, j + 1] = min(deletion, insertion, substitution)
+                    costs[new_cost_index, j+1] = min(deletion, insertion, substitution)
                 end
 
                 old_cost_index, new_cost_index = new_cost_index, old_cost_index
             end
 
             new_cost_index = old_cost_index
-            return costs[new_cost_index, length(target) + 1]
+            return costs[new_cost_index, length(target)+1]
         end
     end
 end
