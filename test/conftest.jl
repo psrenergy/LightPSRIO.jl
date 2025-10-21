@@ -33,6 +33,38 @@ function create_quiver(filename; n_stages::Integer, n_blocks::Integer, n_scenari
     return filename
 end
 
+function create_quiver2(filename; constant::Float64, frequency::String, unit::String, dimensions::Vector{String}, dimension_size::Vector{Int})
+    path = joinpath(@__DIR__, "data", filename)
+    if isfile("$path.toml")
+        return filename
+    end
+
+    @assert length(dimensions) == length(dimension_size)
+
+    writer = Quiver.Writer{Quiver.binary}(
+        path;
+        dimension_size = dimension_size,
+        dimensions = dimensions,
+        frequency = frequency,
+        initial_date = DateTime(2024, 1, 1),
+        labels = vcat("data_" .* dimensions, "data_constant"),
+        time_dimension = dimensions[1],
+        unit = unit,
+    )
+
+    for it in Iterators.product((1:s for s in dimension_size)...)
+        kwargs = NamedTuple{Tuple(Symbol.(dimensions))}(it)
+        data = Float64[v for v in values(kwargs)]
+        push!(data, constant)
+        Quiver.write!(writer, data; kwargs...)
+    end
+
+    Quiver.close!(writer)
+
+    return filename
+end
+
+
 function remove_quiver(filename::String)
     filepath = joinpath(get_data_directory(), filename)
     for extension in [".toml", ".quiv", ".qvr", ".csv"]

@@ -16,7 +16,7 @@ function add(layer::Layer1, time_dimension::Integer, value::Real)
 end
 
 function get_data_string(layer::Layer1)
-    return "[" * join(("[$(t[1]), $(@sprintf("%.3f", t[2]))]" for t in layer.values), ", ") * "]"
+    return "[" * join(("[$(@sprintf("%d", t[1])), $(@sprintf("%.3f", t[2]))]" for t in layer.values), ", ") * "]"
 end
 
 @kwdef struct Layer2 <: AbstractLayer
@@ -35,7 +35,7 @@ function add(layer::Layer2, time_dimension::Integer, value1::Real, value2::Real)
 end
 
 function get_data_string(layer::Layer2)
-    return "[" * join(("[$(t[1]), $(@sprintf("%.3f", t[2])), $(@sprintf("%.3f", t[3]))]" for t in layer.values), ", ") * "]"
+    return "[" * join(("[$(@sprintf("%d", t[1])), $(@sprintf("%.3f", t[2])), $(@sprintf("%.3f", t[3]))]" for t in layer.values), ", ") * "]"
 end
 
 function create_patchwork(layer::AbstractLayer)

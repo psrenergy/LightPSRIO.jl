@@ -64,6 +64,7 @@ function initialize(paths::Vector{String})
         # other
         "has_data", has_data,
         "get_years", get_years,
+        "__tostring", to_string,
     )
 
     @push_lua_function(L, "BY_SUM", BY_SUM)

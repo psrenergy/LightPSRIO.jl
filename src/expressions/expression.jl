@@ -65,6 +65,20 @@ function save(L::LuaState, e::AbstractExpression, filename::String)
 end
 @define_lua_function save
 
+function to_string(L::LuaState, e::AbstractExpression)
+    buffer = IOBuffer()
+
+    start!(e)
+    for kwargs in eachindex(e)
+        result = evaluate(e; kwargs...)
+        println(buffer, "$(kwargs) => $(result)")
+    end
+    finish!(e)
+
+    return String(take!(buffer))
+end
+@define_lua_function to_string
+
 function resolve_units(e::AbstractExpression)
     if e isa ExpressionConvert
         return e

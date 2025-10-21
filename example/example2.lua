@@ -1,8 +1,22 @@
 local generic = Generic();
 
 local configurations = { "400h_60t_200s_100o_6p" };
-local models = { "parp", "auto_arima", "seasonal_avg", "seasonal_naive", "unobserved_components" };
-local strategies = { "yearly_wise", "stage_wise_k1", "stage_wise_k3" };
+local models = {
+    "parp",
+    "auto_arima",
+    "seasonal_avg",
+    "seasonal_naive",
+    -- "unobserved_components",
+    "regime_switching",
+    "threshold",
+    "heavy_tailed",
+    "time_varying_volatility",
+};
+local strategies = { 
+    "yearly_wise",
+    -- "stage_wise_k1",
+    "stage_wise_k3",
+};
 
 local colours = {
     "#2caffe",
@@ -288,5 +302,3 @@ for agent = 1, 1 do
     dashboard:push(tab_thermal_analysis(agent));
 end
 dashboard:save("dashboard");
-
-
