@@ -83,7 +83,7 @@ function resolve_units(e::AbstractExpression)
             gap = abs(factor - 1.0)
             distance = levenshtein(from_unit, to_unit)
             push!(factors, (gap, distance, factor, to_unit))
-        catch e
+        catch
         end
     end
 
