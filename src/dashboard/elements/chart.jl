@@ -117,6 +117,8 @@ function create_patchwork(chart::Chart)
     series = "[" * join([create_patchwork(layer) for layer in chart.layers], ",\n") * "]"
     units = unique([layer.unit for layer in chart.layers])
 
+    # "boost": { "enabled": true, "useGPUTranslations": true, "usePreAllocated": true, "allowForce": true, "seriesThreshold": 2048 },
+
     return Highcharts(
         chart.title,
         """

@@ -3,7 +3,7 @@ local generic = Generic();
 local configurations = { "400h_60t_200s_100o_6p" };
 local models = {
     "parp",
-    "auto_arima",
+    -- "auto_arima",
     "seasonal_avg",
     "seasonal_naive",
     -- "unobserved_components",
@@ -11,6 +11,15 @@ local models = {
     "threshold",
     "heavy_tailed",
     "time_varying_volatility",
+    "long_memory",
+    "jump_diffusion",
+    "seasonal_regime_switching",
+    "copula",
+    "mixture",
+    "par_stochastic_volatility",
+    "levy_process",
+    "charr",
+    "hidden_markov",
 };
 local strategies = { 
     "yearly_wise",
