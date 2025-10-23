@@ -20,5 +20,5 @@ end
 @define_lua_function add
 
 function create_patchwork(markdown::Markdown)
-    return Patchwork.Markdown(join(markdown.content, "\n\n"))
+    return Patchwork.Markdown(join(markdown.content, "\n"))
 end

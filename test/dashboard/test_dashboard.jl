@@ -18,12 +18,14 @@ include("../conftest.jl")
 local generic = Generic();
 local input1 = generic:load("input_year");
 
-print(input1)
-    
-local chart = Chart("");
-chart:add("line", input1);
-
 local tab = Tab("Tab 1");
+
+local chart = Chart("Line");
+chart:add("line", input1);
+tab:push(chart);
+
+local chart = Chart("Column Stacking");
+chart:add("column_stacking", input1);
 tab:push(chart);
 
 local dashboard = Dashboard("PSR");

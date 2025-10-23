@@ -1,5 +1,6 @@
 module LightPSRIO
 
+using ArgParse
 using Base.Iterators
 using Dates
 using EnumX

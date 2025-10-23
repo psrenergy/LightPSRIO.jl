@@ -1,43 +1,73 @@
 local generic = Generic();
 
 local configurations = { "400h_60t_200s_100o_6p" };
+
+-- local models = {
+--     "parp",
+--     -- "auto_arima",
+--     "seasonal_avg",
+--     -- "seasonal_naive",
+--     -- "unobserved_components",
+--     "regime_switching",
+--     "threshold",
+--     "heavy_tailed",
+--     "time_varying_volatility",
+--     "long_memory",
+--     "jump_diffusion",
+--     "seasonal_regime_switching",
+--     "copula",
+--     "mixture",
+--     -- "par_stochastic_volatility",
+--     "levy_process",
+--     "charr",
+--     "hidden_markov",
+-- };
+
 local models = {
     "parp",
     -- "auto_arima",
-    "seasonal_avg",
-    "seasonal_naive",
+    -- "seasonal_avg",
+    -- "seasonal_naive",
     -- "unobserved_components",
     "regime_switching",
     "threshold",
     "heavy_tailed",
     "time_varying_volatility",
     "long_memory",
-    "jump_diffusion",
-    "seasonal_regime_switching",
-    "copula",
-    "mixture",
-    "par_stochastic_volatility",
+    -- "jump_diffusion",
+    -- "seasonal_regime_switching",
+    -- "copula",
+    -- "mixture",
+    -- "par_stochastic_volatility",
     "levy_process",
     "charr",
-    "hidden_markov",
+    -- "hidden_markov",
 };
-local strategies = { 
+
+local strategies = {
     "yearly_wise",
-    -- "stage_wise_k1",
+    "stage_wise_k1",
     "stage_wise_k3",
 };
 
 local colours = {
-    "#2caffe",
-    "#544fc5",
-    "#00e272",
-    "#fe6a35",
-    "#6b8abc",
-    "#d568fb",
-    "#2ee0ca",
-    "#fa4b42",
-    "#feb56a",
-    "#91e8e1"
+    "#ff0029", "#377eb8", "#66a61e", "#984ea3",
+    "#00d2d5", "#ff7f00", "#af8d00", "#7f80cd",
+    "#b3e900", "#c42e60", "#a65628", "#f781bf",
+    "#8dd3c7", "#bebada", "#fb8072", "#80b1d3",
+    "#fdb462", "#fccde5", "#bc80bd", "#ffed6f",
+    "#c4eaff", "#cf8c00", "#1b9e77", "#d95f02",
+    "#e7298a", "#e6ab02", "#a6761d", "#0097ff",
+    "#00d067", "#000000", "#252525", "#525252",
+    "#737373", "#969696", "#bdbdbd", "#f43600",
+    "#4ba93b", "#5779bb", "#927acc", "#97ee3f",
+    "#bf3947", "#9f5b00", "#f48758", "#8caed6",
+    "#f2b94f", "#eff26e", "#e43872", "#d9b100",
+    "#9d7a00", "#698cff", "#d9d9d9", "#00d27e",
+    "#d06800", "#009f82", "#c49200", "#cbe8ff",
+    "#fecddf", "#c27eb6", "#8cd2ce", "#c4b8d9",
+    "#f883b0", "#a49100", "#f48800", "#27d0df",
+    "#a04a9b"
 };
 
 local function add_percentile(chart, data, color)
@@ -91,7 +121,7 @@ local function tab_cost_analysis()
     end
 
     local chart = Chart("Immediate Cost");
-    for _, model in ipairs(models) do
+    for i, model in ipairs(models) do
         for _, configuration in ipairs(configurations) do
             for _, strategy in ipairs(strategies) do
                 local label = configuration .. "/" .. model .. "_" .. strategy;
@@ -101,11 +131,30 @@ local function tab_cost_analysis()
                 data = data:rename_agents({ label });
                 data = data:aggregate("scenario", BY_SUM());
                 data = data:aggregate("stage", BY_SUM());
-                chart:add("column", data);
+                chart:add("column", data, { color = colours[i] });
             end
         end
     end
     tab:push(chart);
+
+    local markdown = Markdown()
+    markdown:add("| Model                       | Violation Type     | Severity        | Best For                        |");
+    markdown:add("|:----------------------------|:-------------------|:---------------:|:--------------------------------|");
+    markdown:add("| `regime_switching`          | State dependence   | Severe          | Persistent droughts/wet periods |");
+    markdown:add("| `threshold`                 | Non-linearity      | Moderate-Severe | Asymmetric dynamics             |");
+    markdown:add("| `heavy_tailed`              | Non-Gaussian       | Moderate        | Extreme events                  |");
+    markdown:add("| `time_varying_volatility`   | Heteroskedasticity | Moderate        | Volatility clustering           |");
+    markdown:add("| `long_memory`               | Infinite memory    | Severe          | Multi-year droughts             |");
+    markdown:add("| `jump_diffusion`            | Jump process       | Moderate-Severe | Sudden shocks                   |");
+    markdown:add("| `seasonal_regime_switching` | Season × State     | Severe          | Compound events                 |");
+    markdown:add("| `copula`                    | Tail dependence    | Moderate-Severe | Multi-reservoir                 |");
+    markdown:add("| `mixture`                   | Non-stationarity   | Moderate        | Climate change                  |");
+    markdown:add("| `par_stochastic_volatility` | SV in PAR          | Moderate        | Minimal violation               |");
+    markdown:add("| `levy_process`              | Heavy tails        | Severe          | Infinite variance events        |");
+    markdown:add("| `charr`                     | Range volatility   | Moderate        | Boom-bust cycles                |");
+    markdown:add("| `hidden_markov`             | Multi-state        | Severe          | Complex regimes                 |");
+    markdown:add("| `periodic_threshold`        | Season × Threshold | Severe          | Non-linear seasonality          |");
+    tab:push(markdown);
 
     for _, model in ipairs(models) do
         local chart = Chart("Immediate Cost - " .. model);
@@ -236,23 +285,34 @@ local function tab_hydro_analysis(agent)
 
     local fake_years = get_years("inflow_fake_historical");
 
+    -- local chart = Chart("Fake Historical Data");
+    -- -- chart:add(
+    -- --     "area_range",
+    -- --     real_min:replicate("stage", fake_years):set_initial_year(1813),
+    -- --     real_max:replicate("stage", fake_years):set_initial_year(1813),
+    -- --     { fillOpacity = 0.4, color = "gray" }
+    -- -- );
+    -- for _, model in ipairs(models) do
+    --     for _, configuration in ipairs(configurations) do
+    --         for _, strategy in ipairs(strategies) do
+    --             local label = configuration .. "/" .. model .. "_" .. strategy;
+
+    --             local data = generic:load(label .. "/inflow_fake_historical");
+    --             data = data:select_agents({ agent });
+    --             data = data:rename_agents({ label });
+    --             chart:add("line", data);
+    --         end
+    --     end
+    -- end
+    -- tab:push(chart);
+
     local chart = Chart("Fake Historical Data");
-    -- chart:add(
-    --     "area_range",
-    --     real_min:replicate("stage", fake_years):set_initial_year(1813),
-    --     real_max:replicate("stage", fake_years):set_initial_year(1813),
-    --     { fillOpacity = 0.4, color = "gray" }
-    -- );
     for _, model in ipairs(models) do
         for _, configuration in ipairs(configurations) do
-            for _, strategy in ipairs(strategies) do
-                local label = configuration .. "/" .. model .. "_" .. strategy;
-
-                local data = generic:load(label .. "/inflow_fake_historical");
-                data = data:select_agents({ agent });
-                data = data:rename_agents({ label });
-                chart:add("line", data);
-            end
+            local data = generic:load(configuration .. "/" .. model .. "_" .. strategies[1] .. "/inflow_fake_historical");
+            data = data:select_agents({ agent });
+            data = data:rename_agents({ configuration .. "/" .. model });
+            chart:add("line", data);
         end
     end
     tab:push(chart);
