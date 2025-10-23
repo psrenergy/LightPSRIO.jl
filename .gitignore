@@ -27,5 +27,7 @@ revise/Manifest.toml
 
 *.DS_Store
 
+compile/build/
 data*
 dashboard.html
+*.log

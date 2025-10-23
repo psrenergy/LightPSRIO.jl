@@ -1,0 +1,109 @@
+name: publish
+on:
+  workflow_dispatch:
+    inputs:
+      windows:
+        description: 'Build windows'
+        required: true
+        type: boolean
+        default: true
+      linux:
+        description: 'Build linux'
+        required: true
+        type: boolean
+        default: true
+      development_stage:
+          type: choice
+          description: 'Development stage'
+          required: true
+          options:
+          - Pre alpha
+          - Alpha
+          - Beta
+          - Release candidate
+          - Stable release
+      version_suffix:
+        description: 'Version suffix (ignored if stable release)'
+        default: ''
+        type: string
+        required: false
+      psrcloud:
+        description: 'PSRCloud'
+        required: true
+        type: boolean
+        default: true
+      overwrite:
+        description: 'Overwrite'
+        required: true
+        type: boolean
+        default: false
+
+jobs:
+  build-publish-windows:
+    if: github.event.inputs.windows == 'true'
+    name: Build and publish windows
+    runs-on: [self-hosted, windows]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Start AWS ECS instance
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          PSRCLOUD_USER: ${{ secrets.PSRCLOUD_USER }}
+          PSRCLOUD_PASSWORD: ${{ secrets.PSRCLOUD_PASSWORD }}
+          SLACK_BOT_USER_OAUTH_ACCESS_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+        run: |
+          $developmentStage = "${{ github.event.inputs.development_stage }}"
+          $versionSuffix = "${{ github.event.inputs.version_suffix }}"
+          $overwrite = "${{ github.event.inputs.overwrite }}"
+          $psrcloud = "${{ github.event.inputs.psrcloud }}"
+          .\compile\ecs.bat --development_stage "$developmentStage" --version_suffix $versionSuffix --overwrite $overwrite --psrcloud $psrcloud --os windows
+
+  build-publish-linux:
+    if: github.event.inputs.linux == 'true'
+    name: Build and publish linux
+    runs-on: [self-hosted, windows]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Start AWS ECS instance
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          PERSONAL_ACCESS_TOKEN: ${{ secrets.PERSONAL_ACCESS_TOKEN }}
+          PSRCLOUD_USER: ${{ secrets.PSRCLOUD_USER }}
+          PSRCLOUD_PASSWORD: ${{ secrets.PSRCLOUD_PASSWORD }}
+          SLACK_BOT_USER_OAUTH_ACCESS_TOKEN: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+        run: |
+          $developmentStage = "${{ github.event.inputs.development_stage }}"
+          $versionSuffix = "${{ github.event.inputs.version_suffix }}"
+          $overwrite = "${{ github.event.inputs.overwrite }}"
+          $psrcloud = "${{ github.event.inputs.psrcloud }}"
+          .\compile\ecs.bat --development_stage "$developmentStage" --version_suffix $versionSuffix --overwrite $overwrite --psrcloud $psrcloud --os linux
+
+  post-publish:
+    name: Create release
+    runs-on: self-hosted
+    needs: [build-publish-windows, build-publish-linux]
+    if: github.event.inputs.development_stage == 'Stable release'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: SebRollen/toml-action@v1.2.0
+        id: project_toml
+        with:
+          file: 'Project.toml'
+          field: 'version'
+
+      - uses: ncipollo/release-action@v1
+        with:
+          tag: v${{ steps.project_toml.outputs.value }}
+          generateReleaseNotes: true   
