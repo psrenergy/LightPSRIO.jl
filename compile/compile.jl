@@ -1,0 +1,53 @@
+import Pkg
+Pkg.activate(@__DIR__)
+Pkg.instantiate()
+
+using ArgParse
+using PSRContinuousDeployment
+
+function main(args::Vector{String})
+    s = ArgParseSettings()
+    #! format: off
+    @add_arg_table! s begin
+        "--development_stage"
+        nargs = '?'
+        constant = "Stable release"
+        default = "Stable release"
+        "--version_suffix"
+        nargs = '?'
+        constant = ""
+        default = ""
+    end
+    #! format: on
+    parsed_args = parse_args(args, s)
+
+    package_path = dirname(@__DIR__)
+    assets_path = joinpath(@__DIR__, "assets")
+    database_path = joinpath(package_path, "database")
+
+    configuration = build_configuration(;
+        package_path = package_path,
+        development_stage = parsed_args["development_stage"],
+        version_suffix = parsed_args["version_suffix"],
+    )
+
+    PSRContinuousDeployment.compile(
+        configuration;
+        executables = [
+            "LightPSRIO" => "julia_main",
+        ],
+        additional_files_path = [
+            database_path,
+        ],
+        windows_additional_files_path = [
+            joinpath(assets_path, "LightPSRIO.bat"),
+        ],
+        linux_additional_files_path = [
+            joinpath(assets_path, "LightPSRIO.sh"),
+        ],
+    )
+
+    return 0
+end
+
+main(ARGS)
