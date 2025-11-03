@@ -44,7 +44,7 @@ jobs:
     name: Build and publish windows
     runs-on: [self-hosted, windows]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
@@ -68,7 +68,7 @@ jobs:
     name: Build and publish linux
     runs-on: [self-hosted, windows]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
@@ -93,7 +93,7 @@ jobs:
     needs: [build-publish-windows, build-publish-linux]
     if: github.event.inputs.development_stage == 'Stable release'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
