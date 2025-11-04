@@ -1,6 +1,5 @@
 module TestDashboard
 
-using DataFrames
 using Dates
 using LightPSRIO
 using Quiver
@@ -25,6 +24,7 @@ chart:add("line", input1);
 tab:push(chart);
 
 local chart = Chart("Column Stacking");
+chart:set_y_axis_options({ stackLabels = { enabled = true } });
 chart:add("column_stacking", input1);
 tab:push(chart);
 

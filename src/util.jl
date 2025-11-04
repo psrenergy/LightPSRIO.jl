@@ -7,9 +7,13 @@ function escape_json(str::String)
     )
 end
 
-function to_json_string(dict::Dict)
-    json = JSON.json(dict)
-    return json[2:(end-1)]
+function to_json_string(options::Optional{Dict})
+    if isnothing(options)
+        return ""
+    else
+        json = JSON.json(options)
+        return string(json[2:(end-1)], ",")
+    end
 end
 
 function kwargs_to_key(excluding::Set{Symbol}; kwargs...)

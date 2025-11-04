@@ -88,6 +88,7 @@ function initialize(paths::Vector{String})
     @push_lua_struct(
         L,
         Chart,
+        "set_y_axis_options", set_y_axis_options,
         "add", add
     )
 
