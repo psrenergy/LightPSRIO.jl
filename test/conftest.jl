@@ -64,7 +64,6 @@ function create_quiver2(filename; constant::Float64, frequency::String, unit::St
     return filename
 end
 
-
 function remove_quiver(filename::String)
     filepath = joinpath(get_data_directory(), filename)
     for extension in [".toml", ".quiv", ".qvr", ".csv"]

@@ -9,7 +9,7 @@ include("../conftest.jl")
 
 @testset "Dashboard" begin
     setup_tests(
-        create_quiver2("input_year"; constant = 2.0, frequency = "year", unit = "GWh", dimensions = ["year"], dimension_size = [10])
+        create_quiver2("input_year"; constant = 2.0, frequency = "year", unit = "GWh", dimensions = ["year"], dimension_size = [10]),
     ) do L
         LightPSRIO.run_script(
             L,
