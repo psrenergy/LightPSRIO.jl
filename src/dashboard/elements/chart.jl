@@ -123,7 +123,6 @@ function create_patchwork(chart::Chart)
 
     series = "[" * join([create_patchwork(layer) for layer in chart.layers], ",\n") * "]"
     units = unique([layer.unit for layer in chart.layers])
-    y_axis_options = to_json_string(chart.y_axis_options)
 
     # "boost": { "enabled": true, "useGPUTranslations": true, "usePreAllocated": true, "allowForce": true, "seriesThreshold": 2048 },
 
@@ -142,7 +141,7 @@ function create_patchwork(chart::Chart)
                 "type": "datetime"
             },
             "yAxis": {
-                $y_axis_options
+                $(to_json_string(chart.y_axis_options))
                 "title": { "text": "$(units[1])" }
             },
             "legend": { "layout": "vertical", "align": "right", "verticalAlign": "top" },

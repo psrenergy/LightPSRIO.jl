@@ -39,13 +39,12 @@ function get_data_string(layer::Layer2)
 end
 
 function create_patchwork(layer::AbstractLayer)
-    options = isnothing(layer.options) ? "" : string(to_json_string(layer.options), ",")
     data = get_data_string(layer)
 
     return """
 {
     "name": "$(layer.label)",    
-    $options
+    $(to_json_string(layer.options))
     $(highcharts(layer.type))
     $(highcharts(layer.date_reference.stage_type))
     "tooltip": { "valueSuffix": " $(layer.unit)" },

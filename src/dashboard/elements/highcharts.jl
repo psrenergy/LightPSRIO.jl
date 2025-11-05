@@ -1,19 +1,20 @@
 struct Highcharts <: Patchwork.Plugin
     title::String
-    config::JSON.Object
+    config::Dict{String, Any}
 
-    function Highcharts(title::String, config::JSON.Object)
+    function Highcharts(title::String, config::Dict{String, Any})
         return new(title, config)
     end
 end
 
 function Highcharts(title::String, config::AbstractString)
-    return Highcharts(title, JSON.parse(config; allownan = true))
+    return Highcharts(title, JSON.parse(config; allownan = true, dicttype = Dict{String, Any}))
 end
 
 function Patchwork.to_html(plugin::Highcharts)
     chart_id = "chart-$(uuid4())"
-    config_json = JSON.json(plugin.config; allownan = true, nan = "null", inf = "null", ninf = "null", pretty = false)
+    # config_json = JSON.json(plugin.config; allownan = true, nan = "null", inf = "null", ninf = "null", pretty = false)
+    config_json = JSON.json(plugin.config)
 
     return """
     <div>

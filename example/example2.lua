@@ -23,25 +23,36 @@ local configurations = { "400h_60t_200s_100o_6p" };
 --     "hidden_markov",
 -- };
 
+-- local models = {
+--     "parp",
+--     -- "auto_arima",
+--     -- "seasonal_avg",
+--     -- "seasonal_naive",
+--     -- "unobserved_components",
+--     "regime_switching",
+--     "threshold",
+--     "heavy_tailed",
+--     "time_varying_volatility",
+--     "long_memory",
+--     -- "jump_diffusion",
+--     -- "seasonal_regime_switching",
+--     -- "copula",
+--     -- "mixture",
+--     -- "par_stochastic_volatility",
+--     "levy_process",
+--     "charr",
+--     -- "hidden_markov",
+-- };
+
 local models = {
     "parp",
-    -- "auto_arima",
-    -- "seasonal_avg",
-    -- "seasonal_naive",
-    -- "unobserved_components",
     "regime_switching",
     "threshold",
     "heavy_tailed",
     "time_varying_volatility",
     "long_memory",
-    -- "jump_diffusion",
-    -- "seasonal_regime_switching",
-    -- "copula",
-    -- "mixture",
-    -- "par_stochastic_volatility",
     "levy_process",
     "charr",
-    -- "hidden_markov",
 };
 
 local strategies = {
