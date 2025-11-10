@@ -1,4 +1,4 @@
-module TestDashboard
+module TestMarkdown
 
 using Dates
 using LightPSRIO
@@ -7,7 +7,7 @@ using Test
 
 include("../conftest.jl")
 
-@testset "Dashboard" begin
+@testset "Markdown" begin
     setup_tests(
         create_markdown("markdown1", "# Heading 1\n\nThis is a test of **Markdown** rendering."),
     ) do L
@@ -15,12 +15,14 @@ include("../conftest.jl")
             L,
             """
 local generic = Generic();
-local input1 = generic:load("input_year");
+local markdown1 = generic:load_string("markdown1.md");
+print(markdown1);
 
 local tab = Tab("Tab 1");
 
 local markdown = Markdown();
-tab:add_from_file(markdown, "markdown1");
+markdown:add(markdown1);
+tab:push(markdown);
 
 local dashboard = Dashboard("PSR");
 dashboard:push(tab);

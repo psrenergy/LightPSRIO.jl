@@ -13,3 +13,12 @@ function load(generic::Generic, filename::String)
     return ExpressionDataQuiver(generic.path, filename)
 end
 @define_lua_function load
+
+function load_string(generic::Generic, filename::String)
+    path = joinpath(generic.path, filename)
+    if !isfile(path)
+        error("File '$filename' not found in case path.")
+    end
+    return read(path, String)
+end
+@define_lua_function load_string

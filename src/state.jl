@@ -16,7 +16,8 @@ function initialize(paths::Vector{String})
         [
             Generic,
         ],
-        "load", load
+        "load", load,
+        "load_string", load_string,
     )
 
     @push_lua_structs(
@@ -83,7 +84,6 @@ function initialize(paths::Vector{String})
         L,
         Markdown,
         "add", add,
-        "add_from_file", add_from_file
     )
 
     @push_lua_struct(
