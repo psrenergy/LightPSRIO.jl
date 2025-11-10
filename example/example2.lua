@@ -1,6 +1,9 @@
 local generic = Generic();
 
-local configurations = { "400h_60t_200s_100o_6p" };
+local configurations = {
+    -- "400h_60t_200s_100o_6p",    
+    "400h_60t_400s_100o_6p",
+};
 
 -- local models = {
 --     "parp",
@@ -46,19 +49,22 @@ local configurations = { "400h_60t_200s_100o_6p" };
 
 local models = {
     "parp",
-    "regime_switching",
-    "threshold",
+    -- "regime_switching",
+    -- "threshold",
     "heavy_tailed",
-    "time_varying_volatility",
+    -- "time_varying_volatility",
     "long_memory",
-    "levy_process",
-    "charr",
+    -- "levy_process",
+    -- "charr",
+    -- "extreme_events",
 };
 
 local strategies = {
     "yearly_wise",
     "stage_wise_k1",
     "stage_wise_k3",
+    "stage_wise_k5",
+    "stage_wise_k7",
 };
 
 local colours = {
@@ -165,7 +171,7 @@ local function tab_cost_analysis()
     markdown:add("| `charr`                     | Range volatility   | Moderate        | Boom-bust cycles                |");
     markdown:add("| `hidden_markov`             | Multi-state        | Severe          | Complex regimes                 |");
     markdown:add("| `periodic_threshold`        | Season × Threshold | Severe          | Non-linear seasonality          |");
-    tab:push(markdown);
+    -- tab:push(markdown);
 
     for _, model in ipairs(models) do
         local chart = Chart("Immediate Cost - " .. model);

@@ -64,9 +64,17 @@ function create_quiver2(filename; constant::Float64, frequency::String, unit::St
     return filename
 end
 
-function remove_quiver(filename::String)
+function create_markdown(filename::String, content::String)
+    path = joinpath(@__DIR__, "data", filename)
+    open("$path.md", "w") do f
+        return write(f, content)
+    end
+    return filename
+end
+
+function remove_files(filename::String)
     filepath = joinpath(get_data_directory(), filename)
-    for extension in [".toml", ".quiv", ".qvr", ".csv"]
+    for extension in [".toml", ".quiv", ".qvr", ".csv", ".md"]
         if isfile(filepath * extension)
             rm(filepath * extension)
         end
@@ -82,7 +90,7 @@ function open_quiver(f::Function, filename::String)
         f(reader)
     finally
         Quiver.close!(reader)
-        remove_quiver(filename)
+        remove_files(filename)
     end
 
     return nothing
@@ -131,7 +139,7 @@ function setup_tests(f::Function, filenames::String...)
         GC.gc()
 
         for filename in filenames
-            remove_quiver(filename)
+            remove_files(filename)
         end
     end
     return nothing

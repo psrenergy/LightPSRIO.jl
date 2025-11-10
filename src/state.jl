@@ -82,7 +82,8 @@ function initialize(paths::Vector{String})
     @push_lua_struct(
         L,
         Markdown,
-        "add", add
+        "add", add,
+        "add_from_file", add_from_file
     )
 
     @push_lua_struct(
