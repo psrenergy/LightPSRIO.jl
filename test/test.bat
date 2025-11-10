@@ -1,7 +1,5 @@
 @echo off
 
 SET BASEPATH=%~dp0
-SET JULIA=1.12.1
 
-CALL juliaup add %JULIA%
-CALL julia +%JULIA% --project=%BASEPATH%\.. -e "import Pkg; Pkg.test(test_args=ARGS)" -- %*
+CALL julia +1.12.1 --project=%BASEPATH%\.. -e "import Pkg; Pkg.test(test_args=ARGS)" -- %*
