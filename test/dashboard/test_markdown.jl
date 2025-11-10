@@ -24,6 +24,17 @@ local markdown = Markdown();
 markdown:add(markdown1);
 tab:push(markdown);
 
+local markdown = Markdown();
+markdown:add([[
+| Feature  | Status   | Priority |
+|:--------:|:--------:|:--------:|
+| Markdown | Complete | High     |
+| Tables   | Styled   | Medium   |
+| Charts   | Complete | High     |
+| Maps     | Complete | Medium   |
+]]);
+tab:push(markdown);
+
 local dashboard = Dashboard("PSR");
 dashboard:push(tab);
 dashboard:save("test_markdown");
