@@ -30,7 +30,7 @@ tab:push(chart);
 
 local dashboard = Dashboard("PSR");
 dashboard:push(tab);
-dashboard:save("dashboard");
+dashboard:save("test_dashboard");
 """,
         )
 
