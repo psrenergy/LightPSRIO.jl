@@ -1,8 +1,11 @@
 local generic = Generic();
 
 local configurations = {
-    -- "400h_60t_200s_100o_6p",    
-    "400h_60t_400s_100o_6p",
+    -- "400h_60t_200s_100o_6p",
+    -- "400h_60t_400s_100o_6p",
+    -- "800h_60t_400s_100o_6p",
+    -- "800h_60t_800s_100o_6p",
+    "40h_24t_40s_10o_6p_20i",
 };
 
 -- local models = {
@@ -47,24 +50,31 @@ local configurations = {
 --     -- "hidden_markov",
 -- };
 
+-- local models = {
+--     "parp",
+--     -- "regime_switching",
+--     -- "threshold",
+--     "heavy_tailed",
+--     -- "time_varying_volatility",
+--     "long_memory",
+--     -- "levy_process",
+--     -- "charr",
+--     -- "extreme_events",
+-- };
+
 local models = {
     "parp",
-    -- "regime_switching",
-    -- "threshold",
-    "heavy_tailed",
-    -- "time_varying_volatility",
-    "long_memory",
-    -- "levy_process",
-    -- "charr",
-    -- "extreme_events",
+    -- "heavy_tailed",
+    -- "long_memory",
 };
 
 local strategies = {
     "yearly_wise",
-    "stage_wise_k1",
-    "stage_wise_k3",
-    "stage_wise_k5",
-    "stage_wise_k7",
+    -- "yearly_wise_read_historical_data",
+    -- "stage_wise_k1",
+    -- "stage_wise_k3",
+    -- "stage_wise_k5",
+    -- "stage_wise_k7",
 };
 
 local colours = {
@@ -116,6 +126,19 @@ local function add_percentile_to_tab(tab, title, filename, agent)
     end
 end
 
+local function get_years(filename)
+    local years = 0;
+    for _, model in ipairs(models) do
+        for _, configuration in ipairs(configurations) do
+            for _, strategy in ipairs(strategies) do
+                local data = generic:load(configuration .. "/" .. model .. "_" .. strategy .. "/" .. filename);
+                years = math.max(years, data:get_years());
+            end
+        end
+    end
+    return years;
+end
+
 local function tab_cost_analysis()
     local tab = Tab("Cost Analysis");
 
@@ -146,7 +169,7 @@ local function tab_cost_analysis()
                 local data = generic:load(label .. "/results/costs_by_category");
                 data = data:select_agents({ 2 });
                 data = data:rename_agents({ label });
-                data = data:aggregate("scenario", BY_SUM());
+                data = data:aggregate("scenario", BY_AVERAGE());
                 data = data:aggregate("stage", BY_SUM());
                 chart:add("column", data, { color = colours[i] });
             end
@@ -154,23 +177,39 @@ local function tab_cost_analysis()
     end
     tab:push(chart);
 
-    local markdown = Markdown()
-    markdown:add("| Model                       | Violation Type     | Severity        | Best For                        |");
-    markdown:add("|:----------------------------|:-------------------|:---------------:|:--------------------------------|");
-    markdown:add("| `regime_switching`          | State dependence   | Severe          | Persistent droughts/wet periods |");
-    markdown:add("| `threshold`                 | Non-linearity      | Moderate-Severe | Asymmetric dynamics             |");
-    markdown:add("| `heavy_tailed`              | Non-Gaussian       | Moderate        | Extreme events                  |");
-    markdown:add("| `time_varying_volatility`   | Heteroskedasticity | Moderate        | Volatility clustering           |");
-    markdown:add("| `long_memory`               | Infinite memory    | Severe          | Multi-year droughts             |");
-    markdown:add("| `jump_diffusion`            | Jump process       | Moderate-Severe | Sudden shocks                   |");
-    markdown:add("| `seasonal_regime_switching` | Season × State     | Severe          | Compound events                 |");
-    markdown:add("| `copula`                    | Tail dependence    | Moderate-Severe | Multi-reservoir                 |");
-    markdown:add("| `mixture`                   | Non-stationarity   | Moderate        | Climate change                  |");
-    markdown:add("| `par_stochastic_volatility` | SV in PAR          | Moderate        | Minimal violation               |");
-    markdown:add("| `levy_process`              | Heavy tails        | Severe          | Infinite variance events        |");
-    markdown:add("| `charr`                     | Range volatility   | Moderate        | Boom-bust cycles                |");
-    markdown:add("| `hidden_markov`             | Multi-state        | Severe          | Complex regimes                 |");
-    markdown:add("| `periodic_threshold`        | Season × Threshold | Severe          | Non-linear seasonality          |");
+    -- local markdown = Markdown()
+    -- markdown:add(
+    -- "| Model                       | Violation Type     | Severity        | Best For                        |");
+    -- markdown:add(
+    -- "|:----------------------------|:-------------------|:---------------:|:--------------------------------|");
+    -- markdown:add(
+    -- "| `regime_switching`          | State dependence   | Severe          | Persistent droughts/wet periods |");
+    -- markdown:add(
+    -- "| `threshold`                 | Non-linearity      | Moderate-Severe | Asymmetric dynamics             |");
+    -- markdown:add(
+    -- "| `heavy_tailed`              | Non-Gaussian       | Moderate        | Extreme events                  |");
+    -- markdown:add(
+    -- "| `time_varying_volatility`   | Heteroskedasticity | Moderate        | Volatility clustering           |");
+    -- markdown:add(
+    -- "| `long_memory`               | Infinite memory    | Severe          | Multi-year droughts             |");
+    -- markdown:add(
+    -- "| `jump_diffusion`            | Jump process       | Moderate-Severe | Sudden shocks                   |");
+    -- markdown:add(
+    -- "| `seasonal_regime_switching` | Season × State     | Severe          | Compound events                 |");
+    -- markdown:add(
+    -- "| `copula`                    | Tail dependence    | Moderate-Severe | Multi-reservoir                 |");
+    -- markdown:add(
+    -- "| `mixture`                   | Non-stationarity   | Moderate        | Climate change                  |");
+    -- markdown:add(
+    -- "| `par_stochastic_volatility` | SV in PAR          | Moderate        | Minimal violation               |");
+    -- markdown:add(
+    -- "| `levy_process`              | Heavy tails        | Severe          | Infinite variance events        |");
+    -- markdown:add(
+    -- "| `charr`                     | Range volatility   | Moderate        | Boom-bust cycles                |");
+    -- markdown:add(
+    -- "| `hidden_markov`             | Multi-state        | Severe          | Complex regimes                 |");
+    -- markdown:add(
+    -- "| `periodic_threshold`        | Season × Threshold | Severe          | Non-linear seasonality          |");
     -- tab:push(markdown);
 
     for _, model in ipairs(models) do
@@ -266,19 +305,6 @@ local function tab_demand_analysis()
     return tab;
 end
 
-local function get_years(filename)
-    local years = 0;
-    for _, model in ipairs(models) do
-        for _, configuration in ipairs(configurations) do
-            for _, strategy in ipairs(strategies) do
-                local data = generic:load(configuration .. "/" .. model .. "_" .. strategy .. "/" .. filename);
-                years = math.max(years, data:get_years());
-            end
-        end
-    end
-    return years;
-end
-
 local function tab_hydro_analysis(agent)
     local tab = Tab("Hydro Analysis (agent " .. agent .. ")");
 
@@ -326,10 +352,12 @@ local function tab_hydro_analysis(agent)
     local chart = Chart("Fake Historical Data");
     for _, model in ipairs(models) do
         for _, configuration in ipairs(configurations) do
-            local data = generic:load(configuration .. "/" .. model .. "_" .. strategies[1] .. "/inflow_fake_historical");
-            data = data:select_agents({ agent });
-            data = data:rename_agents({ configuration .. "/" .. model });
-            chart:add("line", data);
+            for _, strategy in ipairs(strategies) do
+                local data = generic:load(configuration .. "/" .. model .. "_" .. strategy .. "/inflow_fake_historical");
+                data = data:select_agents({ agent });
+                data = data:rename_agents({ configuration .. "/" .. model .. "_" .. strategy });
+                chart:add("line", data);
+            end
         end
     end
     tab:push(chart);
@@ -365,6 +393,42 @@ local function tab_hydro_analysis(agent)
 
         tab:push(chart);
     end
+
+    local chart = Chart("Initial Volume");
+    local i = 1;
+    for _, model in ipairs(models) do
+        for _, configuration in ipairs(configurations) do
+            for _, strategy in ipairs(strategies) do
+                local label = configuration .. "/" .. model .. "_" .. strategy;
+
+                local data = generic:load(label .. "/results/hydro_initial_volume");
+                data = data:select_agents({ agent });
+                data = data:rename_agents({ label });
+                add_percentile(chart, data, colours[i]);
+
+                i = i + 1;
+            end
+        end
+    end
+    tab:push(chart);    
+
+    local chart = Chart("Final Volume");
+    local i = 1;
+    for _, model in ipairs(models) do
+        for _, configuration in ipairs(configurations) do
+            for _, strategy in ipairs(strategies) do
+                local label = configuration .. "/" .. model .. "_" .. strategy;
+
+                local data = generic:load(label .. "/results/hydro_final_volume");
+                data = data:select_agents({ agent });
+                data = data:rename_agents({ label });
+                add_percentile(chart, data, colours[i]);
+
+                i = i + 1;
+            end
+        end
+    end
+    tab:push(chart);
 
     -- add_percentile_to_tab(tab, "Hydro Generation", "results/hydro_generation", agent);
     -- add_percentile_to_tab(tab, "Final Volume", "results/hydro_final_volume", agent);
