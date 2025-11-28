@@ -8,7 +8,7 @@ function escape_json(str::String)
 end
 
 function to_json_string(options::Optional{Dict})
-    if isnothing(options)
+    if isnothing(options) || length(options) == 0
         return ""
     else
         json = JSON.json(options)
