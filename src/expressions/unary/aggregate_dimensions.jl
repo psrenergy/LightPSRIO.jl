@@ -69,7 +69,7 @@ function evaluate(e::ExpressionAggregateDimensions; kwargs...)
     elseif e.aggregate_function.type == AggregateType.Max
         return maximum(data)
     elseif e.aggregate_function.type == AggregateType.Percentile
-        return [quantile(vcat(data...), e.aggregate_function.parameter)]
+        return [quantile(getindex.(data, i), e.aggregate_function.parameter) for i in 1:labels_size]
     else
         error("Aggregate function $(e.aggregate_function) not implemented yet.")
     end

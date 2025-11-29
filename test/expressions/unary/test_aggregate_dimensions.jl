@@ -95,6 +95,57 @@ output9:save("output9");
             @test Quiver.goto!(q; stage = 2, scenario = 2, block = 1) ≈ [2.0, 2.0, 1.5, 2.0]
         end
 
+        open_quiver("output7") do q
+            @test q.metadata.frequency == "month"
+            @test q.metadata.initial_date == DateTime("2024-01-01T00:00:00")
+            @test q.metadata.number_of_dimensions == 3
+            @test q.metadata.dimensions == [:stage, :scenario, :block]
+            @test q.metadata.time_dimension == :stage
+            @test q.metadata.unit == "GWh"
+            @test q.metadata.dimension_size == [1, 2, 2]
+            @test q.metadata.number_of_time_series == 4
+            @test q.metadata.labels == ["data_stage", "data_scenario", "data_block", "data_constant"]
+
+            @test Quiver.goto!(q; stage = 1, scenario = 1, block = 1) ≈ [1.75, 1.0, 1.0, 2.0]
+            @test Quiver.goto!(q; stage = 1, scenario = 1, block = 2) ≈ [1.75, 1.0, 2.0, 2.0]
+            @test Quiver.goto!(q; stage = 1, scenario = 2, block = 1) ≈ [1.75, 2.0, 1.0, 2.0]
+            @test Quiver.goto!(q; stage = 1, scenario = 2, block = 2) ≈ [1.75, 2.0, 2.0, 2.0]
+        end
+
+        open_quiver("output8") do q
+            @test q.metadata.frequency == "month"
+            @test q.metadata.initial_date == DateTime("2024-01-01T00:00:00")
+            @test q.metadata.number_of_dimensions == 3
+            @test q.metadata.dimensions == [:stage, :scenario, :block]
+            @test q.metadata.time_dimension == :stage
+            @test q.metadata.unit == "GWh"
+            @test q.metadata.dimension_size == [2, 1, 2]
+            @test q.metadata.number_of_time_series == 4
+            @test q.metadata.labels == ["data_stage", "data_scenario", "data_block", "data_constant"]
+
+            @test Quiver.goto!(q; stage = 1, scenario = 1, block = 1) ≈ [1.0, 1.75, 1.0, 2.0]
+            @test Quiver.goto!(q; stage = 1, scenario = 1, block = 2) ≈ [1.0, 1.75, 2.0, 2.0]
+            @test Quiver.goto!(q; stage = 2, scenario = 1, block = 1) ≈ [2.0, 1.75, 1.0, 2.0]
+            @test Quiver.goto!(q; stage = 2, scenario = 1, block = 2) ≈ [2.0, 1.75, 2.0, 2.0]
+        end
+
+        open_quiver("output9") do q
+            @test q.metadata.frequency == "month"
+            @test q.metadata.initial_date == DateTime("2024-01-01T00:00:00")
+            @test q.metadata.number_of_dimensions == 3
+            @test q.metadata.dimensions == [:stage, :scenario, :block]
+            @test q.metadata.time_dimension == :stage
+            @test q.metadata.unit == "GWh"
+            @test q.metadata.dimension_size == [2, 2, 1]
+            @test q.metadata.number_of_time_series == 4
+            @test q.metadata.labels == ["data_stage", "data_scenario", "data_block", "data_constant"]
+
+            @test Quiver.goto!(q; stage = 1, scenario = 1, block = 1) ≈ [1.0, 1.0, 1.75, 2.0]
+            @test Quiver.goto!(q; stage = 1, scenario = 2, block = 1) ≈ [1.0, 2.0, 1.75, 2.0]
+            @test Quiver.goto!(q; stage = 2, scenario = 1, block = 1) ≈ [2.0, 1.0, 1.75, 2.0]
+            @test Quiver.goto!(q; stage = 2, scenario = 2, block = 1) ≈ [2.0, 2.0, 1.75, 2.0]
+        end
+
         return nothing
     end
 
