@@ -35,6 +35,15 @@ output5:save("output5");
 
 local output6 = input1:aggregate("block", BY_AVERAGE());
 output6:save("output6");
+
+local output7 = input1:aggregate("stage", BY_PERCENTILE(75));
+output7:save("output7");
+
+local output8 = input1:aggregate("scenario", BY_PERCENTILE(75));
+output8:save("output8");
+
+local output9 = input1:aggregate("block", BY_PERCENTILE(75));
+output9:save("output9");
     """,
         )
 
