@@ -8,7 +8,7 @@
       "Bash(/dev/null)",
       "Bash(formatformat.bat)",
       "Bash(cat:*)",
-      "Bash(testtest.bat test_concatenate.jl)"
+      "Bash(test\\test.bat:*)"
     ],
     "deny": [],
     "ask": []
