@@ -10,6 +10,7 @@ include("../conftest.jl")
 @testset "Dashboard" begin
     setup_tests(
         create_quiver2("input_year"; constant = 2.0, frequency = "year", unit = "GWh", dimensions = ["year"], dimension_size = [10]),
+        create_quiver2("input_month"; constant = 2.0, frequency = "month", unit = "GWh", dimensions = ["stage", "scenario", "block"], dimension_size = [2, 1, 1]),
     ) do L
         LightPSRIO.run_script(
             L,
@@ -26,6 +27,13 @@ tab:push(chart);
 local chart = Chart("Column Stacking");
 chart:set_y_axis_options({ stackLabels = { enabled = true } });
 chart:add("column_stacking", input1);
+tab:push(chart);
+
+local chart = Chart("Area Range");
+local data = generic:load("input_month");
+local p90 = data:aggregate("scenario", BY_PERCENTILE(90));
+local p10 = data:aggregate("scenario", BY_PERCENTILE(10));
+chart:add("area_range", p10, p90);
 tab:push(chart);
 
 local dashboard = Dashboard("PSR");
