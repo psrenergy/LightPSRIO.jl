@@ -9,11 +9,11 @@ function ExpressionDataQuiver(path::String, filename::String)
     try
         reader = Quiver.Reader{Quiver.binary}(joinpath(path, filename))
         attributes = Attributes(reader)
-        println("Loading $filename ($attributes)")
+        @info("Loading $filename ($attributes)")
         Quiver.close!(reader)
         return ExpressionDataQuiver(path, filename, attributes, nothing)
     catch ArgumentError
-        println("The output $filename has no data")
+        @info("The output $filename has no data")
         return ExpressionNull()
     end
 end
