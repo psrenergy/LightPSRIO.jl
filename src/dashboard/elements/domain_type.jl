@@ -10,6 +10,6 @@ function highcharts(type::StageType.T)
 "pointIntervalUnit": "year",
 """
     else
-        error("Unsupported stage type: $type")
+        throw(ArgumentError("Unsupported stage type: $type"))
     end
 end

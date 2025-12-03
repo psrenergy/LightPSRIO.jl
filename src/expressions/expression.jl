@@ -30,7 +30,7 @@ end
 
 function save(L::LuaState, e::AbstractExpression, filename::String)
     if !has_data(e)
-        println("$filename not saved")
+        @info("$filename not saved")
         return nothing
     end
 
@@ -38,7 +38,7 @@ function save(L::LuaState, e::AbstractExpression, filename::String)
 
     case = get_case(L, 1)
     a = e.attributes
-    println("Saving $filename ($a)")
+    @info("Saving $filename ($a)")
 
     writer = Quiver.Writer{Quiver.binary}(
         joinpath(case.path, filename);

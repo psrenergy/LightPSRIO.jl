@@ -19,7 +19,7 @@ end
 @define_lua_function push
 
 function save(L::LuaState, dashboard::Dashboard, filename::String)
-    println("Saving $filename.html")
+    @info("Saving $filename.html")
 
     case = get_case(L, 1)
 

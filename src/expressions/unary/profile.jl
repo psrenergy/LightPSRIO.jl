@@ -19,7 +19,7 @@ function ExpressionProfile(e1::AbstractExpression, profile_type::ProfileType.T, 
 
     dimension_index = findfirst(==(time_dimension), attributes.dimensions)
     if dimension_index === nothing
-        println("Time dimension $(time_dimension) not found (dimensions: $(attributes.dimensions))")
+        @info("Time dimension $(time_dimension) not found (dimensions: $(attributes.dimensions))")
         return ExpressionNull()
     end
 
@@ -36,7 +36,7 @@ function ExpressionProfile(e1::AbstractExpression, profile_type::ProfileType.T, 
     elseif profile_type == ProfileType.Year
         12  # Months in a year (yearly pattern based on input frequency)
     else
-        error("Unknown profile type: $(profile_type)")
+        throw(ArgumentError("Unknown profile type: $(profile_type)"))
     end
 
     attributes.dimension_size[dimension_index] = new_size
@@ -147,6 +147,6 @@ function evaluate(e::ExpressionProfile; kwargs...)
     elseif aggregate_func.type == AggregateType.Percentile
         return [quantile(vcat(data_for_period...), aggregate_func.parameter)]
     else
-        error("Aggregate function $(aggregate_func) not implemented yet.")
+        throw(ArgumentError("Aggregate function $(aggregate_func) not implemented yet."))
     end
 end

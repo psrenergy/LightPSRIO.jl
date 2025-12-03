@@ -18,7 +18,7 @@ function to_series_type(type::String)
     elseif type == "column_stacking"
         return SeriesType.ColumnStacking
     else
-        error("Unsupported series type: $type")
+        throw(ArgumentError("Unsupported series type: $type"))
     end
 end
 
@@ -46,6 +46,6 @@ function highcharts(type::SeriesType.T)
 "stacking": "normal",
         """
     else
-        error("Unsupported series type: $type")
+        throw(ArgumentError("Unsupported series type: $type"))
     end
 end

@@ -21,7 +21,7 @@ function ExpressionConcatenate(dimension::String, expressions::Vector{<:Abstract
     # Find the index of the dimension to concatenate
     dim_index = findfirst(==(dimension_symbol), attributes.dimensions)
     if dim_index === nothing
-        error("Dimension '$dimension' not found in expression attributes")
+        throw(ArgumentError("Dimension '$dimension' not found in expression attributes"))
     end
 
     # Update the size of the concatenated dimension
@@ -61,5 +61,5 @@ function evaluate(e::ExpressionConcatenate; kwargs...)
         cumulative_size += expr_dim_size
     end
 
-    return error("Dimension value $dim_value out of bounds for concatenated dimension $(e.dimension)")
+    throw(ArgumentError("Dimension value $dim_value out of bounds for concatenated dimension $(e.dimension)"))
 end

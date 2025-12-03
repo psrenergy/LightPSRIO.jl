@@ -46,7 +46,6 @@ function Base.show(io::IO, attributes::Attributes)
         print(io, "$dimension: 1:$(attributes.dimension_size[index]), ")
     end
     print(io, "unit: $(attributes.unit), agents: $(length(attributes.labels))")
-    # print(io, "stages: 195 [1:195] [week] [40/2011], blocks: none, scenarios: 1, unit: , agents: 1 [study]")
     return nothing
 end
 
@@ -77,7 +76,7 @@ function get_years(attributes::Attributes)
         if attributes.frequency == "month"
             return Int(ceil(n_stages / 12))
         else
-            error("Unsupported frequency: $(attributes.frequency)")
+            throw(ArgumentError("Unsupported frequency: $(attributes.frequency)"))
         end
     end
     return 0
@@ -92,6 +91,6 @@ function get_date_reference(attributes::Attributes)
     elseif attributes.frequency == "year"
         return DateReference(StageType.YEAR, month, year)
     else
-        error("Unsupported frequency: $(attributes.frequency)")
+        throw(ArgumentError("Unsupported frequency: $(attributes.frequency)"))
     end
 end

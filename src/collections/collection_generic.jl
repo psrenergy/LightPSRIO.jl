@@ -17,7 +17,7 @@ end
 function load_string(generic::Generic, filename::String)
     path = joinpath(generic.path, filename)
     if !isfile(path)
-        error("File '$filename' not found in case path.")
+        throw(ArgumentError("File '$filename' not found in case path."))
     end
     return read(path, String)
 end

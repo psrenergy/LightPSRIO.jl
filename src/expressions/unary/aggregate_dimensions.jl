@@ -17,7 +17,7 @@ function ExpressionAggregateDimensions(e1::AbstractExpression, dimension::String
 
     dimension_index = findfirst(==(dimension_symbol), attributes.dimensions)
     if dimension_index === nothing
-        println("Dimension $dimension not found (dimensions: $(attributes.dimensions))")
+        @info("Dimension $dimension not found (dimensions: $(attributes.dimensions))")
         return ExpressionNull()
     end
     dimension_original_size = attributes.dimension_size[dimension_index]
@@ -71,6 +71,6 @@ function evaluate(e::ExpressionAggregateDimensions; kwargs...)
     elseif e.aggregate_function.type == AggregateType.Percentile
         return [quantile(getindex.(data, i), e.aggregate_function.parameter) for i in 1:labels_size]
     else
-        error("Aggregate function $(e.aggregate_function) not implemented yet.")
+        throw(ArgumentError("Aggregate function $(e.aggregate_function) not implemented yet."))
     end
 end

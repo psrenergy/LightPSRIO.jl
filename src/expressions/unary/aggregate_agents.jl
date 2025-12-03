@@ -50,6 +50,6 @@ function evaluate(e::ExpressionAggregateAgents; kwargs...)
     elseif e.aggregate_function.type == AggregateType.Percentile
         return [quantile(data, e.aggregate_function.parameter)]
     else
-        error("Aggregate function $(e.aggregate_function) not implemented yet.")
+        throw(ArgumentError("Aggregate function $(e.aggregate_function) not implemented yet."))
     end
 end

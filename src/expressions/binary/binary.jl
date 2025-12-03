@@ -25,7 +25,7 @@ mutable struct ExpressionBinary{F <: Function} <: AbstractBinary
         elseif length(a2.labels) == 1
             copy(a1.labels)
         else
-            error("Labels must match for binary operations.")
+            throw(ArgumentError("Labels must match for binary operations."))
         end
 
         dimensions = if isempty(a1.dimensions)
@@ -35,7 +35,7 @@ mutable struct ExpressionBinary{F <: Function} <: AbstractBinary
         elseif a1.dimensions == a2.dimensions
             copy(a1.dimensions)
         else
-            error("Attributes must match for binary operations.")
+            throw(ArgumentError("Attributes must match for binary operations."))
         end
 
         time_dimension = if a1.time_dimension == :none
@@ -45,7 +45,7 @@ mutable struct ExpressionBinary{F <: Function} <: AbstractBinary
         elseif a1.time_dimension == a2.time_dimension
             a1.time_dimension
         else
-            error("Time dimensions must match for binary operations ($(a1.time_dimension) and $(a2.time_dimension))")
+            throw(ArgumentError("Time dimensions must match for binary operations ($(a1.time_dimension) and $(a2.time_dimension))"))
         end
 
         frequency = if isempty(a1.frequency)
@@ -55,7 +55,7 @@ mutable struct ExpressionBinary{F <: Function} <: AbstractBinary
         elseif a1.frequency == a2.frequency
             a1.frequency
         else
-            error("Frequencies must match for binary operations ($(a1.frequency) and $(a2.frequency))")
+            throw(ArgumentError("Frequencies must match for binary operations ($(a1.frequency) and $(a2.frequency))"))
         end
 
         dimension_size = zeros(Int, length(dimensions))
@@ -73,7 +73,7 @@ mutable struct ExpressionBinary{F <: Function} <: AbstractBinary
                 dimension_size[i] = e1_dimension_size[e1_dimension_index]
             else
                 # dimension_size[i] = min(e1_dimension_size[e1_dimension_index], e2_dimension_size[e2_dimension_index])
-                error("Dimensions must match or be 1 for broadcasting.")
+                throw(ArgumentError("Dimensions must match or be 1 for broadcasting."))
             end
         end
 
@@ -91,7 +91,7 @@ mutable struct ExpressionBinary{F <: Function} <: AbstractBinary
                     factor = convert_unit(1.0, a2.unit, a1.unit)
                     unit = a1.unit
                 catch
-                    error("Cannot unify units '$(a1.unit)' and '$(a2.unit)'.")
+                    throw(ArgumentError("Cannot unify units '$(a1.unit)' and '$(a2.unit)'."))
                 end
             end
         elseif unit_operator == UnitOperator.Multiply
@@ -111,7 +111,7 @@ mutable struct ExpressionBinary{F <: Function} <: AbstractBinary
                 unit = "($(a1.unit))/($(a2.unit))"
             end
         else
-            error("Unknown unit operator: $(unit_operator)")
+            throw(ArgumentError("Unknown unit operator: $(unit_operator)"))
         end
 
         attributes = Attributes(
@@ -155,8 +155,6 @@ Base.:/(x::AbstractExpression, y) = Base.:/(promote(x, y)...)
 Base.:/(x, y::AbstractExpression) = Base.:/(promote(x, y)...)
 div(x, y) = Base.:/(x, y)
 @define_lua_function div
-
-# Base.show(io::IO, e::ExpressionBinary) = print(io, "($(e.e1) $(e.f) $(e.e2))")
 
 function evaluate(e::ExpressionBinary; kwargs...)
     return e.f.(evaluate(e.e1; kwargs...), evaluate(e.e2; kwargs...) .* e.factor)

@@ -9,7 +9,7 @@ function add(chart::AbstractChart, type::String, e1::AbstractExpression, options
 
     attributes = e1.attributes
     excluding = Set([attributes.time_dimension])
-    println("Adding layer ($attributes)")
+    @info("Adding layer ($attributes)")
 
     date_reference = get_date_reference(attributes)
 
@@ -57,7 +57,7 @@ function add(chart::AbstractChart, type::String, e1::AbstractExpression, e2::Abs
 
     attributes = e1.attributes
     excluding = Set([attributes.time_dimension])
-    println("Adding layer ($attributes)")
+    @info("Adding layer ($attributes)")
 
     date_reference = get_date_reference(attributes)
 
