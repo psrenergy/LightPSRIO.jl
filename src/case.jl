@@ -11,7 +11,7 @@ function register_cases(L::LuaState, paths::Vector{String})
     println(buffer, "    {")
     println(buffer, "        __index = {")
     for path in paths
-        println("Opening case at path: $path")
+        @info("Opening case at path: $path")
         escaped_path = replace(path, "\\" => "\\\\")
         println(buffer, "            Case(\"$escaped_path\"),")
     end
