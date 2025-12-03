@@ -12,7 +12,7 @@ end
 macro if_expression_has_no_data_return_null(expr)
     return quote
         if !has_data($(esc(expr)))
-            @debug "Expression has no data"
+            @info "Expression has no data"
             return ExpressionNull()
         end
     end
