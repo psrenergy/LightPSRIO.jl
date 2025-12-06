@@ -65,6 +65,6 @@ function convert_unit2(from_unit::String, to_unit::String)
     t = uparse(adjusted_to; unit_context=[Unitful, LightPSRIO])
 
     # Convert 1 unit from source to target and return the conversion factor
-    c = uconvert(t, 1.0f)
+    c = uconvert(t, 1.0 * f)
     return Float64(ustrip(c))
 end
