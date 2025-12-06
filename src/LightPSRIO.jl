@@ -13,7 +13,9 @@ using Quiver
 using Statistics
 using UnitConverter
 using UUIDs
-using Unitful: @unit, Quantity, NoDims, @u_str, uconvert, ustrip
+
+import Unitful
+using Unitful: @unit, Quantity, NoDims, @u_str, uconvert, ustrip, uparse
 
 import Patchwork
 
