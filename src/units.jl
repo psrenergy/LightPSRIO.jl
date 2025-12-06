@@ -51,3 +51,16 @@ function levenshtein(
         end
     end
 end
+
+const UNITS_ADJUSTMENTS = Dict(
+    "hour" => "hr",
+)
+
+function convert_unit2(from_unit::String, to_unit::String)
+    @show get(UNITS_ADJUSTMENTS, from_unit, from_unit)
+    @show get(UNITS_ADJUSTMENTS, to_unit, to_unit)
+    @show f = uparse(get(UNITS_ADJUSTMENTS, from_unit, from_unit))
+    @show t = uparse(get(UNITS_ADJUSTMENTS, to_unit, to_unit))
+    @show c = uconvert(f, 1t)
+    return Float64(1 / c.val)
+end

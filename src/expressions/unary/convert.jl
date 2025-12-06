@@ -11,7 +11,7 @@ function ExpressionConvert(e1::AbstractExpression, unit::String)
     @debug "CONVERT: $(e1.attributes)"
 
     factor = try
-        convert_unit(1.0, e1.attributes.unit, unit)
+        convert_unit2(e1.attributes.unit, unit)
     catch e
         throw(ArgumentError("Cannot convert from unit '$(e1.attributes.unit)' to unit '$(unit)'."))
     end

@@ -93,11 +93,13 @@ function resolve_units(e::AbstractExpression)
 
     for to_unit in FAVORITE_UNITS
         try
-            factor = convert_unit(1.0, from_unit, to_unit)
+            println("Trying to convert from '$from_unit' to '$to_unit'")
+            factor = convert_unit2(from_unit, to_unit)
             gap = abs(factor - 1.0)
             distance = levenshtein(from_unit, to_unit)
             push!(factors, (gap, distance, factor, to_unit))
-        catch
+        catch e
+            @show e
         end
     end
 

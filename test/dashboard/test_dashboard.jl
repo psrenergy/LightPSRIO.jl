@@ -4,6 +4,7 @@ using Dates
 using LightPSRIO
 using Quiver
 using Test
+using Unitful
 
 include("../conftest.jl")
 

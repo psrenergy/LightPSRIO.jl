@@ -13,8 +13,11 @@ using Quiver
 using Statistics
 using UnitConverter
 using UUIDs
+using Unitful: @unit, Quantity, NoDims, @u_str, uconvert, ustrip
 
 import Patchwork
+
+@unit GWh "GWh" GigawattHour 1u"GW" * 1u"hr" false
 
 const FAVORITE_UNITS = Set([
     "MWh",
@@ -74,5 +77,9 @@ include("dashboard/dashboard.jl")
 
 # lua state
 include("state.jl")
+
+function __init__()
+    Unitful.register(LightPSRIO)
+end
 
 end
