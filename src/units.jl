@@ -52,19 +52,12 @@ function levenshtein(
     end
 end
 
-const UNITS_ADJUSTMENTS = Dict(
-    "hour" => "hr",
-)
-
-function convert_unit2(from_unit::String, to_unit::String)
-    adjusted_from = get(UNITS_ADJUSTMENTS, from_unit, from_unit)
-    adjusted_to = get(UNITS_ADJUSTMENTS, to_unit, to_unit)
-
+function convert_unit2(from_unit_string::String, to_unit_string::String)
     # Parse units with both Unitful and LightPSRIO module context for custom units like GWh
-    f = uparse(adjusted_from; unit_context=[Unitful, LightPSRIO])
-    t = uparse(adjusted_to; unit_context=[Unitful, LightPSRIO])
+    from_unit = uparse(from_unit_string; unit_context=[Unitful, LightPSRIO])
+    to_unit = uparse(to_unit_string; unit_context=[Unitful, LightPSRIO])
 
     # Convert 1 unit from source to target and return the conversion factor
-    c = uconvert(t, 1.0 * f)
-    return Float64(ustrip(c))
+    converted = uconvert(to_unit, 1.0 * from_unit)
+    return Float64(ustrip(converted))
 end

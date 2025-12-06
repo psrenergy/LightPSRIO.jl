@@ -12,7 +12,7 @@ include("../../conftest.jl")
     setup_tests(
         create_quiver("input1"; n_stages = 2, n_scenarios = 2, n_blocks = 2, constant = 2.0, frequency = "month", unit = "GWh"),
         create_quiver("input2"; n_stages = 2, n_scenarios = 2, n_blocks = 2, constant = 2.0, frequency = "month", unit = "MW"),
-        create_quiver("input3"; n_stages = 2, n_scenarios = 2, n_blocks = 2, constant = 2.0, frequency = "month", unit = "hr"),
+        create_quiver("input3"; n_stages = 2, n_scenarios = 2, n_blocks = 2, constant = 2.0, frequency = "month", unit = "hour"),
     ) do L
         LightPSRIO.run_script(
             L,
