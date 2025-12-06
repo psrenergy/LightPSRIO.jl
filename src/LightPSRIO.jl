@@ -11,7 +11,6 @@ using Printf
 using PSRDates
 using Quiver
 using Statistics
-using UnitConverter
 using UUIDs
 
 import Unitful
@@ -81,9 +80,5 @@ include("dashboard/dashboard.jl")
 
 # lua state
 include("state.jl")
-
-function __init__()
-    Unitful.register(LightPSRIO)
-end
 
 end
