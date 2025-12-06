@@ -8,9 +8,7 @@
       "Bash(/dev/null)",
       "Bash(formatformat.bat)",
       "Bash(cat:*)",
-      "Bash(test\\test.bat:*)",
-      "Bash(findstr:*)",
-      "Bash(timeout /t 35)"
+      "Bash(test\\test.bat:*)"
     ],
     "deny": [],
     "ask": []
