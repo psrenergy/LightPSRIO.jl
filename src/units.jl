@@ -57,10 +57,14 @@ const UNITS_ADJUSTMENTS = Dict(
 )
 
 function convert_unit2(from_unit::String, to_unit::String)
-    @show get(UNITS_ADJUSTMENTS, from_unit, from_unit)
-    @show get(UNITS_ADJUSTMENTS, to_unit, to_unit)
-    @show f = uparse(get(UNITS_ADJUSTMENTS, from_unit, from_unit))
-    @show t = uparse(get(UNITS_ADJUSTMENTS, to_unit, to_unit))
-    @show c = uconvert(f, 1t)
-    return Float64(1 / c.val)
+    adjusted_from = get(UNITS_ADJUSTMENTS, from_unit, from_unit)
+    adjusted_to = get(UNITS_ADJUSTMENTS, to_unit, to_unit)
+
+    # Parse units with both Unitful and LightPSRIO module context for custom units like GWh
+    f = uparse(adjusted_from; unit_context=[Unitful, LightPSRIO])
+    t = uparse(adjusted_to; unit_context=[Unitful, LightPSRIO])
+
+    # Convert 1 unit from source to target and return the conversion factor
+    c = uconvert(t, 1.0f)
+    return Float64(ustrip(c))
 end
