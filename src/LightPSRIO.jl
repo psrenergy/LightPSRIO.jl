@@ -11,10 +11,16 @@ using Printf
 using PSRDates
 using Quiver
 using Statistics
-using UnitConverter
 using UUIDs
 
+import Unitful
+using Unitful: @unit, Quantity, NoDims, @u_str, uconvert, ustrip, uparse
+
 import Patchwork
+
+@unit MWh "MWh" MegawattHour 1u"MW" * 1u"hr" false
+@unit GWh "GWh" GigawattHour 1u"GW" * 1u"hr" false
+@unit hour "hour" hr 3600u"s" false
 
 const FAVORITE_UNITS = Set([
     "MWh",

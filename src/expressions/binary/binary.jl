@@ -88,7 +88,7 @@ mutable struct ExpressionBinary{F <: Function} <: AbstractBinary
                 unit = a1.unit
             else
                 try
-                    factor = convert_unit(1.0, a2.unit, a1.unit)
+                    factor = convert_unit(a2.unit, a1.unit)
                     unit = a1.unit
                 catch
                     throw(ArgumentError("Cannot unify units '$(a1.unit)' and '$(a2.unit)'."))

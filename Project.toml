@@ -15,17 +15,16 @@ Printf = "de0858da-6303-5e67-8744-51eddeeeb8d7"
 Quiver = "cdbb3f72-2527-4dbd-9d0e-93533a5519ac"
 Statistics = "10745b16-79ce-11e8-11f9-7d13ad32a3b2"
 UUIDs = "cf7118a7-6976-5b1a-9a39-7adc72f591a4"
-UnitConverter = "9a1eac57-3412-4948-b4ec-4c8050addad8"
+Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
 
 [sources]
 PSRDates = {url = "https://github.com/psrenergy/PSRDates.jl"}
-UnitConverter = {url = "https://github.com/raphasampaio/UnitConverter.jl"}
 
 [compat]
 ArgParse = "1"
 JSON = "0.21, 1.0"
 Patchwork = "0.1.4"
-UnitConverter = "0.1.0"
+Unitful = "1.25.1"
 julia = "1.11"
 
 [extras]

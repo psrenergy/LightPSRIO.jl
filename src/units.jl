@@ -51,3 +51,13 @@ function levenshtein(
         end
     end
 end
+
+function convert_unit(from_unit_string::String, to_unit_string::String)
+    # Parse units with both Unitful and LightPSRIO module context for custom units like GWh
+    from_unit = uparse(from_unit_string; unit_context = [Unitful, LightPSRIO])
+    to_unit = uparse(to_unit_string; unit_context = [Unitful, LightPSRIO])
+
+    # Convert 1 unit from source to target and return the conversion factor
+    converted = uconvert(to_unit, 1.0 * from_unit)
+    return Float64(ustrip(converted))
+end
