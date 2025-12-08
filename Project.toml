@@ -22,6 +22,7 @@ url = "https://github.com/psrenergy/PSRDates.jl"
 
 [compat]
 ArgParse = "1"
+EnumX = "1"
 JSON = "0.21, 1.0"
 LuaNova = "0.1"
 Patchwork = "0.1.4"
