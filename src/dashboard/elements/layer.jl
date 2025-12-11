@@ -10,7 +10,7 @@ abstract type AbstractLayer end
 end
 
 function add(layer::Layer1, time_dimension::Integer, value::Real)
-    epoch = PSRDates.stage_to_epoch(layer.date_reference, time_dimension)
+    epoch = DatesUtils.stage_to_epoch(layer.date_reference, time_dimension)
     push!(layer.values, (epoch, value))
     return nothing
 end
@@ -29,7 +29,7 @@ end
 end
 
 function add(layer::Layer2, time_dimension::Integer, value1::Real, value2::Real)
-    epoch = PSRDates.stage_to_epoch(layer.date_reference, time_dimension)
+    epoch = DatesUtils.stage_to_epoch(layer.date_reference, time_dimension)
     push!(layer.values, (epoch, value1, value2))
     return nothing
 end

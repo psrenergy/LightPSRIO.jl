@@ -8,7 +8,7 @@ using JSON
 using Logging
 using LuaNova
 using Printf
-using PSRDates
+using PSRDatabase.DatesUtils
 using Quiver
 using Statistics
 using UUIDs
