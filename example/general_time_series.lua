@@ -5,7 +5,7 @@ local configurations = {
     -- "400h_60t_400s_100o_6p",
     -- "800h_60t_400s_100o_6p",
     -- "800h_60t_800s_100o_6p",
-    "40h_24t_40s_10o_6p_20i",
+    "800h_60t_400s_100o_6p_30i",
 };
 
 -- local models = {
@@ -64,16 +64,16 @@ local configurations = {
 
 local models = {
     "parp",
-    -- "heavy_tailed",
-    -- "long_memory",
+    "heavy_tailed",
+    "long_memory",
 };
 
 local strategies = {
     "yearly_wise",
     -- "yearly_wise_read_historical_data",
-    -- "stage_wise_k1",
-    -- "stage_wise_k3",
-    -- "stage_wise_k5",
+    "stage_wise_k1",
+    "stage_wise_k3",
+    "stage_wise_k5",
     -- "stage_wise_k7",
 };
 
@@ -267,6 +267,27 @@ local function tab_cost_analysis()
     return tab;
 end
 
+local function tab_convergence_analysis()
+    local tab = Tab("Convergence Analysis");
+
+    for _, configuration in ipairs(configurations) do
+        for _, model in ipairs(models) do
+            for _, strategy in ipairs(strategies) do
+                local label = configuration .. "/" .. model .. "_" .. strategy;
+
+                local chart = Chart("Convergence - " .. label);
+
+                local training_progress = generic:load(label .. "/results/training_progress");
+                chart:add("line", training_progress:select_agents({ 1 }));
+                chart:add("line", training_progress:select_agents({ 2 }));
+                tab:push(chart);
+            end
+        end
+    end
+
+    return tab;
+end
+
 local function tab_demand_analysis()
     local tab = Tab("Demand Analysis");
 
@@ -447,6 +468,7 @@ end
 local dashboard = Dashboard("PSR");
 dashboard:push(tab_demand_analysis());
 dashboard:push(tab_cost_analysis());
+dashboard:push(tab_convergence_analysis());
 for agent = 1, 1 do
     dashboard:push(tab_hydro_analysis(agent));
     dashboard:push(tab_thermal_analysis(agent));
