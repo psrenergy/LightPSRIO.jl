@@ -71,7 +71,7 @@ local models = {
 
 local strategies = {
     "yearly_wise",
-    -- "yearly_wise_read_historical_data",
+    "yearly_wise_read_historical_data",
     -- "stage_wise_k1",
     "stage_wise_k3",
     -- "stage_wise_k5",
