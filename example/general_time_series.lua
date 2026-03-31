@@ -5,7 +5,8 @@ local configurations = {
     -- "400h_60t_400s_100o_6p",
     -- "800h_60t_400s_100o_6p",
     -- "800h_60t_800s_100o_6p",
-    "800h_60t_400s_100o_6p_30i",
+    -- "800h_60t_400s_100o_6p_30i",
+    "40h_24t_40s_10o_6p_10i",
 };
 
 -- local models = {
@@ -64,16 +65,16 @@ local configurations = {
 
 local models = {
     "parp",
-    "heavy_tailed",
-    "long_memory",
+    -- "heavy_tailed",
+    -- "long_memory",
 };
 
 local strategies = {
     "yearly_wise",
     -- "yearly_wise_read_historical_data",
-    "stage_wise_k1",
+    -- "stage_wise_k1",
     "stage_wise_k3",
-    "stage_wise_k5",
+    -- "stage_wise_k5",
     -- "stage_wise_k7",
 };
 
