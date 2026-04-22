@@ -1,12 +1,28 @@
 local generic = Generic();
 
 local configurations = {
-    -- "400h_60t_200s_100o_6p",
-    -- "400h_60t_400s_100o_6p",
-    -- "800h_60t_400s_100o_6p",
-    -- "800h_60t_800s_100o_6p",
-    -- "800h_60t_400s_100o_6p_30i",
-    "40h_24t_40s_10o_6p_10i",
+    -- -- "400h_24t_50s_50o_6p_20i",    
+    -- -- "400h_24t_50s_50o_1p_20i",
+    -- -- "800h_60t_100s_100o_1p_20i",
+    -- "800h_60t_100s_100o_6p_20i",
+    -- -- "400h_60t_50s_50o_6p_20i",
+    -- -- "1600h_60t_200s_200o_6p_20i",
+    -- "1600h_60t_200s_200o_6p_100i",
+    -- -- "24h_12t_5s_5o_1p_20i",
+    -- "2000h_60t_500s_500o_6p_100i",
+    -- -- "24h_12t_5s_5o_1p_20i",
+    -- -- "10h_2t_5s_5o_1p_10i",
+    -- "2000h_60t_400s_400o_6p_100i",
+    -- "1000h_60t_100s_100o_6p_200i",
+    -- "2000h_60t_200s_200o_6p_200i",
+    -- "1000h_60t_100s_100o_6p_200i",
+    -- "1600h_60t_200s_200o_6p_20i",
+    -- "1600h_60t_200s_200o_6p_100i",
+    -- "2000h_60t_200s_200o_6p_200i",
+    "2000h_60t_300s_300o_6p_200i",
+    -- "2000h_60t_400s_400o_6p_100i",
+    -- "2000h_60t_500s_500o_6p_100i",
+    -- "800h_60t_100s_100o_6p_20i",
 };
 
 -- local models = {
@@ -64,17 +80,23 @@ local configurations = {
 -- };
 
 local models = {
-    "parp",
+    -- "parp",
     -- "heavy_tailed",
     -- "long_memory",
+    -- "parp",
+    -- "climate_trend",
+    "heavy_tailed",
+    -- "long_memory",
+    -- "msar",
+    -- "seasonal_arma",
 };
 
 local strategies = {
     "yearly_wise",
-    "yearly_wise_read_historical_data",
-    -- "stage_wise_k1",
+    -- -- "yearly_wise_read_historical_data",
+    "stage_wise_k1",
     "stage_wise_k3",
-    -- "stage_wise_k5",
+    "stage_wise_k5",
     -- "stage_wise_k7",
 };
 

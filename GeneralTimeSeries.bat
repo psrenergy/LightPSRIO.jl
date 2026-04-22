@@ -1,5 +1,5 @@
 @echo off
 
-SET BASEPATH=%~dp0
+SET BASE_PATH=%~dp0
 
-CALL LightPSRIO.bat C:\Development\SIAM\GeneralTimeSeriesApproximationInSDDP.jl\data C:\Development\SIAM\LightPSRIO.jl\example\general_time_series.lua
+CALL LightPSRIO.bat C:\Development\SIAM2\SIAM26\GeneralTimeSeriesApproximationInSDDP.jl\results %BASE_PATH%example\general_time_series.lua

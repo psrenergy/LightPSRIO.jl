@@ -3,8 +3,7 @@ Pkg.instantiate()
 
 using LightPSRIO
 
-path = raw"C:\Development\SIAM\GeneralTimeSeriesApproximationInSDDP.jl\data"
-# path = raw"C:\Development\SIAM\GeneralTimeSeriesApproximationInSDDP.jl\results"
+path = raw"C:\Development\SIAM2\SIAM26\GeneralTimeSeriesApproximationInSDDP.jl\data"
 script_path = raw"C:\Development\SIAM\LightPSRIO.jl\example\general_time_series.lua"
 
 L = LightPSRIO.initialize([path])
