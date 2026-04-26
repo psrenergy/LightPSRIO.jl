@@ -19,85 +19,26 @@ local configurations = {
     -- "1600h_60t_200s_200o_6p_20i",
     -- "1600h_60t_200s_200o_6p_100i",
     -- "2000h_60t_200s_200o_6p_200i",
-    "2000h_60t_300s_300o_6p_200i",
+    -- "2000h_60t_300s_300o_6p_200i",
     -- "2000h_60t_400s_400o_6p_100i",
     -- "2000h_60t_500s_500o_6p_100i",
     -- "800h_60t_100s_100o_6p_20i",
+    "2000h_36t_100s_100o_6p_25i",
 };
 
--- local models = {
---     "parp",
---     -- "auto_arima",
---     "seasonal_avg",
---     -- "seasonal_naive",
---     -- "unobserved_components",
---     "regime_switching",
---     "threshold",
---     "heavy_tailed",
---     "time_varying_volatility",
---     "long_memory",
---     "jump_diffusion",
---     "seasonal_regime_switching",
---     "copula",
---     "mixture",
---     -- "par_stochastic_volatility",
---     "levy_process",
---     "charr",
---     "hidden_markov",
--- };
-
--- local models = {
---     "parp",
---     -- "auto_arima",
---     -- "seasonal_avg",
---     -- "seasonal_naive",
---     -- "unobserved_components",
---     "regime_switching",
---     "threshold",
---     "heavy_tailed",
---     "time_varying_volatility",
---     "long_memory",
---     -- "jump_diffusion",
---     -- "seasonal_regime_switching",
---     -- "copula",
---     -- "mixture",
---     -- "par_stochastic_volatility",
---     "levy_process",
---     "charr",
---     -- "hidden_markov",
--- };
-
--- local models = {
---     "parp",
---     -- "regime_switching",
---     -- "threshold",
---     "heavy_tailed",
---     -- "time_varying_volatility",
---     "long_memory",
---     -- "levy_process",
---     -- "charr",
---     -- "extreme_events",
--- };
-
 local models = {
-    -- "parp",
-    -- "heavy_tailed",
-    -- "long_memory",
-    -- "parp",
-    -- "climate_trend",
+    "parp",
     "heavy_tailed",
-    -- "long_memory",
-    -- "msar",
-    -- "seasonal_arma",
+    "long_memory",
+    "msar",
 };
 
 local strategies = {
-    "yearly_wise",
-    -- -- "yearly_wise_read_historical_data",
-    "stage_wise_k1",
-    "stage_wise_k3",
-    "stage_wise_k5",
-    -- "stage_wise_k7",
+    "yearly_wise_0.1.7",
+    "stage_wise_k1_0.1.7",
+    "stage_wise_k2_0.1.7",
+    "stage_wise_k3_0.1.7",
+    "stage_wise_k4_0.1.7",
 };
 
 local colours = {
@@ -488,12 +429,85 @@ local function tab_thermal_analysis(agent)
     return tab;
 end
 
+local function tab_seasonal_stats_analysis(agent)
+    local tab = Tab("Seasonal Stats (agent " .. agent .. ")");
+
+    local files = {
+        { name = "Seasonal Mean - Train",    path = "/inflow_scenarios_seasonal_mean_train" },
+        { name = "Seasonal Mean - Simulate", path = "/inflow_scenarios_seasonal_mean_simulate" },
+        { name = "Seasonal Std - Train",     path = "/inflow_scenarios_seasonal_std_train" },
+        { name = "Seasonal Std - Simulate",  path = "/inflow_scenarios_seasonal_std_simulate" },
+    };
+
+    for _, file in ipairs(files) do
+        for _, model in ipairs(models) do
+            local chart = Chart(file.name .. " - " .. model);
+
+            local i = 1;
+            for _, configuration in ipairs(configurations) do
+                for _, strategy in ipairs(strategies) do
+                    local label = configuration .. "/" .. model .. "_" .. strategy;
+
+                    local data = generic:load(label .. file.path);
+                    data = data:select_agents({ agent });
+                    data = data:rename_agents({ label });
+                    chart:add("line", data, { color = colours[i] });
+                    i = i + 1;
+                end
+            end
+            tab:push(chart);
+        end
+    end
+
+    return tab;
+end
+
+local function get_k_from_strategy(strategy)
+    local k = string.match(strategy, "stage_wise_k(%d+)");
+    if k == nil then
+        return 0;
+    end
+    return tonumber(k);
+end
+
+local function add_cluster_chart(tab, label, filename, title_suffix, n_clusters)
+    local chart = Chart("Cluster sizes - " .. label .. title_suffix);
+    local data = generic:load(label .. "/" .. filename);
+    for cluster = 1, n_clusters do
+        local series = data:select_agents({ cluster });
+        series = series:rename_agents({ "cluster_" .. cluster });
+        chart:add("area_stacking", series, { color = colours[cluster] });
+    end
+    tab:push(chart);
+end
+
+local function tab_clustering_analysis()
+    local tab = Tab("Clustering Analysis");
+
+    for _, configuration in ipairs(configurations) do
+        for _, model in ipairs(models) do
+            for _, strategy in ipairs(strategies) do
+                local k = get_k_from_strategy(strategy);
+                if k > 0 then
+                    local label = configuration .. "/" .. model .. "_" .. strategy;
+                    add_cluster_chart(tab, label, "inflow_cluster_counts_train", " (train)", k);
+                    add_cluster_chart(tab, label, "inflow_cluster_counts_simulate", " (simulate)", k);
+                end
+            end
+        end
+    end
+
+    return tab;
+end
+
 local dashboard = Dashboard("PSR");
 dashboard:push(tab_demand_analysis());
 dashboard:push(tab_cost_analysis());
 dashboard:push(tab_convergence_analysis());
+dashboard:push(tab_clustering_analysis());
 for agent = 1, 1 do
     dashboard:push(tab_hydro_analysis(agent));
     dashboard:push(tab_thermal_analysis(agent));
+    dashboard:push(tab_seasonal_stats_analysis(agent));
 end
 dashboard:save("dashboard");
