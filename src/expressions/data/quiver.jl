@@ -7,7 +7,7 @@ end
 
 function ExpressionDataQuiver(path::String, filename::String)
     try
-        reader = Quiver.Reader{Quiver.binary}(joinpath(path, filename))
+        reader = Quiver.Reader{Quiver.binary}(normpath(joinpath(path, filename)))
         attributes = Attributes(reader)
         @info("Loading $filename ($attributes)")
         Quiver.close!(reader)
@@ -22,7 +22,7 @@ end
 
 function start!(e::ExpressionDataQuiver)
     if has_data(e)
-        e.reader = Quiver.Reader{Quiver.binary}(joinpath(e.path, e.filename))
+        e.reader = Quiver.Reader{Quiver.binary}(normpath(joinpath(e.path, e.filename)))
     end
     return nothing
 end

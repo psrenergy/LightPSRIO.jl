@@ -1,7 +1,7 @@
 local generic = Generic();
 
 local configurations = {
-    -- -- "400h_24t_50s_50o_6p_20i",    
+    -- -- "400h_24t_50s_50o_6p_20i",
     -- -- "400h_24t_50s_50o_1p_20i",
     -- -- "800h_60t_100s_100o_1p_20i",
     -- "800h_60t_100s_100o_6p_20i",
@@ -34,12 +34,16 @@ local models = {
 };
 
 local strategies = {
-    "yearly_wise_0.1.7",
-    "stage_wise_k1_0.1.7",
-    "stage_wise_k2_0.1.7",
-    "stage_wise_k3_0.1.7",
-    "stage_wise_k4_0.1.7",
+    "yearly_wise",
+    "stage_wise_k1",
+    "stage_wise_k2",
+    "stage_wise_k3",
+    "stage_wise_k4",
 };
+
+local versions = {
+    "0.1.7",
+}
 
 local colours = {
     "#ff0029", "#377eb8", "#66a61e", "#984ea3",
@@ -77,13 +81,15 @@ local function add_percentile_to_tab(tab, title, filename, agent)
         local i = 1;
         for _, configuration in ipairs(configurations) do
             for _, strategy in ipairs(strategies) do
-                local label = configuration .. "/" .. model .. "_" .. strategy;
+                for _, version in ipairs(versions) do
+                    local label = configuration .. "/" .. model .. "_" .. strategy .. "_" .. version;
 
-                local data = generic:load(label .. "/" .. filename);
-                data = data:select_agents({ agent });
-                data = data:rename_agents({ label });
-                add_percentile(chart, data, colours[i]);
-                i = i + 1;
+                    local data = generic:load(label .. "/" .. filename);
+                    data = data:select_agents({ agent });
+                    data = data:rename_agents({ label });
+                    add_percentile(chart, data, colours[i]);
+                    i = i + 1;
+                end
             end
         end
         tab:push(chart);
@@ -95,8 +101,11 @@ local function get_years(filename)
     for _, model in ipairs(models) do
         for _, configuration in ipairs(configurations) do
             for _, strategy in ipairs(strategies) do
-                local data = generic:load(configuration .. "/" .. model .. "_" .. strategy .. "/" .. filename);
-                years = math.max(years, data:get_years());
+                for _, version in ipairs(versions) do
+                    local label = configuration .. "/" .. model .. "_" .. strategy .. "_" .. version;
+                    local data = generic:load(label .. "/" .. filename);
+                    years = math.max(years, data:get_years());
+                end
             end
         end
     end
@@ -112,13 +121,15 @@ local function tab_cost_analysis()
         local i = 1;
         for _, configuration in ipairs(configurations) do
             for _, strategy in ipairs(strategies) do
-                local label = configuration .. "/" .. model .. "_" .. strategy
+                for _, version in ipairs(versions) do
+                    local label = configuration .. "/" .. model .. "_" .. strategy .. "_" .. version;
 
-                local data = generic:load(label .. "/results/costs_by_category");
-                data = data:select_agents({ 1 });
-                data = data:rename_agents({ label });
-                add_percentile(chart, data, colours[i]);
-                i = i + 1;
+                    local data = generic:load(label .. "/results/costs_by_category");
+                    data = data:select_agents({ 1 });
+                    data = data:rename_agents({ label });
+                    add_percentile(chart, data, colours[i]);
+                    i = i + 1;
+                end
             end
         end
         tab:push(chart);
@@ -128,14 +139,16 @@ local function tab_cost_analysis()
     for i, model in ipairs(models) do
         for _, configuration in ipairs(configurations) do
             for _, strategy in ipairs(strategies) do
-                local label = configuration .. "/" .. model .. "_" .. strategy;
+                for _, version in ipairs(versions) do
+                    local label = configuration .. "/" .. model .. "_" .. strategy .. "_" .. version;
 
-                local data = generic:load(label .. "/results/costs_by_category");
-                data = data:select_agents({ 2 });
-                data = data:rename_agents({ label });
-                data = data:aggregate("scenario", BY_AVERAGE());
-                data = data:aggregate("stage", BY_SUM());
-                chart:add("column", data, { color = colours[i] });
+                    local data = generic:load(label .. "/results/costs_by_category");
+                    data = data:select_agents({ 2 });
+                    data = data:rename_agents({ label });
+                    data = data:aggregate("scenario", BY_AVERAGE());
+                    data = data:aggregate("stage", BY_SUM());
+                    chart:add("column", data, { color = colours[i] });
+                end
             end
         end
     end
@@ -182,13 +195,15 @@ local function tab_cost_analysis()
         local i = 1;
         for _, configuration in ipairs(configurations) do
             for _, strategy in ipairs(strategies) do
-                local label = configuration .. "/" .. model .. "_" .. strategy;
+                for _, version in ipairs(versions) do
+                    local label = configuration .. "/" .. model .. "_" .. strategy .. "_" .. version;
 
-                local data = generic:load(label .. "/results/costs_by_category");
-                data = data:select_agents({ 2 });
-                data = data:rename_agents({ label });
-                add_percentile(chart, data, colours[i]);
-                i = i + 1;
+                    local data = generic:load(label .. "/results/costs_by_category");
+                    data = data:select_agents({ 2 });
+                    data = data:rename_agents({ label });
+                    add_percentile(chart, data, colours[i]);
+                    i = i + 1;
+                end
             end
         end
         tab:push(chart);
@@ -200,12 +215,14 @@ local function tab_cost_analysis()
         local i = 1;
         for _, configuration in ipairs(configurations) do
             for _, strategy in ipairs(strategies) do
-                local label = configuration .. "/" .. model .. "_" .. strategy;
+                for _, version in ipairs(versions) do
+                    local label = configuration .. "/" .. model .. "_" .. strategy .. "_" .. version;
 
-                local data = generic:load(label .. "/results/load_marginal_cost");
-                data = data:aggregate_agents(BY_AVERAGE(), label);
-                add_percentile(chart, data, colours[i]);
-                i = i + 1;
+                    local data = generic:load(label .. "/results/load_marginal_cost");
+                    data = data:aggregate_agents(BY_AVERAGE(), label);
+                    add_percentile(chart, data, colours[i]);
+                    i = i + 1;
+                end
             end
         end
         tab:push(chart);
@@ -217,12 +234,14 @@ local function tab_cost_analysis()
         local i = 1;
         for _, configuration in ipairs(configurations) do
             for _, strategy in ipairs(strategies) do
-                local label = configuration .. "/" .. model .. "_" .. strategy;
+                for _, version in ipairs(versions) do
+                    local label = configuration .. "/" .. model .. "_" .. strategy .. "_" .. version;
 
-                local data = generic:load(label .. "/results/deficit");
-                data = data:aggregate_agents(BY_AVERAGE(), label);
-                add_percentile(chart, data, colours[i]);
-                i = i + 1;
+                    local data = generic:load(label .. "/results/deficit");
+                    data = data:aggregate_agents(BY_AVERAGE(), label);
+                    add_percentile(chart, data, colours[i]);
+                    i = i + 1;
+                end
             end
         end
         tab:push(chart);
@@ -237,14 +256,16 @@ local function tab_convergence_analysis()
     for _, configuration in ipairs(configurations) do
         for _, model in ipairs(models) do
             for _, strategy in ipairs(strategies) do
-                local label = configuration .. "/" .. model .. "_" .. strategy;
+                for _, version in ipairs(versions) do
+                    local label = configuration .. "/" .. model .. "_" .. strategy .. "_" .. version;
 
-                local chart = Chart("Convergence - " .. label);
+                    local chart = Chart("Convergence - " .. label);
 
-                local training_progress = generic:load(label .. "/results/training_progress");
-                chart:add("line", training_progress:select_agents({ 1 }));
-                chart:add("line", training_progress:select_agents({ 2 }));
-                tab:push(chart);
+                    local training_progress = generic:load(label .. "/results/training_progress");
+                    chart:add("line", training_progress:select_agents({ 1 }));
+                    chart:add("line", training_progress:select_agents({ 2 }));
+                    tab:push(chart);
+                end
             end
         end
     end
@@ -258,31 +279,33 @@ local function tab_demand_analysis()
     for _, configuration in ipairs(configurations) do
         for _, model in ipairs(models) do
             for _, strategy in ipairs(strategies) do
-                local label = configuration .. "/" .. model .. "_" .. strategy;
+                for _, version in ipairs(versions) do
+                    local label = configuration .. "/" .. model .. "_" .. strategy .. "_" .. version;
 
-                local chart = Chart("Balance - " .. label);
+                    local chart = Chart("Balance - " .. label);
 
-                local data = generic:load(label .. "/results/demand");
-                data = data:aggregate_agents(BY_SUM(), "Total Demand");
-                data = data:aggregate("scenario", BY_AVERAGE());
-                chart:add("line", data, { color = "orange" });
+                    local data = generic:load(label .. "/results/demand");
+                    data = data:aggregate_agents(BY_SUM(), "Total Demand");
+                    data = data:aggregate("scenario", BY_AVERAGE());
+                    chart:add("line", data, { color = "orange" });
 
-                local data = generic:load(label .. "/results/hydro_generation");
-                data = data:aggregate_agents(BY_SUM(), "Total Hydro")
-                data = data:aggregate("scenario", BY_AVERAGE());
-                chart:add("area_stacking", data, { color = "blue" });
+                    local data = generic:load(label .. "/results/hydro_generation");
+                    data = data:aggregate_agents(BY_SUM(), "Total Hydro")
+                    data = data:aggregate("scenario", BY_AVERAGE());
+                    chart:add("area_stacking", data, { color = "blue" });
 
-                local data = generic:load(label .. "/results/thermal_generation");
-                data = data:aggregate_agents(BY_SUM(), "Total Thermal");
-                data = data:aggregate("scenario", BY_AVERAGE());
-                chart:add("area_stacking", data, { color = "red" });
+                    local data = generic:load(label .. "/results/thermal_generation");
+                    data = data:aggregate_agents(BY_SUM(), "Total Thermal");
+                    data = data:aggregate("scenario", BY_AVERAGE());
+                    chart:add("area_stacking", data, { color = "red" });
 
-                local data = generic:load(label .. "/results/deficit");
-                data = data:aggregate_agents(BY_SUM(), "Total Deficit");
-                data = data:aggregate("scenario", BY_AVERAGE());
-                chart:add("area_stacking", data, { color = "black" });
+                    local data = generic:load(label .. "/results/deficit");
+                    data = data:aggregate_agents(BY_SUM(), "Total Deficit");
+                    data = data:aggregate("scenario", BY_AVERAGE());
+                    chart:add("area_stacking", data, { color = "black" });
 
-                tab:push(chart);
+                    tab:push(chart);
+                end
             end
         end
     end
@@ -294,7 +317,12 @@ local function tab_hydro_analysis(agent)
     local tab = Tab("Hydro Analysis (agent " .. agent .. ")");
 
     local real = generic
-        :load(configurations[1] .. "/" .. models[1] .. "_" .. strategies[1] .. "/inflow_real_historical")
+        :load(
+            configurations[1] .. "/" ..
+            models[1] .. "_" ..
+            strategies[1] .. "_" ..
+            versions[1] .. "/inflow_real_historical"
+        )
         :select_agents({ agent })
         :rename_agents({ "real historical" });
 
@@ -311,37 +339,17 @@ local function tab_hydro_analysis(agent)
     chart:add("line", real);
     tab:push(chart);
 
-    local fake_years = get_years("inflow_fake_historical");
-
-    -- local chart = Chart("Fake Historical Data");
-    -- -- chart:add(
-    -- --     "area_range",
-    -- --     real_min:replicate("stage", fake_years):set_initial_year(1813),
-    -- --     real_max:replicate("stage", fake_years):set_initial_year(1813),
-    -- --     { fillOpacity = 0.4, color = "gray" }
-    -- -- );
-    -- for _, model in ipairs(models) do
-    --     for _, configuration in ipairs(configurations) do
-    --         for _, strategy in ipairs(strategies) do
-    --             local label = configuration .. "/" .. model .. "_" .. strategy;
-
-    --             local data = generic:load(label .. "/inflow_fake_historical");
-    --             data = data:select_agents({ agent });
-    --             data = data:rename_agents({ label });
-    --             chart:add("line", data);
-    --         end
-    --     end
-    -- end
-    -- tab:push(chart);
-
     local chart = Chart("Fake Historical Data");
     for _, model in ipairs(models) do
         for _, configuration in ipairs(configurations) do
             for _, strategy in ipairs(strategies) do
-                local data = generic:load(configuration .. "/" .. model .. "_" .. strategy .. "/inflow_fake_historical");
-                data = data:select_agents({ agent });
-                data = data:rename_agents({ configuration .. "/" .. model .. "_" .. strategy });
-                chart:add("line", data);
+                for _, version in ipairs(versions) do
+                    local label = configuration .. "/" .. model .. "_" .. strategy .. "_" .. version;
+                    local data = generic:load(label .. "/inflow_fake_historical");
+                    data = data:select_agents({ agent });
+                    data = data:rename_agents({ configuration .. "/" .. model .. "_" .. strategy });
+                    chart:add("line", data);
+                end
             end
         end
     end
@@ -353,26 +361,28 @@ local function tab_hydro_analysis(agent)
         local i = 1;
         for _, configuration in ipairs(configurations) do
             for _, strategy in ipairs(strategies) do
-                local label = configuration .. "/" .. model .. "_" .. strategy;
+                for _, version in ipairs(versions) do
+                    local label = configuration .. "/" .. model .. "_" .. strategy .. "_" .. version;
 
-                local data = generic:load(label .. "/inflow_scenarios_train");
-                data = data:select_agents({ agent });
-                data = data:rename_agents({ label .. " - train (avg)" });
-                data = data:aggregate("scenario", BY_AVERAGE());
-                chart:add("line", data, { color = colours[i] });
+                    local data = generic:load(label .. "/inflow_scenarios_train");
+                    data = data:select_agents({ agent });
+                    data = data:rename_agents({ label .. " - train (avg)" });
+                    data = data:aggregate("scenario", BY_AVERAGE());
+                    chart:add("line", data, { color = colours[i] });
 
-                local data = generic:load(label .. "/inflow_scenarios_simulate");
-                data = data:select_agents({ agent });
-                data = data:rename_agents({ label .. " - simulate (avg)" });
-                data = data:aggregate("scenario", BY_AVERAGE());
-                chart:add("line", data, { color = colours[i] });
+                    local data = generic:load(label .. "/inflow_scenarios_simulate");
+                    data = data:select_agents({ agent });
+                    data = data:rename_agents({ label .. " - simulate (avg)" });
+                    data = data:aggregate("scenario", BY_AVERAGE());
+                    chart:add("line", data, { color = colours[i] });
 
-                local data = generic:load(label .. "/results/hydro_inflow");
-                data = data:select_agents({ agent });
-                data = data:rename_agents({ label .. " - result" });
-                add_percentile(chart, data, colours[i]);
+                    local data = generic:load(label .. "/results/hydro_inflow");
+                    data = data:select_agents({ agent });
+                    data = data:rename_agents({ label .. " - result" });
+                    add_percentile(chart, data, colours[i]);
 
-                i = i + 1;
+                    i = i + 1;
+                end
             end
         end
 
@@ -384,32 +394,36 @@ local function tab_hydro_analysis(agent)
     for _, model in ipairs(models) do
         for _, configuration in ipairs(configurations) do
             for _, strategy in ipairs(strategies) do
-                local label = configuration .. "/" .. model .. "_" .. strategy;
+                for _, version in ipairs(versions) do
+                    local label = configuration .. "/" .. model .. "_" .. strategy .. "_" .. version;
 
-                local data = generic:load(label .. "/results/hydro_initial_volume");
-                data = data:select_agents({ agent });
-                data = data:rename_agents({ label });
-                add_percentile(chart, data, colours[i]);
+                    local data = generic:load(label .. "/results/hydro_initial_volume");
+                    data = data:select_agents({ agent });
+                    data = data:rename_agents({ label });
+                    add_percentile(chart, data, colours[i]);
 
-                i = i + 1;
+                    i = i + 1;
+                end
             end
         end
     end
-    tab:push(chart);    
+    tab:push(chart);
 
     local chart = Chart("Final Volume");
     local i = 1;
     for _, model in ipairs(models) do
         for _, configuration in ipairs(configurations) do
             for _, strategy in ipairs(strategies) do
-                local label = configuration .. "/" .. model .. "_" .. strategy;
+                for _, version in ipairs(versions) do
+                    local label = configuration .. "/" .. model .. "_" .. strategy .. "_" .. version;
 
-                local data = generic:load(label .. "/results/hydro_final_volume");
-                data = data:select_agents({ agent });
-                data = data:rename_agents({ label });
-                add_percentile(chart, data, colours[i]);
+                    local data = generic:load(label .. "/results/hydro_final_volume");
+                    data = data:select_agents({ agent });
+                    data = data:rename_agents({ label });
+                    add_percentile(chart, data, colours[i]);
 
-                i = i + 1;
+                    i = i + 1;
+                end
             end
         end
     end
@@ -446,13 +460,15 @@ local function tab_seasonal_stats_analysis(agent)
             local i = 1;
             for _, configuration in ipairs(configurations) do
                 for _, strategy in ipairs(strategies) do
-                    local label = configuration .. "/" .. model .. "_" .. strategy;
+                    for _, version in ipairs(versions) do
+                        local label = configuration .. "/" .. model .. "_" .. strategy .. "_" .. version;
 
-                    local data = generic:load(label .. file.path);
-                    data = data:select_agents({ agent });
-                    data = data:rename_agents({ label });
-                    chart:add("line", data, { color = colours[i] });
-                    i = i + 1;
+                        local data = generic:load(label .. file.path);
+                        data = data:select_agents({ agent });
+                        data = data:rename_agents({ label });
+                        chart:add("line", data, { color = colours[i] });
+                        i = i + 1;
+                    end
                 end
             end
             tab:push(chart);
@@ -487,11 +503,13 @@ local function tab_clustering_analysis()
     for _, configuration in ipairs(configurations) do
         for _, model in ipairs(models) do
             for _, strategy in ipairs(strategies) do
-                local k = get_k_from_strategy(strategy);
-                if k > 0 then
-                    local label = configuration .. "/" .. model .. "_" .. strategy;
-                    add_cluster_chart(tab, label, "inflow_cluster_counts_train", " (train)", k);
-                    add_cluster_chart(tab, label, "inflow_cluster_counts_simulate", " (simulate)", k);
+                for _, version in ipairs(versions) do
+                    local k = get_k_from_strategy(strategy);
+                    if k > 0 then
+                        local label = configuration .. "/" .. model .. "_" .. strategy .. "_" .. version;
+                        add_cluster_chart(tab, label, "inflow_cluster_counts_train", " (train)", k);
+                        add_cluster_chart(tab, label, "inflow_cluster_counts_simulate", " (simulate)", k);
+                    end
                 end
             end
         end
@@ -508,6 +526,6 @@ dashboard:push(tab_clustering_analysis());
 for agent = 1, 1 do
     dashboard:push(tab_hydro_analysis(agent));
     dashboard:push(tab_thermal_analysis(agent));
-    dashboard:push(tab_seasonal_stats_analysis(agent));
+    -- dashboard:push(tab_seasonal_stats_analysis(agent));
 end
 dashboard:save("dashboard");

@@ -15,7 +15,7 @@ end
 @define_lua_function load
 
 function load_string(generic::Generic, filename::String)
-    path = joinpath(generic.path, filename)
+    path = normpath(joinpath(generic.path, filename))
     if !isfile(path)
         throw(ArgumentError("File '$filename' not found in case path."))
     end
