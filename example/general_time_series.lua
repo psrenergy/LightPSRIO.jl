@@ -23,7 +23,8 @@ local configurations = {
     -- "2000h_60t_400s_400o_6p_100i",
     -- "2000h_60t_500s_500o_6p_100i",
     -- "800h_60t_100s_100o_6p_20i",
-    "2000h_36t_100s_100o_6p_25i",
+    -- "2000h_36t_100s_100o_6p_25i",
+    "2000h_36t_100s_100o_6p_50i",
 };
 
 local models = {
@@ -65,6 +66,10 @@ local colours = {
     "#a04a9b"
 };
 
+local get_label(configuration, model, strategy, version)
+    return configuration .. "/" .. model .. "_" .. strategy .. "_" .. version;
+end
+
 local function add_percentile(chart, data, color)
     local avg = data:aggregate("scenario", BY_AVERAGE()):add_suffix(" (avg)");
     chart:add("line", avg, { color = color });
@@ -82,7 +87,7 @@ local function add_percentile_to_tab(tab, title, filename, agent)
         for _, configuration in ipairs(configurations) do
             for _, strategy in ipairs(strategies) do
                 for _, version in ipairs(versions) do
-                    local label = configuration .. "/" .. model .. "_" .. strategy .. "_" .. version;
+                    local label = get_label(configuration, model, strategy, version);
 
                     local data = generic:load(label .. "/" .. filename);
                     data = data:select_agents({ agent });
@@ -102,7 +107,8 @@ local function get_years(filename)
         for _, configuration in ipairs(configurations) do
             for _, strategy in ipairs(strategies) do
                 for _, version in ipairs(versions) do
-                    local label = configuration .. "/" .. model .. "_" .. strategy .. "_" .. version;
+                    local label = get_label(configuration, model, strategy, version);
+
                     local data = generic:load(label .. "/" .. filename);
                     years = math.max(years, data:get_years());
                 end
@@ -122,7 +128,7 @@ local function tab_cost_analysis()
         for _, configuration in ipairs(configurations) do
             for _, strategy in ipairs(strategies) do
                 for _, version in ipairs(versions) do
-                    local label = configuration .. "/" .. model .. "_" .. strategy .. "_" .. version;
+                    local label = get_label(configuration, model, strategy, version);
 
                     local data = generic:load(label .. "/results/costs_by_category");
                     data = data:select_agents({ 1 });
@@ -140,7 +146,7 @@ local function tab_cost_analysis()
         for _, configuration in ipairs(configurations) do
             for _, strategy in ipairs(strategies) do
                 for _, version in ipairs(versions) do
-                    local label = configuration .. "/" .. model .. "_" .. strategy .. "_" .. version;
+                    local label = get_label(configuration, model, strategy, version);
 
                     local data = generic:load(label .. "/results/costs_by_category");
                     data = data:select_agents({ 2 });
@@ -196,7 +202,7 @@ local function tab_cost_analysis()
         for _, configuration in ipairs(configurations) do
             for _, strategy in ipairs(strategies) do
                 for _, version in ipairs(versions) do
-                    local label = configuration .. "/" .. model .. "_" .. strategy .. "_" .. version;
+                    local label = get_label(configuration, model, strategy, version);
 
                     local data = generic:load(label .. "/results/costs_by_category");
                     data = data:select_agents({ 2 });
@@ -216,7 +222,7 @@ local function tab_cost_analysis()
         for _, configuration in ipairs(configurations) do
             for _, strategy in ipairs(strategies) do
                 for _, version in ipairs(versions) do
-                    local label = configuration .. "/" .. model .. "_" .. strategy .. "_" .. version;
+                    local label = get_label(configuration, model, strategy, version);
 
                     local data = generic:load(label .. "/results/load_marginal_cost");
                     data = data:aggregate_agents(BY_AVERAGE(), label);
@@ -235,7 +241,7 @@ local function tab_cost_analysis()
         for _, configuration in ipairs(configurations) do
             for _, strategy in ipairs(strategies) do
                 for _, version in ipairs(versions) do
-                    local label = configuration .. "/" .. model .. "_" .. strategy .. "_" .. version;
+                    local label = get_label(configuration, model, strategy, version);
 
                     local data = generic:load(label .. "/results/deficit");
                     data = data:aggregate_agents(BY_AVERAGE(), label);
@@ -257,10 +263,9 @@ local function tab_convergence_analysis()
         for _, model in ipairs(models) do
             for _, strategy in ipairs(strategies) do
                 for _, version in ipairs(versions) do
-                    local label = configuration .. "/" .. model .. "_" .. strategy .. "_" .. version;
+                    local label = get_label(configuration, model, strategy, version);
 
                     local chart = Chart("Convergence - " .. label);
-
                     local training_progress = generic:load(label .. "/results/training_progress");
                     chart:add("line", training_progress:select_agents({ 1 }));
                     chart:add("line", training_progress:select_agents({ 2 }));
@@ -280,7 +285,7 @@ local function tab_demand_analysis()
         for _, model in ipairs(models) do
             for _, strategy in ipairs(strategies) do
                 for _, version in ipairs(versions) do
-                    local label = configuration .. "/" .. model .. "_" .. strategy .. "_" .. version;
+                    local label = get_label(configuration, model, strategy, version);
 
                     local chart = Chart("Balance - " .. label);
 
@@ -344,7 +349,8 @@ local function tab_hydro_analysis(agent)
         for _, configuration in ipairs(configurations) do
             for _, strategy in ipairs(strategies) do
                 for _, version in ipairs(versions) do
-                    local label = configuration .. "/" .. model .. "_" .. strategy .. "_" .. version;
+                    local label = get_label(configuration, model, strategy, version);
+
                     local data = generic:load(label .. "/inflow_fake_historical");
                     data = data:select_agents({ agent });
                     data = data:rename_agents({ configuration .. "/" .. model .. "_" .. strategy });
@@ -362,7 +368,7 @@ local function tab_hydro_analysis(agent)
         for _, configuration in ipairs(configurations) do
             for _, strategy in ipairs(strategies) do
                 for _, version in ipairs(versions) do
-                    local label = configuration .. "/" .. model .. "_" .. strategy .. "_" .. version;
+                    local label = get_label(configuration, model, strategy, version);
 
                     local data = generic:load(label .. "/inflow_scenarios_train");
                     data = data:select_agents({ agent });
@@ -395,7 +401,7 @@ local function tab_hydro_analysis(agent)
         for _, configuration in ipairs(configurations) do
             for _, strategy in ipairs(strategies) do
                 for _, version in ipairs(versions) do
-                    local label = configuration .. "/" .. model .. "_" .. strategy .. "_" .. version;
+                    local label = get_label(configuration, model, strategy, version);
 
                     local data = generic:load(label .. "/results/hydro_initial_volume");
                     data = data:select_agents({ agent });
@@ -415,7 +421,7 @@ local function tab_hydro_analysis(agent)
         for _, configuration in ipairs(configurations) do
             for _, strategy in ipairs(strategies) do
                 for _, version in ipairs(versions) do
-                    local label = configuration .. "/" .. model .. "_" .. strategy .. "_" .. version;
+                    local label = get_label(configuration, model, strategy, version);
 
                     local data = generic:load(label .. "/results/hydro_final_volume");
                     data = data:select_agents({ agent });
@@ -461,7 +467,7 @@ local function tab_seasonal_stats_analysis(agent)
             for _, configuration in ipairs(configurations) do
                 for _, strategy in ipairs(strategies) do
                     for _, version in ipairs(versions) do
-                        local label = configuration .. "/" .. model .. "_" .. strategy .. "_" .. version;
+                        local label = get_label(configuration, model, strategy, version);
 
                         local data = generic:load(label .. file.path);
                         data = data:select_agents({ agent });
@@ -506,7 +512,8 @@ local function tab_clustering_analysis()
                 for _, version in ipairs(versions) do
                     local k = get_k_from_strategy(strategy);
                     if k > 0 then
-                        local label = configuration .. "/" .. model .. "_" .. strategy .. "_" .. version;
+                        local label = get_label(configuration, model, strategy, version);
+
                         add_cluster_chart(tab, label, "inflow_cluster_counts_train", " (train)", k);
                         add_cluster_chart(tab, label, "inflow_cluster_counts_simulate", " (simulate)", k);
                     end
