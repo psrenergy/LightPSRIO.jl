@@ -23,8 +23,8 @@ local configurations = {
     -- "2000h_60t_400s_400o_6p_100i",
     -- "2000h_60t_500s_500o_6p_100i",
     -- "800h_60t_100s_100o_6p_20i",
-    -- "2000h_36t_100s_100o_6p_25i",
-    "2000h_36t_100s_100o_6p_50i",
+    "2000h_36t_100s_100o_6p_25i",
+    -- "2000h_36t_100s_100o_6p_50i",
 };
 
 local models = {
@@ -43,6 +43,7 @@ local strategies = {
 };
 
 local versions = {
+    "0.1.6",
     "0.1.7",
 }
 
@@ -66,7 +67,7 @@ local colours = {
     "#a04a9b"
 };
 
-local get_label(configuration, model, strategy, version)
+local function get_label(configuration, model, strategy, version)
     return configuration .. "/" .. model .. "_" .. strategy .. "_" .. version;
 end
 
