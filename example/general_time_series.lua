@@ -1,31 +1,15 @@
 local generic = Generic();
 
 local configurations = {
-    -- -- "400h_24t_50s_50o_6p_20i",
-    -- -- "400h_24t_50s_50o_1p_20i",
-    -- -- "800h_60t_100s_100o_1p_20i",
-    -- "800h_60t_100s_100o_6p_20i",
-    -- -- "400h_60t_50s_50o_6p_20i",
-    -- -- "1600h_60t_200s_200o_6p_20i",
-    -- "1600h_60t_200s_200o_6p_100i",
-    -- -- "24h_12t_5s_5o_1p_20i",
-    -- "2000h_60t_500s_500o_6p_100i",
-    -- -- "24h_12t_5s_5o_1p_20i",
-    -- -- "10h_2t_5s_5o_1p_10i",
-    -- "2000h_60t_400s_400o_6p_100i",
-    -- "1000h_60t_100s_100o_6p_200i",
-    -- "2000h_60t_200s_200o_6p_200i",
-    -- "1000h_60t_100s_100o_6p_200i",
-    -- "1600h_60t_200s_200o_6p_20i",
-    -- "1600h_60t_200s_200o_6p_100i",
-    -- "2000h_60t_200s_200o_6p_200i",
-    -- "2000h_60t_300s_300o_6p_200i",
-    -- "2000h_60t_400s_400o_6p_100i",
-    -- "2000h_60t_500s_500o_6p_100i",
-    -- "800h_60t_100s_100o_6p_20i",
-    "2000h_36t_100s_100o_6p_25i",
-    "2000h_36t_200s_200o_6p_25i",
+    -- "2000h_36t_100s_100o_6p_25i",
     -- "2000h_36t_100s_100o_6p_50i",
+    -- "2000h_36t_200s_200o_6p_25i",
+    -- "2000h_36t_200s_200o_6p_50i",
+    -- "2000h_36t_300s_300o_6p_25i",
+    -- "2000h_36t_300s_300o_6p_50i",
+    "2001h_36t_100s_100o_6p_25i",
+    -- "2000h_60t_100s_100o_6p_25i",
+    -- "2000h_60t_200s_200o_6p_25i",
 };
 
 local models = {
@@ -33,19 +17,28 @@ local models = {
     "heavy_tailed",
     "long_memory",
     "msar",
+    -- "msar5",
+    -- "annual_msar",
 };
 
 local strategies = {
     "yearly_wise",
     "stage_wise_k1",
-    "stage_wise_k2",
+    -- "stage_wise_k2",
     "stage_wise_k3",
-    "stage_wise_k4",
+    -- "stage_wise_k4",
+    "stage_wise_k5",
 };
 
 local versions = {
+    -- "",
     -- "0.1.6",
-    "0.1.7",
+    -- "0.1.7",
+    -- "0.1.8-alpha.1",
+    -- "0.1.8-alpha.2",
+    -- "0.1.8-alpha.3",
+    -- "0.1.8-alpha.4",
+    "0.1.8-alpha.5",
 }
 
 local colours = {
@@ -120,9 +113,7 @@ local function get_years(filename)
     return years;
 end
 
-local function tab_cost_analysis()
-    local tab = Tab("Cost Analysis");
-
+function Tab.push_total_cost_charts(self)
     for _, model in ipairs(models) do
         local chart = Chart("Total Cost - " .. model);
 
@@ -140,10 +131,13 @@ local function tab_cost_analysis()
                 end
             end
         end
-        tab:push(chart);
+        self:push(chart);
     end
+end
 
+function Tab.push_immediate_cost_chart(self)
     local chart = Chart("Immediate Cost");
+
     for i, model in ipairs(models) do
         for _, configuration in ipairs(configurations) do
             for _, strategy in ipairs(strategies) do
@@ -160,44 +154,49 @@ local function tab_cost_analysis()
             end
         end
     end
-    tab:push(chart);
 
-    -- local markdown = Markdown()
-    -- markdown:add(
-    -- "| Model                       | Violation Type     | Severity        | Best For                        |");
-    -- markdown:add(
-    -- "|:----------------------------|:-------------------|:---------------:|:--------------------------------|");
-    -- markdown:add(
-    -- "| `regime_switching`          | State dependence   | Severe          | Persistent droughts/wet periods |");
-    -- markdown:add(
-    -- "| `threshold`                 | Non-linearity      | Moderate-Severe | Asymmetric dynamics             |");
-    -- markdown:add(
-    -- "| `heavy_tailed`              | Non-Gaussian       | Moderate        | Extreme events                  |");
-    -- markdown:add(
-    -- "| `time_varying_volatility`   | Heteroskedasticity | Moderate        | Volatility clustering           |");
-    -- markdown:add(
-    -- "| `long_memory`               | Infinite memory    | Severe          | Multi-year droughts             |");
-    -- markdown:add(
-    -- "| `jump_diffusion`            | Jump process       | Moderate-Severe | Sudden shocks                   |");
-    -- markdown:add(
-    -- "| `seasonal_regime_switching` | Season × State     | Severe          | Compound events                 |");
-    -- markdown:add(
-    -- "| `copula`                    | Tail dependence    | Moderate-Severe | Multi-reservoir                 |");
-    -- markdown:add(
-    -- "| `mixture`                   | Non-stationarity   | Moderate        | Climate change                  |");
-    -- markdown:add(
-    -- "| `par_stochastic_volatility` | SV in PAR          | Moderate        | Minimal violation               |");
-    -- markdown:add(
-    -- "| `levy_process`              | Heavy tails        | Severe          | Infinite variance events        |");
-    -- markdown:add(
-    -- "| `charr`                     | Range volatility   | Moderate        | Boom-bust cycles                |");
-    -- markdown:add(
-    -- "| `hidden_markov`             | Multi-state        | Severe          | Complex regimes                 |");
-    -- markdown:add(
-    -- "| `periodic_threshold`        | Season × Threshold | Severe          | Non-linear seasonality          |");
-    -- tab:push(markdown);
+    self:push(chart);
+end
+
+function Tab.push_immediate_cost_charts(self)
+    for _, model in ipairs(models) do
+        for _, configuration in ipairs(configurations) do
+            local chart = Chart("Immediate Cost - " .. model .. " - " .. configuration);
+
+            for _, strategy in ipairs(strategies) do
+                for i, version in ipairs(versions) do
+                    local label = get_label(configuration, model, strategy, version);
+
+                    local data = generic:load(label .. "/results/costs_by_category");
+                    data = data:select_agents({ 2 });
+                    data = data:rename_agents({ label });
+                    data = data:aggregate("scenario", BY_AVERAGE());
+                    data = data:aggregate("stage", BY_SUM());
+                    chart:add("column", data, { color = colours[i] });
+                end
+            end
+            self:push(chart);
+        end
+    end
 
     for _, model in ipairs(models) do
+        local chart = Chart("Immediate Cost - " .. model);
+        for _, configuration in ipairs(configurations) do
+            for _, strategy in ipairs(strategies) do
+                for i, version in ipairs(versions) do
+                    local label = get_label(configuration, model, strategy, version);
+
+                    local data = generic:load(label .. "/results/costs_by_category");
+                    data = data:select_agents({ 2 });
+                    data = data:rename_agents({ label });
+                    data = data:aggregate("scenario", BY_AVERAGE());
+                    data = data:aggregate("stage", BY_SUM());
+                    chart:add("column", data, { color = colours[i] });
+                end
+            end
+            self:push(chart);
+        end
+
         local chart = Chart("Immediate Cost - " .. model);
 
         local i = 1;
@@ -214,9 +213,31 @@ local function tab_cost_analysis()
                 end
             end
         end
-        tab:push(chart);
+        self:push(chart);
     end
 
+    -- for _, model in ipairs(models) do
+    --     local chart = Chart("Immediate Cost - " .. model);
+
+    --     local i = 1;
+    --     for _, configuration in ipairs(configurations) do
+    --         for _, strategy in ipairs(strategies) do
+    --             for _, version in ipairs(versions) do
+    --                 local label = get_label(configuration, model, strategy, version);
+
+    --                 local data = generic:load(label .. "/results/costs_by_category");
+    --                 data = data:select_agents({ 2 });
+    --                 data = data:rename_agents({ label });
+    --                 add_percentile(chart, data, colours[i]);
+    --                 i = i + 1;
+    --             end
+    --         end
+    --     end
+    --     self:push(chart);
+    -- end
+end
+
+function Tab.push_marginal_cost_charts(self)
     for _, model in ipairs(models) do
         local chart = Chart("Marginal Cost - " .. model);
 
@@ -233,9 +254,12 @@ local function tab_cost_analysis()
                 end
             end
         end
-        tab:push(chart);
-    end
 
+        self:push(chart);
+    end
+end
+
+function Tab.push_deficit_charts(self)
     for _, model in ipairs(models) do
         local chart = Chart("Deficit - " .. model);
 
@@ -252,8 +276,19 @@ local function tab_cost_analysis()
                 end
             end
         end
-        tab:push(chart);
+
+        self:push(chart);
     end
+end
+
+local function tab_cost_analysis()
+    local tab = Tab("Cost Analysis");
+
+    tab:push_immediate_cost_chart();
+    tab:push_immediate_cost_charts();
+    -- tab:push_total_cost_charts();
+    -- tab:push_marginal_cost_charts();
+    -- tab:push_deficit_charts();
 
     return tab;
 end
@@ -535,6 +570,6 @@ dashboard:push(tab_clustering_analysis());
 for agent = 1, 1 do
     dashboard:push(tab_hydro_analysis(agent));
     dashboard:push(tab_thermal_analysis(agent));
-    -- dashboard:push(tab_seasonal_stats_analysis(agent));
+    dashboard:push(tab_seasonal_stats_analysis(agent));
 end
 dashboard:save("dashboard");
