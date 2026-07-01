@@ -30,6 +30,7 @@ Patchwork.js_deps(::Type{Highcharts}) = [
     "https://cdn.jsdelivr.net/npm/highcharts@12.4.0/highcharts.js",
     "https://cdn.jsdelivr.net/npm/highcharts@12.4.0/highcharts-more.js",
     "https://cdn.jsdelivr.net/npm/highcharts@12.4.0/modules/exporting.js",
+    "https://cdn.jsdelivr.net/npm/highcharts@12.4.0/modules/export-data.js",
     "https://cdn.jsdelivr.net/npm/highcharts@12.4.0/modules/boost.js",
 ]
 
@@ -45,6 +46,8 @@ Patchwork.init_script(::Type{Highcharts}) = """
                 contextButton: {
                     menuItems: [
                         'downloadPNG',
+                        'downloadCSV',
+                        'separator',
                         {
                             text: 'Show All Series',
                             onclick: function() {

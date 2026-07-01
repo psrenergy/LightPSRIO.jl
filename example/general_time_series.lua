@@ -1,33 +1,35 @@
 local generic = Generic();
 
 local configurations = {
-    -- "2000h_36t_100s_100o_6p_25i",
-    -- "2000h_36t_100s_100o_6p_50i",
-    -- "2000h_36t_200s_200o_6p_25i",
-    -- "2000h_36t_200s_200o_6p_50i",
-    -- "2000h_36t_300s_300o_6p_25i",
-    -- "2000h_36t_300s_300o_6p_50i",
-    "2001h_36t_100s_100o_6p_25i",
-    -- "2000h_60t_100s_100o_6p_25i",
-    -- "2000h_60t_200s_200o_6p_25i",
+    "2003h_60t_100s_100o_12p_25i",
+    "2003h_60t_100s_100o_12p_25i_d3",
+    -- "2003h_36t_100s_100o_6p_25i",
+    -- "2003h_36t_100s_100o_6p_50i",
+    -- "2003h_36t_100s_100o_6p_100i",
 };
 
 local models = {
     "parp",
-    "heavy_tailed",
-    "long_memory",
-    "msar",
+    "regime",
+    -- "climate",
+    -- "volregime15",
+    -- "volregime50",
+    -- "volregime90",
+    -- "parp",
+    -- "heavy_tailed",
+    -- "long_memory",
+    -- "msar",
+    -- "msar3",
     -- "msar5",
     -- "annual_msar",
+    -- "msar3_new",
+    -- "msar5_new",
 };
 
 local strategies = {
     "yearly_wise",
     "stage_wise_k1",
-    -- "stage_wise_k2",
     "stage_wise_k3",
-    -- "stage_wise_k4",
-    "stage_wise_k5",
 };
 
 local versions = {
@@ -38,7 +40,9 @@ local versions = {
     -- "0.1.8-alpha.2",
     -- "0.1.8-alpha.3",
     -- "0.1.8-alpha.4",
-    "0.1.8-alpha.5",
+    -- "0.1.8-alpha.5",
+    -- "0.1.8",
+    "0.1.9-alpha.1",
 }
 
 local colours = {
@@ -281,16 +285,16 @@ function Tab.push_deficit_charts(self)
     end
 end
 
-local function tab_cost_analysis()
+function Dashboard.push_cost_analysis_tabs(self)
     local tab = Tab("Cost Analysis");
 
     tab:push_immediate_cost_chart();
     tab:push_immediate_cost_charts();
     -- tab:push_total_cost_charts();
-    -- tab:push_marginal_cost_charts();
+    tab:push_marginal_cost_charts();
     -- tab:push_deficit_charts();
 
-    return tab;
+    self:push(tab);
 end
 
 local function tab_convergence_analysis()
@@ -315,7 +319,7 @@ local function tab_convergence_analysis()
     return tab;
 end
 
-local function tab_demand_analysis()
+function Dashboard.push_demand_analysis_tabs(self)
     local tab = Tab("Demand Analysis");
 
     for _, configuration in ipairs(configurations) do
@@ -350,6 +354,101 @@ local function tab_demand_analysis()
                 end
             end
         end
+    end
+
+    self:push(tab);
+end
+
+function Dashboard.push_generic_analysis_tabs(self, title, output)
+    local tab = Tab(title .. " Analysis");
+
+    local chart = Chart("Total " .. title);
+    for i, model in ipairs(models) do
+        for _, configuration in ipairs(configurations) do
+            for _, strategy in ipairs(strategies) do
+                for _, version in ipairs(versions) do
+                    local label = get_label(configuration, model, strategy, version);
+
+                    local data = generic:load(label .. "/results/" .. output);
+                    data = data:aggregate_agents(BY_SUM(), label);
+                    data = data:aggregate("scenario", BY_AVERAGE());
+                    data = data:aggregate("stage", BY_SUM());
+                    chart:add("column", data, { color = colours[i] });
+                end
+            end
+        end
+    end
+    tab:push(chart);
+
+    for _, configuration in ipairs(configurations) do
+        for _, model in ipairs(models) do
+            local chart = Chart(configuration .. " - " .. model);
+
+            local i = 1;
+            for _, strategy in ipairs(strategies) do
+                for _, version in ipairs(versions) do
+                    local label = get_label(configuration, model, strategy, version);
+
+                    local data = generic:load(label .. "/results/" .. output);
+                    data = data:aggregate_agents(BY_SUM(), label);
+                    add_percentile(chart, data, colours[i]);
+                    i = i + 1;
+                end
+            end
+            tab:push(chart);
+        end
+    end
+
+    self:push(tab);
+end
+
+local function tab_final_volume_analysis()
+    local tab = Tab("Final Volume");
+
+    local chart = Chart("Final Volume");
+    local i = 1;
+    for _, model in ipairs(models) do
+        for _, configuration in ipairs(configurations) do
+            for _, strategy in ipairs(strategies) do
+                for _, version in ipairs(versions) do
+                    local label = get_label(configuration, model, strategy, version);
+
+                    local data = generic:load(label .. "/results/hydro_final_volume");
+                    data = data:aggregate_agents(BY_SUM(), label);
+                    data = data:aggregate("scenario", BY_AVERAGE());
+                    chart:add("line", data);
+
+                    i = i + 1;
+                end
+            end
+        end
+    end
+    tab:push(chart);
+
+    return tab;
+end
+
+local function tab_marginal_cost_analysis(agent)
+    local tab = Tab("Cost Analysis (agent " .. agent .. ")");
+
+    for _, model in ipairs(models) do
+        local chart = Chart("Marginal Cost - " .. model);
+
+        local i = 1;
+        for _, configuration in ipairs(configurations) do
+            for _, strategy in ipairs(strategies) do
+                for _, version in ipairs(versions) do
+                    local label = get_label(configuration, model, strategy, version);
+
+                    local data = generic:load(label .. "/results/load_marginal_cost");
+                    data = data:select_agents({ agent });
+                    add_percentile(chart, data, colours[i]);
+                    i = i + 1;
+                end
+            end
+        end
+
+        tab:push(chart);
     end
 
     return tab;
@@ -478,14 +577,6 @@ local function tab_hydro_analysis(agent)
     return tab;
 end
 
-local function tab_thermal_analysis(agent)
-    local tab = Tab("Thermal Analysis (agent " .. agent .. ")");
-
-    add_percentile_to_tab(tab, "Thermal Generation", "results/thermal_generation", agent);
-
-    return tab;
-end
-
 local function tab_seasonal_stats_analysis(agent)
     local tab = Tab("Seasonal Stats (agent " .. agent .. ")");
 
@@ -563,13 +654,17 @@ local function tab_clustering_analysis()
 end
 
 local dashboard = Dashboard("PSR");
-dashboard:push(tab_demand_analysis());
-dashboard:push(tab_cost_analysis());
-dashboard:push(tab_convergence_analysis());
-dashboard:push(tab_clustering_analysis());
-for agent = 1, 1 do
-    dashboard:push(tab_hydro_analysis(agent));
-    dashboard:push(tab_thermal_analysis(agent));
-    dashboard:push(tab_seasonal_stats_analysis(agent));
-end
+dashboard:push_cost_analysis_tabs();
+dashboard:push_demand_analysis_tabs();
+dashboard:push_generic_analysis_tabs("Thermal", "thermal_generation");
+dashboard:push_generic_analysis_tabs("Hydro", "hydro_generation");
+dashboard:push_generic_analysis_tabs("Deficit", "deficit");
+-- dashboard:push(tab_convergence_analysis());
+dashboard:push(tab_final_volume_analysis());
+-- dashboard:push(tab_clustering_analysis());
+-- for agent = 1, 4 do
+--     dashboard:push(tab_marginal_cost_analysis(agent));
+--     -- dashboard:push(tab_hydro_analysis(agent));
+--     -- dashboard:push(tab_seasonal_stats_analysis(agent));
+-- end
 dashboard:save("dashboard");
