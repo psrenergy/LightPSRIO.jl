@@ -1,15 +1,29 @@
 local generic = Generic();
 
 local configurations = {
-    "2003h_60t_100s_100o_12p_25i",
-    "2003h_60t_100s_100o_12p_25i_d3",
+    -- "2003h_60t_100s_100o_12p_25i",
+    -- "2003h_60t_100s_100o_12p_25i_d3",
+    -- "2003h_60t_100s_100o_12p_25i_d5",
+    -- "2003h_60t_100s_100o_12p_25i_d7",
+    -- "2003h_60t_100s_100o_12p_25i_d9",
+    -- "2003h_60t_100s_100o_12p_25i_d11",
+    -- "2003h_60t_100s_100o_12p_25i_d13",
+    -- "2003h_60t_100s_100o_12p_25i_d15",
+    -- "2003h_60t_100s_100o_12p_25i_d17",
+    -- "2003h_60t_100s_100o_12p_25i_d19",
+    "2003h_60t_100s_100o_12p_25i_d21",
+    "2003h_60t_100s_100o_12p_25i_d23",
+    "2003h_60t_100s_100o_12p_25i_d25",
+    "2003h_60t_100s_100o_12p_25i_d27",
+    "2003h_60t_100s_100o_12p_25i_d29",
+    "2003h_60t_100s_100o_12p_25i_d31",
     -- "2003h_36t_100s_100o_6p_25i",
     -- "2003h_36t_100s_100o_6p_50i",
     -- "2003h_36t_100s_100o_6p_100i",
 };
 
 local models = {
-    "parp",
+    -- "parp",
     "regime",
     -- "climate",
     -- "volregime15",
@@ -28,7 +42,7 @@ local models = {
 
 local strategies = {
     "yearly_wise",
-    "stage_wise_k1",
+    -- "stage_wise_k1",
     "stage_wise_k3",
 };
 
@@ -659,7 +673,7 @@ dashboard:push_demand_analysis_tabs();
 dashboard:push_generic_analysis_tabs("Thermal", "thermal_generation");
 dashboard:push_generic_analysis_tabs("Hydro", "hydro_generation");
 dashboard:push_generic_analysis_tabs("Deficit", "deficit");
--- dashboard:push(tab_convergence_analysis());
+dashboard:push(tab_convergence_analysis());
 dashboard:push(tab_final_volume_analysis());
 -- dashboard:push(tab_clustering_analysis());
 -- for agent = 1, 4 do
